@@ -1,0 +1,34 @@
+/*
+ *  PhotoPipr is Copyright 2017-2022 by Jeremy Brooks
+ *
+ *  This file is part of PhotoPipr.
+ *
+ *   PhotoPipr is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   PhotoPipr is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with PhotoPipr.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+package net.jeremybrooks.photopipr.action;
+
+public interface Action {
+  enum Status {
+    WAITING,
+    RUNNING,
+    FINISHED
+  }
+  String getDescription();
+  Status getStatus();
+  void setStatus(Status status);
+
+  String getStatusMessage();
+  void setStatusMessage(String statusMessage);
+}

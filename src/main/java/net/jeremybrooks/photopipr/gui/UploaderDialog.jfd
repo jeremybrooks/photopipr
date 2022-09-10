@@ -1,0 +1,380 @@
+JFDML JFormDesigner: "7.0.7.0.1134" Java: "17.0.3" encoding: "UTF-8"
+
+new FormModel {
+	"i18n.autoExternalize": true
+	"i18n.bundlePackage": "net.jeremybrooks.photopipr"
+	"i18n.bundleName": "uploader"
+	"i18n.keyPrefix": "UploaderDialog"
+	contentType: "form/swing"
+	root: new FormRoot {
+		add( new FormWindow( "javax.swing.JDialog", new FormLayoutManager( class java.awt.BorderLayout ) ) {
+			name: "this"
+			"title": new FormMessage( null, "UploaderDialog.this.title" )
+			"$sizePolicy": 1
+			"defaultCloseOperation": 0
+			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.BorderLayout ) ) {
+				name: "dialogPane"
+				"border": new javax.swing.border.EmptyBorder( 12, 12, 12, 12 )
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.BorderLayout ) ) {
+					name: "contentPanel"
+					add( new FormContainer( "javax.swing.JTabbedPane", new FormLayoutManager( class javax.swing.JTabbedPane ) ) {
+						name: "tabbedPane1"
+						add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
+							"$columnSpecs": "0, 0, 0"
+							"$rowSpecs": "0, 0, 0, 0, 0, 0"
+							"$hGap": 5
+							"$vGap": 5
+							"$alignLeft": true
+							"$alignTop": true
+						} ) {
+							name: "pnlBasic"
+							add( new FormComponent( "javax.swing.JLabel" ) {
+								name: "label2"
+								"text": new FormMessage( null, "UploaderDialog.label2.text" )
+							}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+								"insets": new java.awt.Insets( 0, 5, 0, 0 )
+							} )
+							add( new FormComponent( "javax.swing.JTextField" ) {
+								name: "txtSource"
+								"editable": false
+							}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+								"gridx": 1
+								"weightx": 1.0
+								"insets": new java.awt.Insets( 0, 5, 0, 0 )
+							} )
+							add( new FormComponent( "javax.swing.JButton" ) {
+								name: "btnBrowse"
+								"text": new FormMessage( null, "UploaderDialog.btnBrowse.text" )
+								addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnBrowseActionPerformed", true ) )
+							}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+								"gridx": 2
+								"insets": new java.awt.Insets( 0, 5, 0, 0 )
+							} )
+							add( new FormComponent( "javax.swing.JLabel" ) {
+								name: "label3"
+								"text": new FormMessage( null, "UploaderDialog.label3.text" )
+							}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+								"gridy": 1
+								"insets": new java.awt.Insets( 0, 5, 0, 0 )
+							} )
+							add( new FormComponent( "javax.swing.JSpinner" ) {
+								name: "spinnerQuantity"
+								"model": new javax.swing.SpinnerNumberModel {
+									minimum: 1
+									value: 1
+								}
+							}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+								"gridx": 1
+								"gridy": 1
+								"insets": new java.awt.Insets( 0, 5, 0, 0 )
+							} )
+							add( new FormComponent( "javax.swing.JLabel" ) {
+								name: "lblCriteria"
+								"text": new FormMessage( null, "UploaderDialog.lblCriteria.text" )
+							}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+								"gridy": 2
+								"insets": new java.awt.Insets( 0, 5, 0, 0 )
+							} )
+							add( new FormComponent( "javax.swing.JComboBox" ) {
+								name: "cmbSelectionOrder"
+								auxiliary() {
+									"JavaCodeGenerator.postCreateCode": "// ORDER MATTERS HERE\n// DO NOT REORDER\ncmbSelectionOrder.setModel(new DefaultComboBoxModel<>(new String[] {\n              bundle.getString(\"UploaderDialog.cmbSelectionOrder.random\"),\nbundle.getString(\"UploaderDialog.cmbSelectionOrder.newest\"),\nbundle.getString(\"UploaderDialog.cmbSelectionOrder.oldest\"),\nbundle.getString(\"UploaderDialog.cmbSelectionOrder.asc\"),\nbundle.getString(\"UploaderDialog.cmbSelectionOrder.desc\")\n            }));"
+								}
+							}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+								"gridx": 1
+								"gridy": 2
+							} )
+							add( new FormComponent( "javax.swing.JLabel" ) {
+								name: "lblInterval"
+								"text": new FormMessage( null, "UploaderDialog.lblInterval.text" )
+							}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+								"gridy": 3
+								"insets": new java.awt.Insets( 0, 5, 0, 0 )
+							} )
+							add( new FormComponent( "javax.swing.JSpinner" ) {
+								name: "spinnerInterval"
+								"model": new javax.swing.SpinnerNumberModel {
+									minimum: 0
+									value: 1
+								}
+							}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+								"gridx": 1
+								"gridy": 3
+								"insets": new java.awt.Insets( 0, 5, 0, 0 )
+							} )
+							add( new FormComponent( "javax.swing.JCheckBox" ) {
+								name: "cbxPrivate"
+								"text": new FormMessage( null, "UploaderDialog.cbxPrivate.text" )
+							}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+								"gridx": 1
+								"gridy": 4
+								"insets": new java.awt.Insets( 3, 3, 3, 0 )
+							} )
+							add( new FormComponent( "javax.swing.JLabel" ) {
+								name: "label1"
+								"text": new FormMessage( null, "UploaderDialog.label1.text" )
+							}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+								"gridy": 5
+								"insets": new java.awt.Insets( 0, 5, 0, 0 )
+								"vAlign": 1
+							} )
+							add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridLayout ) {
+								"rows": 3
+							} ) {
+								name: "panel6"
+								add( new FormComponent( "javax.swing.JRadioButton" ) {
+									name: "radioSafe"
+									"text": new FormMessage( null, "UploaderDialog.radioSafe.text" )
+									"$buttonGroup": new FormReference( "buttonGroup2" )
+								} )
+								add( new FormComponent( "javax.swing.JRadioButton" ) {
+									name: "radioModerate"
+									"text": new FormMessage( null, "UploaderDialog.radioModerate.text" )
+									"$buttonGroup": new FormReference( "buttonGroup2" )
+								} )
+								add( new FormComponent( "javax.swing.JRadioButton" ) {
+									name: "radioRestricted"
+									"text": new FormMessage( null, "UploaderDialog.radioRestricted.text" )
+									"$buttonGroup": new FormReference( "buttonGroup2" )
+								} )
+							}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+								"gridx": 1
+								"gridy": 5
+								"insets": new java.awt.Insets( 3, 3, 3, 3 )
+							} )
+						}, new FormLayoutConstraints( null ) {
+							"title": new FormMessage( null, "UploaderDialog.pnlBasic.tab.title" )
+						} )
+						add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
+							"$columnSpecs": "0, 0"
+							"$rowSpecs": "0, 0, 0, 0"
+							"$hGap": 5
+							"$vGap": 5
+							"$alignLeft": true
+							"$alignTop": true
+						} ) {
+							name: "panel1"
+							add( new FormComponent( "javax.swing.JComboBox" ) {
+								name: "cmbTagMode"
+								auxiliary() {
+									"JavaCodeGenerator.postCreateCode": "// ORDER MATTERS HERE\n// DO NOT REORDER\ncmbTagMode.setModel(new DefaultComboBoxModel<>(new String[] {\n              bundle.getString(\"UploaderDialog.cmbTagMode.all\"),\n\t\t\t  bundle.getString(\"UploaderDialog.cmbTagMode.any\")\n            }));"
+								}
+							}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) )
+							add( new FormComponent( "javax.swing.JTextField" ) {
+								name: "txtTags"
+							}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+								"gridx": 1
+							} )
+							add( new FormComponent( "javax.swing.JLabel" ) {
+								name: "label8"
+								"text": new FormMessage( null, "UploaderDialog.label8.text" )
+							}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+								"gridy": 1
+							} )
+							add( new FormComponent( "javax.swing.JComboBox" ) {
+								name: "cmbGroupList"
+								auxiliary() {
+									"JavaCodeGenerator.customCreateCode": "new JComboBox(groupArray);"
+									"JavaCodeGenerator.postInitCode": "cmbGroupList.setRenderer(new GroupComboBoxRenderer());"
+								}
+							}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+								"gridx": 1
+								"gridy": 1
+							} )
+							add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.FlowLayout ) {
+								"alignment": 2
+							} ) {
+								name: "panel3"
+								add( new FormComponent( "javax.swing.JButton" ) {
+									name: "button1"
+									"text": new FormMessage( null, "UploaderDialog.button1.text" )
+								} )
+							}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+								"gridy": 2
+								"gridwidth": 2
+							} )
+							add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.BorderLayout ) ) {
+								name: "panel4"
+								"border": new javax.swing.border.TitledBorder( "i18nKey=UploaderDialog.panel4.border" )
+								add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
+									name: "scrollPane1"
+									add( new FormComponent( "javax.swing.JList" ) {
+										name: "lstGroupRules"
+										"selectionMode": 1
+									} )
+								}, new FormLayoutConstraints( class java.lang.String ) {
+									"value": "Center"
+								} )
+								add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.FlowLayout ) {
+									"alignment": 2
+								} ) {
+									name: "panel5"
+									add( new FormComponent( "javax.swing.JButton" ) {
+										name: "button2"
+										"text": new FormMessage( null, "UploaderDialog.button2.text" )
+									} )
+								}, new FormLayoutConstraints( class java.lang.String ) {
+									"value": "South"
+								} )
+							}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+								"gridy": 3
+								"gridwidth": 2
+								"weightx": 1.0
+								"weighty": 1.0
+							} )
+						}, new FormLayoutConstraints( null ) {
+							"title": new FormMessage( null, "UploaderDialog.panel1.tab.title" )
+						} )
+						add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
+							"$columnSpecs": "0, 0, 0"
+							"$rowSpecs": "0, 0, 0, 0, 0, 0"
+							"$hGap": 5
+							"$vGap": 5
+							"$alignLeft": true
+							"$alignTop": true
+						} ) {
+							name: "pnlArchive"
+							add( new FormComponent( "javax.swing.JRadioButton" ) {
+								name: "radioMove"
+								"text": new FormMessage( null, "UploaderDialog.radioMove.text" )
+								"$buttonGroup": new FormReference( "buttonGroup1" )
+								"selected": true
+								addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "radioMoveActionPerformed", true ) )
+							}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+								"gridy": 1
+							} )
+							add( new FormComponent( "javax.swing.JTextField" ) {
+								name: "txtMoveTo"
+								"editable": false
+							}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+								"weightx": 1.0
+								"gridx": 1
+								"gridy": 1
+							} )
+							add( new FormComponent( "javax.swing.JButton" ) {
+								name: "btnBrowseMove"
+								"text": new FormMessage( null, "UploaderDialog.btnBrowseMove.text" )
+								addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnBrowseMoveActionPerformed", true ) )
+							}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+								"gridx": 2
+								"gridy": 1
+							} )
+							add( new FormComponent( "javax.swing.JCheckBox" ) {
+								name: "cbxCreateFolders"
+								"text": new FormMessage( null, "UploaderDialog.cbxCreateFolders.text" )
+								addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "cbxUseDateActionPerformed", true ) )
+							}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+								"gridy": 2
+								"gridx": 1
+							} )
+							add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
+								"$columnSpecs": "0, 0, 0"
+								"$rowSpecs": "0, 0, 0"
+								"$hGap": 5
+								"$vGap": 5
+								"$alignLeft": true
+								"$alignTop": true
+							} ) {
+								name: "panel2"
+								add( new FormComponent( "javax.swing.JLabel" ) {
+									name: "lblDateFormat"
+									"text": new FormMessage( null, "UploaderDialog.lblDateFormat.text" )
+								}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) )
+								add( new FormComponent( "javax.swing.JTextField" ) {
+									name: "txtDateFormat"
+									"text": new FormMessage( null, "UploaderDialog.txtDateFormat.text" )
+									addEvent( new FormEvent( "java.awt.event.KeyListener", "keyTyped", "txtDateFormatKeyTyped", true ) )
+								}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+									"gridx": 1
+									"gridwidth": 2
+									"weightx": 1.0
+								} )
+								add( new FormComponent( "javax.swing.JLabel" ) {
+									name: "lblFolderNameSample"
+									"text": new FormMessage( null, "UploaderDialog.lblFolderNameSample.text" )
+								}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+									"gridy": 1
+								} )
+								add( new FormComponent( "javax.swing.JLabel" ) {
+									name: "lblDateSample"
+									"text": new FormMessage( null, "UploaderDialog.lblDateSample.text" )
+								}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+									"gridx": 1
+									"gridy": 1
+									"gridwidth": 2
+									"insets": new java.awt.Insets( 0, 5, 0, 0 )
+								} )
+								add( new FormComponent( "javax.swing.JButton" ) {
+									name: "btnDefaultDate"
+									"text": new FormMessage( null, "UploaderDialog.btnDefaultDate.text" )
+									addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnDefaultDateActionPerformed", true ) )
+								}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+									"gridx": 1
+									"gridy": 2
+								} )
+							}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+								"gridx": 1
+								"gridy": 3
+								"gridwidth": 2
+							} )
+							add( new FormComponent( "javax.swing.JRadioButton" ) {
+								name: "radioDelete"
+								"text": new FormMessage( null, "UploaderDialog.radioDelete.text" )
+								"$buttonGroup": new FormReference( "buttonGroup1" )
+								addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "radioDeleteActionPerformed", true ) )
+							}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+								"gridy": 5
+							} )
+						}, new FormLayoutConstraints( null ) {
+							"title": new FormMessage( null, "UploaderDialog.pnlArchive.tab.title" )
+						} )
+					}, new FormLayoutConstraints( class java.lang.String ) {
+						"value": "North"
+					} )
+				}, new FormLayoutConstraints( class java.lang.String ) {
+					"value": "Center"
+				} )
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
+					"$columnSpecs": "0:1.0, 80, 80"
+					"$rowSpecs": "0"
+					"$hGap": 5
+					"$vGap": 5
+				} ) {
+					name: "buttonBar"
+					"border": new javax.swing.border.EmptyBorder( 12, 0, 0, 0 )
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "btnCancel"
+						"text": new FormMessage( null, "UploaderDialog.btnCancel.text" )
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnCancelActionPerformed", true ) )
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+						"gridx": 1
+					} )
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "btnSave"
+						"text": new FormMessage( null, "UploaderDialog.btnSave.text" )
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnSaveActionPerformed", true ) )
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+						"gridx": 2
+					} )
+				}, new FormLayoutConstraints( class java.lang.String ) {
+					"value": "South"
+				} )
+			}, new FormLayoutConstraints( class java.lang.String ) {
+				"value": "Center"
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 110, 0 )
+			"size": new java.awt.Dimension( 610, 470 )
+		} )
+		add( new FormNonVisual( "javax.swing.ButtonGroup" ) {
+			name: "buttonGroup1"
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 5, 445 )
+		} )
+		add( new FormNonVisual( "javax.swing.ButtonGroup" ) {
+			name: "buttonGroup2"
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 0, 505 )
+		} )
+	}
+}

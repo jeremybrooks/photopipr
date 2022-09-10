@@ -1,0 +1,120 @@
+JFDML JFormDesigner: "7.0.7.0.1134" Java: "17.0.3" encoding: "UTF-8"
+
+new FormModel {
+	"i18n.bundlePackage": "net.jeremybrooks.photopipr"
+	"i18n.bundleName": "workflow"
+	"i18n.keyPrefix": "WorkflowWindow"
+	"i18n.autoExternalize": true
+	contentType: "form/swing"
+	root: new FormRoot {
+		add( new FormWindow( "javax.swing.JFrame", new FormLayoutManager( class java.awt.GridBagLayout ) {
+			"$columnSpecs": "0, 0"
+			"$rowSpecs": "0, 0, 0"
+			"$hGap": 5
+			"$vGap": 5
+			"$alignTop": true
+			"$alignLeft": true
+		} ) {
+			name: "this"
+			"$sizePolicy": 2
+			addEvent( new FormEvent( "java.awt.event.ComponentListener", "componentMoved", "thisComponentMoved", false ) )
+			addEvent( new FormEvent( "java.awt.event.ComponentListener", "componentResized", "thisComponentResized", false ) )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label1"
+				"text": new FormMessage( null, "WorkflowWindow.label1.text" )
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+				"insets": new java.awt.Insets( 5, 5, 5, 5 )
+			} )
+			add( new FormComponent( "javax.swing.JComboBox" ) {
+				name: "cmbWorkflows"
+				auxiliary() {
+					"JavaCodeGenerator.typeParameters": "Workflow"
+				}
+				addEvent( new FormEvent( "java.awt.event.ItemListener", "itemStateChanged", "cmbWorkflowsItemStateChanged", false ) )
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+				"gridx": 1
+				"weightx": 1.0
+			} )
+			add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
+				name: "scrollPane1"
+				add( new FormComponent( "javax.swing.JList" ) {
+					name: "lstActions"
+					auxiliary() {
+						"JavaCodeGenerator.typeParameters": "Action"
+					}
+					addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "lstWorkflowMouseClicked", true ) )
+				} )
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+				"gridy": 1
+				"gridwidth": 2
+				"weighty": 1.0
+				"insets": new java.awt.Insets( 5, 5, 5, 5 )
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "lblStatus"
+				"text": new FormMessage( null, "WorkflowWindow.lblStatus.text" )
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+				"gridy": 2
+				"gridwidth": 2
+				"hAlign": 2
+			} )
+			menuBar: new FormContainer( "javax.swing.JMenuBar", new FormLayoutManager( class javax.swing.JMenuBar ) ) {
+				name: "menuBar1"
+				add( new FormContainer( "javax.swing.JMenu", new FormLayoutManager( class javax.swing.JMenu ) ) {
+					name: "menu1"
+					"text": new FormMessage( null, "WorkflowWindow.menu1.text" )
+					add( new FormComponent( "javax.swing.JMenuItem" ) {
+						name: "mnuQuit"
+						"text": new FormMessage( null, "WorkflowWindow.mnuQuit.text" )
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "mnuQuit", false ) )
+					} )
+				} )
+				add( new FormContainer( "javax.swing.JMenu", new FormLayoutManager( class javax.swing.JMenu ) ) {
+					name: "mnuWorkflow"
+					"text": new FormMessage( null, "WorkflowWindow.mnuWorkflow.text" )
+					addEvent( new FormEvent( "javax.swing.event.MenuListener", "menuSelected", "mnuWorkflowMenuSelected", false ) )
+					add( new FormComponent( "javax.swing.JMenuItem" ) {
+						name: "mnuNewWorkflow"
+						"text": new FormMessage( null, "WorkflowWindow.mnuNewWorkflow.text" )
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "mnuNewWorkflow", false ) )
+					} )
+					add( new FormComponent( "javax.swing.JMenuItem" ) {
+						name: "mnuRenameWorkflow"
+						"text": new FormMessage( null, "WorkflowWindow.mnuRenameWorkflow.text" )
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "mnuRenameWorkflow", false ) )
+					} )
+					add( new FormComponent( "javax.swing.JMenuItem" ) {
+						name: "mnuDeleteWorkflow"
+						"text": new FormMessage( null, "WorkflowWindow.mnuDeleteWorkflow.text" )
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "mnuDeleteWorkflow", false ) )
+					} )
+					add( new FormComponent( "javax.swing.JMenuItem" ) {
+						name: "mnuRunWorkflow"
+						"text": new FormMessage( null, "WorkflowWindow.mnuRunWorkflow.text" )
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "mnuRunWorkflow", false ) )
+					} )
+					add( new FormComponent( "javax.swing.JPopupMenu$Separator" ) {
+						name: "separator1"
+					} )
+					add( new FormContainer( "javax.swing.JMenu", new FormLayoutManager( class javax.swing.JMenu ) ) {
+						name: "mnuAddAction"
+						"text": new FormMessage( null, "WorkflowWindow.mnuAddAction.text" )
+						add( new FormComponent( "javax.swing.JMenuItem" ) {
+							name: "mnuAddUploadAction"
+							"text": new FormMessage( null, "WorkflowWindow.mnuAddUploadAction.text" )
+							addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "mnuAddUploadAction", false ) )
+						} )
+						add( new FormComponent( "javax.swing.JMenuItem" ) {
+							name: "mnuAddTimedAction"
+							"text": new FormMessage( null, "WorkflowWindow.mnuAddTimedAction.text" )
+							addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "mnuAddTimedAction", false ) )
+						} )
+					} )
+				} )
+			}
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 0, 0 )
+			"size": new java.awt.Dimension( 550, 300 )
+		} )
+	}
+}

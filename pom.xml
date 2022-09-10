@@ -1,0 +1,168 @@
+<!--
+  ~  PhotoPipr is Copyright 2017-2022 by Jeremy Brooks
+  ~
+  ~  This file is part of PhotoPipr.
+  ~
+  ~   PhotoPipr is free software: you can redistribute it and/or modify
+  ~   it under the terms of the GNU General Public License as published by
+  ~   the Free Software Foundation, either version 3 of the License, or
+  ~   (at your option) any later version.
+  ~
+  ~   PhotoPipr is distributed in the hope that it will be useful,
+  ~   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~   GNU General Public License for more details.
+  ~
+  ~   You should have received a copy of the GNU General Public License
+  ~   along with PhotoPipr.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>net.jeremybrooks</groupId>
+    <artifactId>photopipr</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <name>PhotoPipr</name>
+    <description>Flexible automatic photo uploads for Flickr.</description>
+    <url>https://jeremybrooks.net/photopipr</url>
+    <inceptionYear>2017</inceptionYear>
+    <licenses>
+        <license>
+            <name>GNU General Public License</name>
+            <url>http://www.gnu.org/licenses/</url>
+        </license>
+    </licenses>
+    <organization>
+        <name>Jeremy Brooks</name>
+        <url>https://jeremybrooks.net</url>
+    </organization>
+    <scm>
+        <connection>scm:git:git@github.com:jeremybrooks/photopipr.git</connection>
+        <developerConnection>scm:git:git@github.com:jeremybrooks/photopipr.git</developerConnection>
+        <url>https://github.com/jeremybrooks/photopipr</url>
+      <tag>HEAD</tag>
+  </scm>
+    <developers>
+        <developer>
+            <email>jeremyb@whirljack.net</email>
+            <name>Jeremy Brooks</name>
+            <url>https://jeremybrooks.net</url>
+        </developer>
+    </developers>
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <!-- library versions -->
+        <commons-io.version>2.6</commons-io.version>
+        <commons-lang.version>3.11</commons-lang.version>
+        <commons-collections4.version>4.4</commons-collections4.version>
+        <jinx.version>3.0.2</jinx.version>
+        <junit.version>4.11</junit.version>
+        <log4j.version>2.18.0</log4j.version>
+        <metadata-extractor.version>2.18.0</metadata-extractor.version>
+
+        <!-- plugin versions -->
+        <gitflow-maven-plugin.version>1.14.0</gitflow-maven-plugin.version>
+        <maven-compiler-plugin.version>2.3.2</maven-compiler-plugin.version>
+        <maven-dependency-plugin.version>3.1.2</maven-dependency-plugin.version>
+        <maven-deploy-plugin.version>2.8.2</maven-deploy-plugin.version>
+        <maven-jar-plugin.version>2.4</maven-jar-plugin.version>
+        <maven-javadoc-plugin.version>2.9.1</maven-javadoc-plugin.version>
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.jeremybrooks</groupId>
+            <artifactId>jinx</artifactId>
+            <version>${jinx.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>${commons-io.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${commons-lang.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-collections4</artifactId>
+            <version>${commons-collections4.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.drewnoakes</groupId>
+            <artifactId>metadata-extractor</artifactId>
+            <version>${metadata-extractor.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <type>jar</type>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>${maven-dependency-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                            <excludeArtifactIds>junit,hamcrest-core</excludeArtifactIds>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>${maven-jar-plugin.version}</version>
+                <inherited>true</inherited>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>${maven-javadoc-plugin.version}</version>
+                <configuration>
+                    <source>8</source>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.amashchenko.maven.plugin</groupId>
+                <artifactId>gitflow-maven-plugin</artifactId>
+                <version>${gitflow-maven-plugin.version}</version>
+                <configuration>
+                    <skipTestProject>true</skipTestProject>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
+
+
