@@ -21,6 +21,8 @@ package net.jeremybrooks.photopipr.worker;
 
 import net.jeremybrooks.photopipr.action.Action;
 
+import java.util.Date;
+
 public class TimeDelay {
     private final WorkflowRunner workflowRunner;
     private final Action action;
@@ -53,5 +55,8 @@ public class TimeDelay {
             workflowRunner.publish(action, index);
             Thread.sleep(500);
         } while (System.currentTimeMillis() < waitUntil);
+        action.setStatus(Action.Status.IDLE);
+        action.setStatusMessage("Timer completed at " + new Date());
+        workflowRunner.publish(action, index);
     }
 }

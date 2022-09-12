@@ -19,6 +19,7 @@
 
 package net.jeremybrooks.photopipr;
 
+import java.awt.Color;
 import java.util.List;
 
 public class PPConstants {
@@ -38,4 +39,9 @@ public class PPConstants {
   public static final List<String> SUPPORTED_FILE_TYPES = List.of(
           "jpg", "jpeg", "png", "gif",
           "mp4", "avi", "wmv", "mov", "3gp", "m2ts", "ogg", "ogv");
+
+  public static final Color LIST_SELECTED_BACKGROUND = new Color(47, 101, 202);
+  public static final Color LIST_ODD_NOT_SELECTED_BACKGROUND = Color.white;
+  public static final Color LIST_EVEN_NOT_SELECTED_BACKGROUND = new Color(192, 192, 192);
+  public static final Color LIST_ACTIVE_BACKGROUND = new Color(102, 204, 0);
 }

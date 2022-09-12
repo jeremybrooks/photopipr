@@ -45,6 +45,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -99,7 +100,7 @@ public class Upload {
                 // handle uploaded photo
                 switch (uploadAction.getPostUploadAction()) {
                     case UPLOAD_DONE_ACTION_DELETE -> delete(p);
-                    case UPLOAD_DONE_ACTION_MOVE -> move(p);
+                    case UPLOAD_DONE_ACTION_MOVE -> move(p, uploadMetadata);
                 }
 
                 processGroupRules(p, uploadMetadata);
@@ -115,6 +116,9 @@ public class Upload {
                 uploadAction.setHasErrors(true);
             }
         }
+        uploadAction.setStatus(Action.Status.IDLE);
+        uploadAction.setStatusMessage("Upload action completed at " + new Date());
+        workflowRunner.publish(uploadAction,index);
     }
 
     private List<Path> getPhotos() {
@@ -205,12 +209,31 @@ public class Upload {
 
     private void delete(Path p) {
         logger.info("Deleting {}", p);
-        // todo
+        try {
+            Files.delete(p);
+        } catch (Exception e) {
+            logger.error("Error deleting {}", p, e);
+            uploadAction.setHasErrors(true);
+        }
     }
 
-    private void move(Path p) {
+    private void move(Path p, UploadMetadata metadata) {
         logger.info("Moving {}", p);
-        // todo
+        Path destDir;
+        try {
+            if (uploadAction.isCreateFolders()) {
+                destDir = Paths.get(uploadAction.getMovePath(), metadata.getDateCreated());
+                if (Files.notExists(destDir)) {
+                    Files.createDirectories(destDir);
+                }
+            } else {
+                destDir = Paths.get(uploadAction.getMovePath());
+            }
+            Files.move(p, destDir.resolve(p.getFileName()));
+        } catch (Exception e) {
+            logger.error("Error moving {}", p, e);
+            uploadAction.setHasErrors(true);
+        }
     }
 
     private UploadMetadata readMetadata(Path p) {

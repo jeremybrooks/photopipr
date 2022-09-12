@@ -19,14 +19,13 @@
 
 package net.jeremybrooks.photopipr.action;
 
-import static net.jeremybrooks.photopipr.PPConstants.FINISH_ACTION_EXIT;
-import static net.jeremybrooks.photopipr.PPConstants.FINISH_ACTION_REPEAT;
+import static net.jeremybrooks.photopipr.PPConstants.*;
 
 public class FinishAction implements Action {
-    private String finishMode = "Stop";
-    private transient Status status = Status.WAITING;
+    private String finishMode = FINISH_ACTION_STOP;
+    private transient Status status = Status.IDLE;
 
-    private transient String statusMessage;
+    private transient String statusMessage = " ";
 
     public String getDescription() {
         String description;

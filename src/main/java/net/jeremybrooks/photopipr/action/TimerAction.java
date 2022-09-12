@@ -25,7 +25,7 @@ public class TimerAction implements Action {
     private int minutes;
     private int seconds;
 
-    private transient Status status = Status.WAITING;
+    private transient Status status = Status.IDLE;
     private transient String statusMessage;
 
 

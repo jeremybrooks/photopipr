@@ -39,6 +39,7 @@ new FormModel {
 				name: "scrollPane1"
 				add( new FormComponent( "javax.swing.JList" ) {
 					name: "lstActions"
+					"selectionMode": 0
 					auxiliary() {
 						"JavaCodeGenerator.typeParameters": "Action"
 					}

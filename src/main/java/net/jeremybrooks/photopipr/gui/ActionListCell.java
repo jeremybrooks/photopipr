@@ -23,15 +23,9 @@
 
 package net.jeremybrooks.photopipr.gui;
 
-import net.jeremybrooks.photopipr.action.Action;
-import net.jeremybrooks.photopipr.action.UploadAction;
-
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.ListCellRenderer;
-import java.awt.Color;
-import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -40,11 +34,16 @@ import java.io.Serial;
 /**
  * @author Jeremy Brooks
  */
-public class ActionListItemRenderer extends JPanel implements ListCellRenderer<Action> {
+public class ActionListCell extends JPanel {
     @Serial
     private static final long serialVersionUID = -3341073154520983031L;
 
-    public ActionListItemRenderer() {
+    public static final ImageIcon ICON_UPLOAD = new ImageIcon(ActionListCell.class.getResource("/net/jeremybrooks/photopipr/icons/168-upload-photo-2.png"));
+    public static final ImageIcon ICON_TIMER = new ImageIcon(ActionListCell.class.getResource("/net/jeremybrooks/photopipr/icons/1097-timer-2.png"));
+    public static final ImageIcon ICON_FINISH = new ImageIcon(ActionListCell.class.getResource("/net/jeremybrooks/photopipr/icons/1243-stop.png"));
+
+
+    public ActionListCell() {
         initComponents();
     }
 
@@ -62,13 +61,13 @@ public class ActionListItemRenderer extends JPanel implements ListCellRenderer<A
         ((GridBagLayout)getLayout()).rowWeights = new double[] {0.0, 0.0, 1.0E-4};
 
         //---- lblIcon ----
-        lblIcon.setText("text");
+        lblIcon.setIcon(new ImageIcon(getClass().getResource("/net/jeremybrooks/photopipr/icons/168-upload-photo-2.png")));
         add(lblIcon, new GridBagConstraints(0, 0, 1, 2, 0.0, 0.0,
             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
             new Insets(3, 3, 3, 8), 0, 0));
 
         //---- lblDescription ----
-        lblDescription.setText("text");
+        lblDescription.setText("description of action");
         add(lblDescription, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0,
             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
             new Insets(3, 3, 8, 3), 0, 0));
@@ -81,41 +80,21 @@ public class ActionListItemRenderer extends JPanel implements ListCellRenderer<A
         // JFormDesigner - End of component initialization  //GEN-END:initComponents
     }
 
+    public void setDescription(String description) {
+        lblDescription.setText(description);
+    }
+
+    public void setStatus(String status) {
+        lblStatus.setText(status);
+    }
+
+    public void setIcon(ImageIcon icon) {
+        lblIcon.setIcon(icon);
+    }
+
     // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
     private JLabel lblIcon;
     private JLabel lblDescription;
     private JLabel lblStatus;
-
-    @Override
-    public Component getListCellRendererComponent(JList<? extends Action> list, Action value, int index, boolean isSelected, boolean cellHasFocus) {
-        setOpaque(true);
-        lblDescription.setText(value.getDescription());
-        switch (value.getStatus()) {
-            case WAITING -> {
-                lblIcon.setText("W");
-                lblStatus.setText("");
-            }
-            case FINISHED  -> {
-                lblIcon.setText("F");
-                if (value instanceof UploadAction ua && ua.isHasErrors()) {
-                    lblStatus.setText("There were errors during upload. Check the logs.");
-                } else {
-                    lblStatus.setText("Done");
-                }
-            }
-            case RUNNING -> {
-                lblIcon.setText("R");
-                lblStatus.setText(value.getStatusMessage());
-            }
-        }
-        if (isSelected) {
-            setBackground(Color.blue);
-            setForeground(Color.white);
-        } else {
-            setBackground(Color.white);
-            setForeground(Color.black);
-        }
-        return this;
-    }
     // JFormDesigner - End of variables declaration  //GEN-END:variables
 }

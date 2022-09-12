@@ -46,6 +46,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
+import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
@@ -84,7 +85,7 @@ public class WorkflowWindow extends JFrame {
                 Optional.ofNullable(WorkflowWindow.class.getPackage().getImplementationVersion()).orElse("0.0.0")));
 
         lstActions.setModel(actionListModel);
-        lstActions.setCellRenderer(new ActionListItemRenderer());
+        lstActions.setCellRenderer(new ActionListCellRenderer());
 
         // build UI based on the workflows
         workflowComboBoxModel.addAll(workflows);
@@ -397,6 +398,7 @@ public class WorkflowWindow extends JFrame {
         {
 
             //---- lstActions ----
+            lstActions.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
             lstActions.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {

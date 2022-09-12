@@ -25,8 +25,6 @@ import net.jeremybrooks.photopipr.model.GroupRule;
 import java.util.ArrayList;
 import java.util.List;
 
-import static net.jeremybrooks.photopipr.action.Action.Status.WAITING;
-
 public class UploadAction implements Action {
 
   /* Configuration parameters */
@@ -47,8 +45,8 @@ public class UploadAction implements Action {
   private boolean createFolders = false;
   private String dateFormat = "yyyy-MM-dd";
 
-  private transient Status status = WAITING;
-  private transient String statusMessage;
+  private transient Status status = Status.IDLE;
+  private transient String statusMessage = " ";
 
   public String getDescription() {
     if (interval > 0) {

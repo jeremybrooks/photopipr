@@ -20,10 +20,17 @@
 package net.jeremybrooks.photopipr.action;
 
 public interface Action {
+  /**
+   * The status enum defines the current state of an Action.
+   *
+   * IDLE - The action is not running and is not waiting to run
+   * PENDING - The action is in a workflow that is running, and it is waiting to run
+   * RUNNING - The action is currently running
+   */
   enum Status {
-    WAITING,
-    RUNNING,
-    FINISHED
+    IDLE,
+    PENDING,
+    RUNNING
   }
   String getDescription();
   Status getStatus();

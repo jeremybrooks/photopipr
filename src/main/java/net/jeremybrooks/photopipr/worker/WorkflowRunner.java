@@ -26,6 +26,7 @@ import net.jeremybrooks.photopipr.action.UploadAction;
 
 import javax.swing.DefaultListModel;
 import javax.swing.SwingWorker;
+import java.util.Date;
 import java.util.List;
 
 import static net.jeremybrooks.photopipr.PPConstants.*;
@@ -40,20 +41,22 @@ public class WorkflowRunner extends SwingWorker<Void, WorkflowRunner.ActionUpdat
 
     @Override
     protected Void doInBackground() throws Exception {
+        // set all the actions to PENDING
+        for (int i = 0; i < actionListModel.size(); i++) {
+            Action a = actionListModel.get(i);
+            a.setStatus(Action.Status.PENDING);
+            a.setStatusMessage("Execution pending...");
+            publish(a, i);
+        }
         boolean repeat = false;
         do {
             for (int i = 0; i < actionListModel.size(); i++) {
                 Action a = actionListModel.get(i);
                 if (a instanceof TimerAction ta) {
                     new TimeDelay(this, ta, i, "Sleeping", ta.getSleepMillis()).go();
-                    ta.setStatus(Action.Status.FINISHED);
-                    ta.setStatusMessage("Done");
-                    publish(ta, i);
 
                 } else if (a instanceof UploadAction ua) {
                     new Upload(ua, i, this).go();
-                    ua.setStatus(Action.Status.FINISHED);
-                    publish(new ActionUpdate(ua, i));
 
                 } else if (a instanceof FinishAction fa) {
                     switch (fa.getFinishMode()) {
@@ -65,13 +68,13 @@ public class WorkflowRunner extends SwingWorker<Void, WorkflowRunner.ActionUpdat
                             repeat = fa.getFinishMode().equals(FINISH_ACTION_REPEAT);
                             for (int j = 0; j < actionListModel.size(); j++) {
                                 Action action = actionListModel.get(j);
-                                action.setStatus(Action.Status.WAITING);
+                                action.setStatus(Action.Status.PENDING);
                                 publish(new ActionUpdate(action, j));
                             }
                         }
                         case FINISH_ACTION_STOP -> {
-                            fa.setStatus(Action.Status.FINISHED);
-                            fa.setStatusMessage("Done");
+                            fa.setStatus(Action.Status.IDLE);
+                            fa.setStatusMessage("Workflow completed at " + new Date());
                             publish(fa, i);
                         }
                     }
