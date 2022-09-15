@@ -20,7 +20,6 @@
 package net.jeremybrooks.photopipr.model;
 
 public class Configuration {
-    private String previousWorkflow;
     private int windowPositionX = 100;
     private int windowPositionY = 100;
     private int windowWidth = 600;
