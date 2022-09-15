@@ -25,7 +25,7 @@ package net.jeremybrooks.photopipr.gui;
 
 import net.jeremybrooks.jinx.JinxConstants;
 import net.jeremybrooks.jinx.response.groups.Groups;
-import net.jeremybrooks.photopipr.action.UploadAction;
+import net.jeremybrooks.photopipr.model.UploadAction;
 import net.jeremybrooks.photopipr.model.GroupRule;
 
 import javax.swing.ButtonGroup;

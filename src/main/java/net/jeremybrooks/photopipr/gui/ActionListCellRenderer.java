@@ -21,10 +21,10 @@ package net.jeremybrooks.photopipr.gui;
 
 import net.jeremybrooks.jinx.JinxConstants;
 import net.jeremybrooks.photopipr.PPConstants;
-import net.jeremybrooks.photopipr.action.Action;
-import net.jeremybrooks.photopipr.action.FinishAction;
-import net.jeremybrooks.photopipr.action.TimerAction;
-import net.jeremybrooks.photopipr.action.UploadAction;
+import net.jeremybrooks.photopipr.model.Action;
+import net.jeremybrooks.photopipr.model.FinishAction;
+import net.jeremybrooks.photopipr.model.TimerAction;
+import net.jeremybrooks.photopipr.model.UploadAction;
 
 import javax.swing.ImageIcon;
 import javax.swing.JList;

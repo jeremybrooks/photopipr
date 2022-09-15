@@ -24,7 +24,7 @@
 package net.jeremybrooks.photopipr.gui;
 
 import javax.swing.*;
-import net.jeremybrooks.photopipr.action.FinishAction;
+import net.jeremybrooks.photopipr.model.FinishAction;
 import net.jeremybrooks.photopipr.model.Workflow;
 
 import javax.swing.JButton;

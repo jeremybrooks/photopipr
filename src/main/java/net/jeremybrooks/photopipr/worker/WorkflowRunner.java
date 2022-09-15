@@ -19,10 +19,10 @@
 
 package net.jeremybrooks.photopipr.worker;
 
-import net.jeremybrooks.photopipr.action.Action;
-import net.jeremybrooks.photopipr.action.FinishAction;
-import net.jeremybrooks.photopipr.action.TimerAction;
-import net.jeremybrooks.photopipr.action.UploadAction;
+import net.jeremybrooks.photopipr.model.Action;
+import net.jeremybrooks.photopipr.model.FinishAction;
+import net.jeremybrooks.photopipr.model.TimerAction;
+import net.jeremybrooks.photopipr.model.UploadAction;
 
 import javax.swing.DefaultListModel;
 import javax.swing.SwingWorker;

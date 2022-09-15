@@ -24,7 +24,7 @@
 package net.jeremybrooks.photopipr.gui;
 
 import javax.swing.*;
-import net.jeremybrooks.photopipr.action.TimerAction;
+import net.jeremybrooks.photopipr.model.TimerAction;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;

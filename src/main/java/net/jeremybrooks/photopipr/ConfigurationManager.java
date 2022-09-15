@@ -22,7 +22,7 @@ package net.jeremybrooks.photopipr;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import net.jeremybrooks.photopipr.action.Action;
+import net.jeremybrooks.photopipr.model.Action;
 import net.jeremybrooks.photopipr.model.Configuration;
 import net.jeremybrooks.photopipr.model.Workflow;
 import org.apache.logging.log4j.LogManager;

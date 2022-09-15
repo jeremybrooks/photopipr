@@ -19,9 +19,6 @@
 
 package net.jeremybrooks.photopipr.model;
 
-import net.jeremybrooks.photopipr.action.Action;
-import net.jeremybrooks.photopipr.action.FinishAction;
-
 import java.util.ArrayList;
 import java.util.List;
 

@@ -17,10 +17,9 @@
  *   along with PhotoPipr.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.jeremybrooks.photopipr.action;
+package net.jeremybrooks.photopipr.model;
 
 import net.jeremybrooks.photopipr.PPConstants;
-import net.jeremybrooks.photopipr.model.GroupRule;
 
 import java.util.ArrayList;
 import java.util.List;

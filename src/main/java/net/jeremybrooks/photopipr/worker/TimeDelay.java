@@ -19,7 +19,7 @@
 
 package net.jeremybrooks.photopipr.worker;
 
-import net.jeremybrooks.photopipr.action.Action;
+import net.jeremybrooks.photopipr.model.Action;
 
 import java.util.Date;
 

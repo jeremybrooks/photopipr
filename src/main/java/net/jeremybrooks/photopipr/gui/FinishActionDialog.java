@@ -23,7 +23,7 @@
 
 package net.jeremybrooks.photopipr.gui;
 
-import net.jeremybrooks.photopipr.action.FinishAction;
+import net.jeremybrooks.photopipr.model.FinishAction;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
