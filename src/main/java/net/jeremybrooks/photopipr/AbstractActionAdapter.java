@@ -33,8 +33,13 @@ import java.lang.reflect.Type;
 
 /**
  * Adapter to serialize/deserialize the Action classes.
+ *
+ * <p>Action is an interface, so we add some properties to the serialized JSON document
+ * to allow us to detect the concrete type during deserialization.</p>
  */
 public class AbstractActionAdapter implements JsonSerializer<Action>, JsonDeserializer<Action> {
+    private static final String ACTION_CLASS_PACKAGE_NAME = "net.jeremybrooks.photopipr.model.";
+
     @Override
     public JsonElement serialize(Action src, Type typeOfSrc, JsonSerializationContext context) {
         JsonObject result = new JsonObject();
@@ -51,7 +56,7 @@ public class AbstractActionAdapter implements JsonSerializer<Action>, JsonDeseri
         JsonElement element = jsonObject.get("properties");
 
         try {
-            return context.deserialize(element, Class.forName("net.jeremybrooks.photopipr.action." + type));
+            return context.deserialize(element, Class.forName(ACTION_CLASS_PACKAGE_NAME + type));
         } catch (ClassNotFoundException cnfe) {
             throw new JsonParseException("Unknown element type: " + type, cnfe);
         }
