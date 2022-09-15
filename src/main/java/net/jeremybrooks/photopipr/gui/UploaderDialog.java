@@ -56,7 +56,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -90,10 +89,6 @@ public class UploaderDialog extends JDialog {
         this.groupArray = (null == groupArray) ? new Groups.Group[0] : groupArray;
         initComponents();
 
-        // todo add groups to the group list
-
-        // todo if this is an edit of existing uploader, set fields accordingly
-
         txtSource.setText(uploadAction.getSourcePath());
         spinnerQuantity.setValue(uploadAction.getQuantity());
         spinnerInterval.setValue(uploadAction.getInterval());
@@ -117,15 +112,15 @@ public class UploaderDialog extends JDialog {
         updateMoveFolderSelection();
     }
 
-    private void radioMoveActionPerformed(ActionEvent e) {
+    private void radioMoveActionPerformed() {
         updateMoveFolderSelection();
     }
 
-    private void radioDeleteActionPerformed(ActionEvent e) {
+    private void radioDeleteActionPerformed() {
         updateMoveFolderSelection();
     }
 
-    private void cbxUseDateActionPerformed(ActionEvent e) {
+    private void cbxUseDateActionPerformed() {
         updateDateFolderComponents();
     }
 
@@ -146,7 +141,7 @@ public class UploaderDialog extends JDialog {
         lblFolderNameSample.setEnabled(enabled);
     }
 
-    private void btnCancelActionPerformed(ActionEvent e) {
+    private void btnCancelActionPerformed() {
         int confirm = JOptionPane.showConfirmDialog(this,
                 resourceBundle.getString("UploaderDialog.confirmExit.message"),
                 resourceBundle.getString("UploaderDialog.confirmExit.title"),
@@ -162,16 +157,16 @@ public class UploaderDialog extends JDialog {
         lblDateSample.setText(simpleDateFormat.format(new Date()));
     }
 
-    private void btnDefaultDateActionPerformed(ActionEvent e) {
+    private void btnDefaultDateActionPerformed() {
         txtDateFormat.setText("yyyy-MM-dd");
         updateSampleDateFormat();
     }
 
-    private void txtDateFormatKeyTyped(KeyEvent e) {
+    private void txtDateFormatKeyTyped() {
         updateSampleDateFormat();
     }
 
-    private void btnSaveActionPerformed(ActionEvent e) {
+    private void btnSaveActionPerformed() {
         if (validateInput()) {
             uploadAction.setSourcePath(txtSource.getText().trim());
             uploadAction.setQuantity(((SpinnerNumberModel) spinnerQuantity.getModel()).getNumber().intValue());
@@ -234,16 +229,15 @@ public class UploaderDialog extends JDialog {
         return true;
     }
 
-    private void btnBrowseActionPerformed(ActionEvent e) {
+    private void btnBrowseActionPerformed() {
         JFileChooser jFileChooser = new JFileChooser();
         if (txtSource.getText().isBlank()) {
-            jFileChooser.setCurrentDirectory(null);
+            jFileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
         } else {
             jFileChooser.setCurrentDirectory(new File(txtSource.getText()));
         }
         jFileChooser.setMultiSelectionEnabled(false);
         jFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        jFileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
         jFileChooser.setDialogTitle(resourceBundle.getString("UploaderDialog.selectSourceDialog.title"));
         if (jFileChooser.showDialog(this,
                 resourceBundle.getString("UploaderDialog.selectDirectoryDialog.buttonText")) == JFileChooser.APPROVE_OPTION) {
@@ -251,20 +245,29 @@ public class UploaderDialog extends JDialog {
         }
     }
 
-    private void btnBrowseMoveActionPerformed(ActionEvent e) {
+    private void btnBrowseMoveActionPerformed() {
         JFileChooser jFileChooser = new JFileChooser();
         jFileChooser.setMultiSelectionEnabled(false);
         jFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        jFileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
-        jFileChooser.setDialogTitle(resourceBundle.getString("UploaderDialog.selectMoveDialog.title"));
-        if (jFileChooser.showDialog(this,
-                resourceBundle.getString("UploaderDialog.selectDirectoryDialog.buttonText")) == JFileChooser.APPROVE_OPTION) {
-            txtMoveTo.setText(jFileChooser.getSelectedFile().getAbsolutePath());
+        if (txtMoveTo.getText().isBlank()) {
+            jFileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+        } else {
+            jFileChooser.setCurrentDirectory(new File(txtMoveTo.getText()));
         }
-    }
-
-    private void createUIComponents() {
-        // TODO: add custom component creation code here
+        jFileChooser.setDialogTitle(resourceBundle.getString("UploaderDialog.selectMoveDialog.title"));
+        int choice = jFileChooser.showDialog(this,
+                resourceBundle.getString("UploaderDialog.selectDirectoryDialog.buttonText"));
+        if (choice == JFileChooser.APPROVE_OPTION) {
+            File f = jFileChooser.getSelectedFile();
+            if (f.exists() && f.isDirectory()) {
+              txtMoveTo.setText(f.getAbsolutePath());
+            } else {
+                JOptionPane.showMessageDialog(this,
+                        resourceBundle.getString("UploaderDialog.invalidLocation.message") + "\n" + f.getAbsolutePath(),
+                        resourceBundle.getString("UploaderDialog.invalidLocation.title"),
+                        JOptionPane.ERROR_MESSAGE );
+            }
+        }
     }
 
 
@@ -281,7 +284,7 @@ public class UploaderDialog extends JDialog {
         label3 = new JLabel();
         spinnerQuantity = new JSpinner();
         lblCriteria = new JLabel();
-        cmbSelectionOrder = new JComboBox();
+        cmbSelectionOrder = new JComboBox<>();
         // ORDER MATTERS HERE
         // DO NOT REORDER
         cmbSelectionOrder.setModel(new DefaultComboBoxModel<>(new String[] {
@@ -300,7 +303,7 @@ public class UploaderDialog extends JDialog {
         radioModerate = new JRadioButton();
         radioRestricted = new JRadioButton();
         panel1 = new JPanel();
-        cmbTagMode = new JComboBox();
+        cmbTagMode = new JComboBox<>();
         // ORDER MATTERS HERE
         // DO NOT REORDER
         cmbTagMode.setModel(new DefaultComboBoxModel<>(new String[] {
@@ -373,7 +376,7 @@ public class UploaderDialog extends JDialog {
 
                         //---- btnBrowse ----
                         btnBrowse.setText(bundle.getString("UploaderDialog.btnBrowse.text"));
-                        btnBrowse.addActionListener(e -> btnBrowseActionPerformed(e));
+                        btnBrowse.addActionListener(e -> btnBrowseActionPerformed());
                         pnlBasic.add(btnBrowse, new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0,
                             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
                             new Insets(0, 5, 5, 0), 0, 0));
@@ -524,7 +527,7 @@ public class UploaderDialog extends JDialog {
                         //---- radioMove ----
                         radioMove.setText(bundle.getString("UploaderDialog.radioMove.text"));
                         radioMove.setSelected(true);
-                        radioMove.addActionListener(e -> radioMoveActionPerformed(e));
+                        radioMove.addActionListener(e -> radioMoveActionPerformed());
                         pnlArchive.add(radioMove, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
                             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
                             new Insets(0, 0, 5, 5), 0, 0));
@@ -537,14 +540,14 @@ public class UploaderDialog extends JDialog {
 
                         //---- btnBrowseMove ----
                         btnBrowseMove.setText(bundle.getString("UploaderDialog.btnBrowseMove.text"));
-                        btnBrowseMove.addActionListener(e -> btnBrowseMoveActionPerformed(e));
+                        btnBrowseMove.addActionListener(e -> btnBrowseMoveActionPerformed());
                         pnlArchive.add(btnBrowseMove, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0,
                             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
                             new Insets(0, 0, 5, 0), 0, 0));
 
                         //---- cbxCreateFolders ----
                         cbxCreateFolders.setText(bundle.getString("UploaderDialog.cbxCreateFolders.text"));
-                        cbxCreateFolders.addActionListener(e -> cbxUseDateActionPerformed(e));
+                        cbxCreateFolders.addActionListener(e -> cbxUseDateActionPerformed());
                         pnlArchive.add(cbxCreateFolders, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0,
                             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
                             new Insets(0, 0, 5, 5), 0, 0));
@@ -568,7 +571,7 @@ public class UploaderDialog extends JDialog {
                             txtDateFormat.addKeyListener(new KeyAdapter() {
                                 @Override
                                 public void keyTyped(KeyEvent e) {
-                                    txtDateFormatKeyTyped(e);
+                                    txtDateFormatKeyTyped();
                                 }
                             });
                             panel2.add(txtDateFormat, new GridBagConstraints(1, 0, 2, 1, 1.0, 0.0,
@@ -589,7 +592,7 @@ public class UploaderDialog extends JDialog {
 
                             //---- btnDefaultDate ----
                             btnDefaultDate.setText(bundle.getString("UploaderDialog.btnDefaultDate.text"));
-                            btnDefaultDate.addActionListener(e -> btnDefaultDateActionPerformed(e));
+                            btnDefaultDate.addActionListener(e -> btnDefaultDateActionPerformed());
                             panel2.add(btnDefaultDate, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0,
                                 GridBagConstraints.CENTER, GridBagConstraints.BOTH,
                                 new Insets(0, 0, 0, 5), 0, 0));
@@ -600,7 +603,7 @@ public class UploaderDialog extends JDialog {
 
                         //---- radioDelete ----
                         radioDelete.setText(bundle.getString("UploaderDialog.radioDelete.text"));
-                        radioDelete.addActionListener(e -> radioDeleteActionPerformed(e));
+                        radioDelete.addActionListener(e -> radioDeleteActionPerformed());
                         pnlArchive.add(radioDelete, new GridBagConstraints(0, 5, 1, 1, 0.0, 0.0,
                             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
                             new Insets(0, 0, 0, 5), 0, 0));
@@ -620,14 +623,14 @@ public class UploaderDialog extends JDialog {
 
                 //---- btnCancel ----
                 btnCancel.setText(bundle.getString("UploaderDialog.btnCancel.text"));
-                btnCancel.addActionListener(e -> btnCancelActionPerformed(e));
+                btnCancel.addActionListener(e -> btnCancelActionPerformed());
                 buttonBar.add(btnCancel, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0,
                     GridBagConstraints.CENTER, GridBagConstraints.BOTH,
                     new Insets(0, 0, 0, 5), 0, 0));
 
                 //---- btnSave ----
                 btnSave.setText(bundle.getString("UploaderDialog.btnSave.text"));
-                btnSave.addActionListener(e -> btnSaveActionPerformed(e));
+                btnSave.addActionListener(e -> btnSaveActionPerformed());
                 buttonBar.add(btnSave, new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0,
                     GridBagConstraints.CENTER, GridBagConstraints.BOTH,
                     new Insets(0, 0, 0, 0), 0, 0));
@@ -662,7 +665,7 @@ public class UploaderDialog extends JDialog {
     private JLabel label3;
     private JSpinner spinnerQuantity;
     private JLabel lblCriteria;
-    private JComboBox cmbSelectionOrder;
+    private JComboBox<String> cmbSelectionOrder;
     private JLabel lblInterval;
     private JSpinner spinnerInterval;
     private JCheckBox cbxPrivate;
@@ -672,10 +675,10 @@ public class UploaderDialog extends JDialog {
     private JRadioButton radioModerate;
     private JRadioButton radioRestricted;
     private JPanel panel1;
-    private JComboBox cmbTagMode;
+    private JComboBox<String> cmbTagMode;
     private JTextField txtTags;
     private JLabel label8;
-    private JComboBox cmbGroupList;
+    private JComboBox<Groups.Group> cmbGroupList;
     private JPanel panel3;
     private JButton button1;
     private JPanel panel4;

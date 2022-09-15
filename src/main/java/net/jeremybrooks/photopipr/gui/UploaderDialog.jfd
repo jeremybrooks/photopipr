@@ -45,7 +45,7 @@ new FormModel {
 							add( new FormComponent( "javax.swing.JButton" ) {
 								name: "btnBrowse"
 								"text": new FormMessage( null, "UploaderDialog.btnBrowse.text" )
-								addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnBrowseActionPerformed", true ) )
+								addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnBrowseActionPerformed", false ) )
 							}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 								"gridx": 2
 								"insets": new java.awt.Insets( 0, 5, 0, 0 )
@@ -79,6 +79,7 @@ new FormModel {
 								name: "cmbSelectionOrder"
 								auxiliary() {
 									"JavaCodeGenerator.postCreateCode": "// ORDER MATTERS HERE\n// DO NOT REORDER\ncmbSelectionOrder.setModel(new DefaultComboBoxModel<>(new String[] {\n              bundle.getString(\"UploaderDialog.cmbSelectionOrder.random\"),\nbundle.getString(\"UploaderDialog.cmbSelectionOrder.newest\"),\nbundle.getString(\"UploaderDialog.cmbSelectionOrder.oldest\"),\nbundle.getString(\"UploaderDialog.cmbSelectionOrder.asc\"),\nbundle.getString(\"UploaderDialog.cmbSelectionOrder.desc\")\n            }));"
+									"JavaCodeGenerator.typeParameters": "String"
 								}
 							}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 								"gridx": 1
@@ -158,6 +159,7 @@ new FormModel {
 								name: "cmbTagMode"
 								auxiliary() {
 									"JavaCodeGenerator.postCreateCode": "// ORDER MATTERS HERE\n// DO NOT REORDER\ncmbTagMode.setModel(new DefaultComboBoxModel<>(new String[] {\n              bundle.getString(\"UploaderDialog.cmbTagMode.all\"),\n\t\t\t  bundle.getString(\"UploaderDialog.cmbTagMode.any\")\n            }));"
+									"JavaCodeGenerator.typeParameters": "String"
 								}
 							}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) )
 							add( new FormComponent( "javax.swing.JTextField" ) {
@@ -176,6 +178,7 @@ new FormModel {
 								auxiliary() {
 									"JavaCodeGenerator.customCreateCode": "new JComboBox(groupArray);"
 									"JavaCodeGenerator.postInitCode": "cmbGroupList.setRenderer(new GroupComboBoxRenderer());"
+									"JavaCodeGenerator.typeParameters": "Groups.Group"
 								}
 							}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 								"gridx": 1
@@ -239,7 +242,7 @@ new FormModel {
 								"text": new FormMessage( null, "UploaderDialog.radioMove.text" )
 								"$buttonGroup": new FormReference( "buttonGroup1" )
 								"selected": true
-								addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "radioMoveActionPerformed", true ) )
+								addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "radioMoveActionPerformed", false ) )
 							}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 								"gridy": 1
 							} )
@@ -254,7 +257,7 @@ new FormModel {
 							add( new FormComponent( "javax.swing.JButton" ) {
 								name: "btnBrowseMove"
 								"text": new FormMessage( null, "UploaderDialog.btnBrowseMove.text" )
-								addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnBrowseMoveActionPerformed", true ) )
+								addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnBrowseMoveActionPerformed", false ) )
 							}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 								"gridx": 2
 								"gridy": 1
@@ -262,7 +265,7 @@ new FormModel {
 							add( new FormComponent( "javax.swing.JCheckBox" ) {
 								name: "cbxCreateFolders"
 								"text": new FormMessage( null, "UploaderDialog.cbxCreateFolders.text" )
-								addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "cbxUseDateActionPerformed", true ) )
+								addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "cbxUseDateActionPerformed", false ) )
 							}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 								"gridy": 2
 								"gridx": 1
@@ -283,7 +286,7 @@ new FormModel {
 								add( new FormComponent( "javax.swing.JTextField" ) {
 									name: "txtDateFormat"
 									"text": new FormMessage( null, "UploaderDialog.txtDateFormat.text" )
-									addEvent( new FormEvent( "java.awt.event.KeyListener", "keyTyped", "txtDateFormatKeyTyped", true ) )
+									addEvent( new FormEvent( "java.awt.event.KeyListener", "keyTyped", "txtDateFormatKeyTyped", false ) )
 								}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 									"gridx": 1
 									"gridwidth": 2
@@ -307,7 +310,7 @@ new FormModel {
 								add( new FormComponent( "javax.swing.JButton" ) {
 									name: "btnDefaultDate"
 									"text": new FormMessage( null, "UploaderDialog.btnDefaultDate.text" )
-									addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnDefaultDateActionPerformed", true ) )
+									addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnDefaultDateActionPerformed", false ) )
 								}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 									"gridx": 1
 									"gridy": 2
@@ -321,7 +324,7 @@ new FormModel {
 								name: "radioDelete"
 								"text": new FormMessage( null, "UploaderDialog.radioDelete.text" )
 								"$buttonGroup": new FormReference( "buttonGroup1" )
-								addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "radioDeleteActionPerformed", true ) )
+								addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "radioDeleteActionPerformed", false ) )
 							}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 								"gridy": 5
 							} )
@@ -345,14 +348,14 @@ new FormModel {
 					add( new FormComponent( "javax.swing.JButton" ) {
 						name: "btnCancel"
 						"text": new FormMessage( null, "UploaderDialog.btnCancel.text" )
-						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnCancelActionPerformed", true ) )
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnCancelActionPerformed", false ) )
 					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 						"gridx": 1
 					} )
 					add( new FormComponent( "javax.swing.JButton" ) {
 						name: "btnSave"
 						"text": new FormMessage( null, "UploaderDialog.btnSave.text" )
-						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnSaveActionPerformed", true ) )
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnSaveActionPerformed", false ) )
 					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 						"gridx": 2
 					} )

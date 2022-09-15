@@ -101,6 +101,7 @@ public class Upload {
                 switch (uploadAction.getPostUploadAction()) {
                     case UPLOAD_DONE_ACTION_DELETE -> delete(p);
                     case UPLOAD_DONE_ACTION_MOVE -> move(p, uploadMetadata);
+                    default -> logger.warn("Unexpected post-upload action {}", uploadAction.getPostUploadAction());
                 }
 
                 processGroupRules(p, uploadMetadata);
@@ -218,7 +219,6 @@ public class Upload {
     }
 
     private void move(Path p, UploadMetadata metadata) {
-        logger.info("Moving {}", p);
         Path destDir;
         try {
             if (uploadAction.isCreateFolders()) {
@@ -229,7 +229,9 @@ public class Upload {
             } else {
                 destDir = Paths.get(uploadAction.getMovePath());
             }
-            Files.move(p, destDir.resolve(p.getFileName()));
+            Path dest = destDir.resolve(p.getFileName());
+            logger.info("Moving {} to {}", p, dest);
+            Files.move(p, dest);
         } catch (Exception e) {
             logger.error("Error moving {}", p, e);
             uploadAction.setHasErrors(true);

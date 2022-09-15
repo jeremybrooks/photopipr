@@ -22,7 +22,6 @@ package net.jeremybrooks.photopipr;
 import net.jeremybrooks.jinx.OAuthAccessToken;
 import net.jeremybrooks.jinx.response.groups.Groups;
 import net.jeremybrooks.photopipr.gui.LoginDialog;
-import net.jeremybrooks.photopipr.gui.SplashDialog;
 import net.jeremybrooks.photopipr.gui.WorkflowWindow;
 import net.jeremybrooks.photopipr.model.Workflow;
 import org.apache.logging.log4j.LogManager;
@@ -49,15 +48,21 @@ import java.util.List;
 public class Main {
 
   private static final Logger logger = LogManager.getLogger();
-  private static final SplashDialog splashDialog = new SplashDialog();
   private static List<Workflow> workflows;
 
   /* This is where the authorization token will be saved */
   public static final Path APP_HOME = Paths.get(System.getProperty("user.home"), "/.photopipr");
   private static final Path AUTH_TOKEN_FILE = Paths.get(APP_HOME.toString(), "/photopipr_auth_token");
+  public static String VERSION;
+  public static final String APPNAME = "PhotoPipr";
 
   public static void main(String... args) {
-    SwingUtilities.invokeLater(() -> splashDialog.setVisible(true));
+    Package p = Main.class.getPackage();
+    if (p != null && p.getImplementationVersion() != null) {
+      VERSION = p.getImplementationVersion();
+    } else {
+      VERSION = "0.0.0";
+    }
 
     if (!Files.exists(APP_HOME)) {
       try {
@@ -70,7 +75,7 @@ public class Main {
       workflows = ConfigurationManager.loadWorkflows();
     } catch (Exception e) {
       logger.error("Error loading workflows.", e);
-      int option = JOptionPane.showConfirmDialog(splashDialog,
+      int option = JOptionPane.showConfirmDialog(null,
               """
                       Error loading workflow configuration.
                       If you continue, any existing workflows will be lost.
@@ -86,28 +91,19 @@ public class Main {
         workflows = new ArrayList<>();
       }
     }
-    initJinx();
-  }
 
-  private static void initJinx() {
     try {
       JinxFactory.getInstance();
     } catch (Exception e) {
       errExit("Could not initialize JinxFactory.", e);
     }
 
-    loadAuthToken();
-  }
-
-  /*
-   * Attempt to load a previously saved auth token
-   */
-  private static void loadAuthToken() {
+    // load a previously saved auth token, or prompt the user to authorize the application
     OAuthAccessToken oAuthAccessToken = new OAuthAccessToken();
     try (InputStream in = Files.newInputStream(AUTH_TOKEN_FILE)) {
       oAuthAccessToken.load(in);
       JinxFactory.getInstance().setAccessToken(oAuthAccessToken);
-      loadGroups();
+      loadGroupsAndShowMainWindow();
     } catch (Exception e) {
       logger.info("Could not load auth token, requesting authorization...");
       try {
@@ -118,8 +114,7 @@ public class Main {
     }
   }
 
-  public static void loadGroups() {
-    splashDialog.updateStatus("Loading groups....");
+  public static void loadGroupsAndShowMainWindow() {
     SwingUtilities.invokeLater(() -> {
       Groups.Group[] groups = new Groups.Group[0];
       try {
@@ -130,7 +125,7 @@ public class Main {
         groups = groupList.getGroupList().toArray(new Groups.Group[0]);
       } catch (Exception e) {
         logger.error("Could not load groups.", e);
-        JOptionPane.showMessageDialog(splashDialog,
+        JOptionPane.showMessageDialog(null,
                 """
                         Could not load groups from Flickr.
                         Adding photos to groups during upload
@@ -138,25 +133,15 @@ public class Main {
             "Group Load Error",
             JOptionPane.INFORMATION_MESSAGE);
       } finally {
-        showMainWindow(groups);
+        Groups.Group[] finalGroups = groups;
+        SwingUtilities.invokeLater(() -> new WorkflowWindow(workflows, finalGroups).setVisible(true));
       }
     });
   }
 
-  public static void showMainWindow(Groups.Group[] groupArray) {
-    SwingUtilities.invokeLater(() -> splashDialog.setVisible(false));
-    SwingUtilities.invokeLater(() -> new WorkflowWindow(workflows, groupArray).setVisible(true));
-  }
-
-
-
-
-
-
-
   private static void errExit(String message, Exception cause) {
     logger.fatal("Fatal error: {}", message, cause);
-    JOptionPane.showMessageDialog(splashDialog,
+    JOptionPane.showMessageDialog(null,
         message, "Fatal Error", JOptionPane.ERROR_MESSAGE);
     System.exit(1);
   }

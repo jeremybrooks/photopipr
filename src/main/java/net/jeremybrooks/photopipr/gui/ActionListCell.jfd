@@ -4,7 +4,7 @@ new FormModel {
 	contentType: "form/swing"
 	root: new FormRoot {
 		add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
-			"$columnSpecs": "0, 0"
+			"$columnSpecs": "0, 0, 0, 0"
 			"$rowSpecs": "0, 0"
 			"$hGap": 5
 			"$vGap": 5
@@ -20,18 +20,50 @@ new FormModel {
 				"insets": new java.awt.Insets( 3, 3, 3, 3 )
 			} )
 			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "lblPrivateIcon"
+				"icon": new com.jformdesigner.model.SwingIcon( 0, "/net/jeremybrooks/photopipr/icons/Transparent.png" )
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+				"gridx": 1
+				"hAlign": 0
+				"vAlign": 0
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "lblSafetyIcon"
+				"icon": new com.jformdesigner.model.SwingIcon( 0, "/net/jeremybrooks/photopipr/icons/Transparent.png" )
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+				"gridx": 2
+				"hAlign": 0
+				"vAlign": 0
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
 				name: "lblDescription"
 				"text": "description of action"
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-				"gridx": 1
+				"gridx": 3
 				"weightx": 1.0
 				"insets": new java.awt.Insets( 3, 3, 3, 3 )
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "lblPostUploadIcon"
+				"icon": new com.jformdesigner.model.SwingIcon( 0, "/net/jeremybrooks/photopipr/icons/Transparent.png" )
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+				"gridx": 1
+				"gridy": 1
+				"hAlign": 0
+				"vAlign": 0
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "lblStatusIcon"
+				"icon": new com.jformdesigner.model.SwingIcon( 0, "/net/jeremybrooks/photopipr/icons/Check.png" )
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+				"gridx": 2
+				"gridy": 1
 			} )
 			add( new FormComponent( "javax.swing.JLabel" ) {
 				name: "lblStatus"
 				"text": "text"
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-				"gridx": 1
+				"gridx": 3
 				"gridy": 1
 				"insets": new java.awt.Insets( 3, 3, 3, 3 )
 			} )

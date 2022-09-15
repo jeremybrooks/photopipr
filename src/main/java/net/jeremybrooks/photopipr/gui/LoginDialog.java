@@ -192,7 +192,7 @@ public class LoginDialog extends JDialog {
           JOptionPane.INFORMATION_MESSAGE);
       setVisible(false);
       dispose();
-      Main.loadGroups();
+      Main.loadGroupsAndShowMainWindow();
     }
   }
 
@@ -211,70 +211,71 @@ public class LoginDialog extends JDialog {
 
     //======== this ========
     setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+    setModal(true);
     var contentPane = getContentPane();
     contentPane.setLayout(new BorderLayout());
 
     //======== dialogPane ========
     {
-      dialogPane.setBorder(new EmptyBorder(12, 12, 12, 12));
-      dialogPane.setLayout(new BorderLayout());
+        dialogPane.setBorder(new EmptyBorder(12, 12, 12, 12));
+        dialogPane.setLayout(new BorderLayout());
 
-      //======== contentPanel ========
-      {
-        contentPanel.setLayout(new GridBagLayout());
-        ((GridBagLayout)contentPanel.getLayout()).columnWidths = new int[] {0, 0, 0};
-        ((GridBagLayout)contentPanel.getLayout()).rowHeights = new int[] {0, 0, 0};
-        ((GridBagLayout)contentPanel.getLayout()).columnWeights = new double[] {0.0, 0.0, 1.0E-4};
-        ((GridBagLayout)contentPanel.getLayout()).rowWeights = new double[] {0.0, 0.0, 1.0E-4};
-
-        //======== scrollPane1 ========
+        //======== contentPanel ========
         {
+            contentPanel.setLayout(new GridBagLayout());
+            ((GridBagLayout)contentPanel.getLayout()).columnWidths = new int[] {0, 0, 0};
+            ((GridBagLayout)contentPanel.getLayout()).rowHeights = new int[] {0, 0, 0};
+            ((GridBagLayout)contentPanel.getLayout()).columnWeights = new double[] {0.0, 0.0, 1.0E-4};
+            ((GridBagLayout)contentPanel.getLayout()).rowWeights = new double[] {0.0, 0.0, 1.0E-4};
 
-          //---- textArea1 ----
-          textArea1.setText(bundle.getString("LoginDialog.textArea"));
-          textArea1.setWrapStyleWord(true);
-          textArea1.setLineWrap(true);
-          textArea1.setEditable(false);
-          textArea1.setBackground(UIManager.getColor("Button.background"));
-          scrollPane1.setViewportView(textArea1);
+            //======== scrollPane1 ========
+            {
+
+                //---- textArea1 ----
+                textArea1.setText(bundle.getString("LoginDialog.textArea"));
+                textArea1.setWrapStyleWord(true);
+                textArea1.setLineWrap(true);
+                textArea1.setEditable(false);
+                textArea1.setBackground(UIManager.getColor("Button.background"));
+                scrollPane1.setViewportView(textArea1);
+            }
+            contentPanel.add(scrollPane1, new GridBagConstraints(0, 0, 2, 1, 1.0, 1.0,
+                GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                new Insets(5, 5, 10, 5), 0, 0));
+
+            //---- lblCode ----
+            lblCode.setText(bundle.getString("LoginDialog.lblCode.text"));
+            contentPanel.add(lblCode, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
+                GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                new Insets(0, 0, 0, 5), 0, 0));
+            contentPanel.add(txtCode, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0,
+                GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                new Insets(0, 0, 0, 0), 0, 0));
         }
-        contentPanel.add(scrollPane1, new GridBagConstraints(0, 0, 2, 1, 1.0, 1.0,
-          GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-          new Insets(5, 5, 10, 5), 0, 0));
+        dialogPane.add(contentPanel, BorderLayout.CENTER);
 
-        //---- lblCode ----
-        lblCode.setText(bundle.getString("LoginDialog.lblCode.text"));
-        contentPanel.add(lblCode, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
-          GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-          new Insets(0, 0, 0, 5), 0, 0));
-        contentPanel.add(txtCode, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0,
-          GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-          new Insets(0, 0, 0, 0), 0, 0));
-      }
-      dialogPane.add(contentPanel, BorderLayout.CENTER);
+        //======== buttonBar ========
+        {
+            buttonBar.setBorder(new EmptyBorder(12, 0, 0, 0));
+            buttonBar.setLayout(new GridBagLayout());
+            ((GridBagLayout)buttonBar.getLayout()).columnWidths = new int[] {0, 85, 80};
+            ((GridBagLayout)buttonBar.getLayout()).columnWeights = new double[] {1.0, 0.0, 0.0};
 
-      //======== buttonBar ========
-      {
-        buttonBar.setBorder(new EmptyBorder(12, 0, 0, 0));
-        buttonBar.setLayout(new GridBagLayout());
-        ((GridBagLayout)buttonBar.getLayout()).columnWidths = new int[] {0, 85, 80};
-        ((GridBagLayout)buttonBar.getLayout()).columnWeights = new double[] {1.0, 0.0, 0.0};
+            //---- cancelButton ----
+            cancelButton.setText(bundle.getString("LoginDialog.cancelButton.text"));
+            cancelButton.addActionListener(e -> cancelButtonActionPerformed(e));
+            buttonBar.add(cancelButton, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0,
+                GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                new Insets(0, 0, 0, 5), 0, 0));
 
-        //---- cancelButton ----
-        cancelButton.setText(bundle.getString("LoginDialog.cancelButton.text"));
-        cancelButton.addActionListener(e -> cancelButtonActionPerformed(e));
-        buttonBar.add(cancelButton, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0,
-          GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-          new Insets(0, 0, 0, 5), 0, 0));
-
-        //---- okButton ----
-        okButton.setText(bundle.getString("LoginDialog.okButton.text"));
-        okButton.addActionListener(e -> okButtonActionPerformed(e));
-        buttonBar.add(okButton, new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0,
-          GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-          new Insets(0, 0, 0, 0), 0, 0));
-      }
-      dialogPane.add(buttonBar, BorderLayout.PAGE_END);
+            //---- okButton ----
+            okButton.setText(bundle.getString("LoginDialog.okButton.text"));
+            okButton.addActionListener(e -> okButtonActionPerformed(e));
+            buttonBar.add(okButton, new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0,
+                GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                new Insets(0, 0, 0, 0), 0, 0));
+        }
+        dialogPane.add(buttonBar, BorderLayout.PAGE_END);
     }
     contentPane.add(dialogPane, BorderLayout.CENTER);
     setSize(465, 275);

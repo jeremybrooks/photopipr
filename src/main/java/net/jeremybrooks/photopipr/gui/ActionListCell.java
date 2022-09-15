@@ -50,14 +50,18 @@ public class ActionListCell extends JPanel {
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
         lblIcon = new JLabel();
+        lblPrivateIcon = new JLabel();
+        lblSafetyIcon = new JLabel();
         lblDescription = new JLabel();
+        lblPostUploadIcon = new JLabel();
+        lblStatusIcon = new JLabel();
         lblStatus = new JLabel();
 
         //======== this ========
         setLayout(new GridBagLayout());
-        ((GridBagLayout)getLayout()).columnWidths = new int[] {0, 0, 0};
+        ((GridBagLayout)getLayout()).columnWidths = new int[] {0, 0, 0, 0, 0};
         ((GridBagLayout)getLayout()).rowHeights = new int[] {0, 0, 0};
-        ((GridBagLayout)getLayout()).columnWeights = new double[] {0.0, 0.0, 1.0E-4};
+        ((GridBagLayout)getLayout()).columnWeights = new double[] {0.0, 0.0, 0.0, 0.0, 1.0E-4};
         ((GridBagLayout)getLayout()).rowWeights = new double[] {0.0, 0.0, 1.0E-4};
 
         //---- lblIcon ----
@@ -66,15 +70,39 @@ public class ActionListCell extends JPanel {
             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
             new Insets(3, 3, 3, 8), 0, 0));
 
+        //---- lblPrivateIcon ----
+        lblPrivateIcon.setIcon(new ImageIcon(getClass().getResource("/net/jeremybrooks/photopipr/icons/Transparent.png")));
+        add(lblPrivateIcon, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0,
+            GridBagConstraints.CENTER, GridBagConstraints.NONE,
+            new Insets(0, 0, 5, 5), 0, 0));
+
+        //---- lblSafetyIcon ----
+        lblSafetyIcon.setIcon(new ImageIcon(getClass().getResource("/net/jeremybrooks/photopipr/icons/Transparent.png")));
+        add(lblSafetyIcon, new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0,
+            GridBagConstraints.CENTER, GridBagConstraints.NONE,
+            new Insets(0, 0, 5, 5), 0, 0));
+
         //---- lblDescription ----
         lblDescription.setText("description of action");
-        add(lblDescription, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0,
+        add(lblDescription, new GridBagConstraints(3, 0, 1, 1, 1.0, 0.0,
             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
             new Insets(3, 3, 8, 3), 0, 0));
 
+        //---- lblPostUploadIcon ----
+        lblPostUploadIcon.setIcon(new ImageIcon(getClass().getResource("/net/jeremybrooks/photopipr/icons/Transparent.png")));
+        add(lblPostUploadIcon, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0,
+            GridBagConstraints.CENTER, GridBagConstraints.NONE,
+            new Insets(0, 0, 0, 5), 0, 0));
+
+        //---- lblStatusIcon ----
+        lblStatusIcon.setIcon(new ImageIcon(getClass().getResource("/net/jeremybrooks/photopipr/icons/Check.png")));
+        add(lblStatusIcon, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0,
+            GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+            new Insets(0, 0, 0, 5), 0, 0));
+
         //---- lblStatus ----
         lblStatus.setText("text");
-        add(lblStatus, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0,
+        add(lblStatus, new GridBagConstraints(3, 1, 1, 1, 0.0, 0.0,
             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
             new Insets(3, 3, 3, 3), 0, 0));
         // JFormDesigner - End of component initialization  //GEN-END:initComponents
@@ -92,9 +120,18 @@ public class ActionListCell extends JPanel {
         lblIcon.setIcon(icon);
     }
 
+    public void setLblSafetyIcon(ImageIcon icon) { lblSafetyIcon.setIcon(icon); }
+    public void setLblPostUploadIcon(ImageIcon icon) { lblPostUploadIcon.setIcon(icon); }
+    public void setLblPrivateIcon(ImageIcon icon) {lblPrivateIcon.setIcon(icon);}
+    public void setLblStatusIcon(ImageIcon icon) {lblStatusIcon.setIcon(icon);}
+
     // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
     private JLabel lblIcon;
+    private JLabel lblPrivateIcon;
+    private JLabel lblSafetyIcon;
     private JLabel lblDescription;
+    private JLabel lblPostUploadIcon;
+    private JLabel lblStatusIcon;
     private JLabel lblStatus;
     // JFormDesigner - End of variables declaration  //GEN-END:variables
 }
