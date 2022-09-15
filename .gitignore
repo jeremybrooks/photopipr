@@ -5,6 +5,7 @@ src/main/resources/net/jeremybrooks/photopipr/secret/private.properties
 ##############################
 ## Java
 ##############################
+*.log
 .mtj.tmp/
 *.class
 *.jar
