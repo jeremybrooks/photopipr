@@ -50,7 +50,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Window;
-import java.awt.event.ActionEvent;
 import java.io.OutputStream;
 import java.io.Serial;
 import java.net.URI;
@@ -78,12 +77,12 @@ public class LoginDialog extends JDialog {
     txtCode.setVisible(false);
   }
 
-  private void cancelButtonActionPerformed(ActionEvent e) {
+  private void cancelButtonActionPerformed() {
     logger.info("User canceled authorization. Exiting.");
     System.exit(0);
   }
 
-  private void okButtonActionPerformed(ActionEvent e) {
+  private void okButtonActionPerformed() {
     if (txtCode.getText().trim().isEmpty()) {
       try {
         // sends user to the Flickr site to get an auth code
@@ -192,7 +191,7 @@ public class LoginDialog extends JDialog {
           JOptionPane.INFORMATION_MESSAGE);
       setVisible(false);
       dispose();
-      Main.loadGroupsAndShowMainWindow();
+      Main.showMainWindow();
     }
   }
 
@@ -263,14 +262,14 @@ public class LoginDialog extends JDialog {
 
             //---- cancelButton ----
             cancelButton.setText(bundle.getString("LoginDialog.cancelButton.text"));
-            cancelButton.addActionListener(e -> cancelButtonActionPerformed(e));
+            cancelButton.addActionListener(e -> cancelButtonActionPerformed());
             buttonBar.add(cancelButton, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0,
                 GridBagConstraints.CENTER, GridBagConstraints.BOTH,
                 new Insets(0, 0, 0, 5), 0, 0));
 
             //---- okButton ----
             okButton.setText(bundle.getString("LoginDialog.okButton.text"));
-            okButton.addActionListener(e -> okButtonActionPerformed(e));
+            okButton.addActionListener(e -> okButtonActionPerformed());
             buttonBar.add(okButton, new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0,
                 GridBagConstraints.CENTER, GridBagConstraints.BOTH,
                 new Insets(0, 0, 0, 0), 0, 0));

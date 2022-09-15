@@ -20,7 +20,6 @@
 package net.jeremybrooks.photopipr;
 
 import net.jeremybrooks.jinx.OAuthAccessToken;
-import net.jeremybrooks.jinx.response.groups.Groups;
 import net.jeremybrooks.photopipr.gui.LoginDialog;
 import net.jeremybrooks.photopipr.gui.WorkflowWindow;
 import net.jeremybrooks.photopipr.model.Workflow;
@@ -34,7 +33,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -103,7 +101,7 @@ public class Main {
     try (InputStream in = Files.newInputStream(AUTH_TOKEN_FILE)) {
       oAuthAccessToken.load(in);
       JinxFactory.getInstance().setAccessToken(oAuthAccessToken);
-      loadGroupsAndShowMainWindow();
+      showMainWindow();
     } catch (Exception e) {
       logger.info("Could not load auth token, requesting authorization...");
       try {
@@ -114,29 +112,33 @@ public class Main {
     }
   }
 
-  public static void loadGroupsAndShowMainWindow() {
-    SwingUtilities.invokeLater(() -> {
-      Groups.Group[] groups = new Groups.Group[0];
-      try {
-        logger.info("Loading groups...");
-        Groups groupList = JinxFactory.getInstance().getPeopleApi().getGroups(JinxFactory.getInstance().getNsid(), null);
-        logger.info("Got {} groups", groupList.getGroupList().size());
-        groupList.getGroupList().sort(Comparator.comparing(group -> group.getName().toLowerCase()));
-        groups = groupList.getGroupList().toArray(new Groups.Group[0]);
-      } catch (Exception e) {
-        logger.error("Could not load groups.", e);
-        JOptionPane.showMessageDialog(null,
-                """
-                        Could not load groups from Flickr.
-                        Adding photos to groups during upload
-                        may experience problems.""",
-            "Group Load Error",
-            JOptionPane.INFORMATION_MESSAGE);
-      } finally {
-        Groups.Group[] finalGroups = groups;
-        SwingUtilities.invokeLater(() -> new WorkflowWindow(workflows, finalGroups).setVisible(true));
-      }
-    });
+  public static void showMainWindow() {
+//    SwingUtilities.invokeLater(() -> {
+//      Groups.Group[] groups = new Groups.Group[0];
+//      try {
+//        logger.info("Loading groups...");
+//        Groups groupList = JinxFactory.getInstance().getPeopleApi().getGroups(JinxFactory.getInstance().getNsid(), null);
+//        logger.info("Got {} groups", groupList.getGroupList().size());
+//        groupList.getGroupList().sort(Comparator.comparing(group -> group.getName().toLowerCase()));
+//        groups = groupList.getGroupList().toArray(new Groups.Group[0]);
+//      } catch (Exception e) {
+//        logger.error("Could not load groups.", e);
+//        JOptionPane.showMessageDialog(null,
+//                """
+//                        Could not load groups from Flickr.
+//                        Adding photos to groups during upload
+//                        may experience problems.""",
+//            "Group Load Error",
+//            JOptionPane.INFORMATION_MESSAGE);
+//      } finally {
+//        Groups.Group[] finalGroups = groups;
+        SwingUtilities.invokeLater(() -> {
+          WorkflowWindow ww = new WorkflowWindow(workflows);
+          ww.setVisible(true);
+          ww.loadGroups();
+        });
+//      }
+//    });
   }
 
   private static void errExit(String message, Exception cause) {

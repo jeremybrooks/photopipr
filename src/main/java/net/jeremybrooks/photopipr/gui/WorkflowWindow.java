@@ -25,6 +25,7 @@ package net.jeremybrooks.photopipr.gui;
 
 import net.jeremybrooks.jinx.response.groups.Groups;
 import net.jeremybrooks.photopipr.ConfigurationManager;
+import net.jeremybrooks.photopipr.JinxFactory;
 import net.jeremybrooks.photopipr.action.Action;
 import net.jeremybrooks.photopipr.action.FinishAction;
 import net.jeremybrooks.photopipr.action.TimerAction;
@@ -60,9 +61,11 @@ import java.awt.event.MouseEvent;
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.concurrent.Executors;
 
 /**
  * @author Jeremy Brooks
@@ -74,12 +77,15 @@ public class WorkflowWindow extends JFrame {
     private final ResourceBundle resourceBundle = ResourceBundle.getBundle("net.jeremybrooks.photopipr.workflow");
     private final DefaultComboBoxModel<Workflow> workflowComboBoxModel = new DefaultComboBoxModel<>();
     private final DefaultListModel<Action> actionListModel = new DefaultListModel<>();
-    private final Groups.Group[] groupArray;
+    private Groups.Group[] groupArray;
 
-    public WorkflowWindow(List<Workflow> workflows, Groups.Group[] groupArray) {
-        this.groupArray = groupArray;
+    private final DisabledGlassPane disabledGlassPane = new DisabledGlassPane();
+
+    public WorkflowWindow(List<Workflow> workflows) {
 
         initComponents();
+        SwingUtilities.getRootPane(this).setGlassPane(disabledGlassPane);
+
         setTitle(String.format("%s : %s",
                 Optional.ofNullable(WorkflowWindow.class.getPackage().getImplementationTitle()).orElse("PhotoPipr"),
                 Optional.ofNullable(WorkflowWindow.class.getPackage().getImplementationVersion()).orElse("0.0.0")));
@@ -91,7 +97,7 @@ public class WorkflowWindow extends JFrame {
         workflowComboBoxModel.addAll(workflows);
         cmbWorkflows.setModel(workflowComboBoxModel);
         cmbWorkflows.setRenderer(new WorkflowComboBoxRenderer());
-        // setting the selected item will trigger the changelistener and populate the Action list
+        // setting the selected item will trigger the change listener and populate the Action list
         cmbWorkflows.setSelectedIndex(0);
 
         // set the size and location
@@ -105,6 +111,32 @@ public class WorkflowWindow extends JFrame {
                     resourceBundle.getString("WorkflowWindow.noWorkflowsDialog.header"),
                     JOptionPane.INFORMATION_MESSAGE);
         }
+    }
+
+    public void loadGroups() {
+        disabledGlassPane.activate("Loading groups from Flickr...");
+        Executors.newSingleThreadExecutor().submit(() -> {
+            try {
+                logger.info("Loading groups...");
+                Groups groupList = JinxFactory.getInstance().getPeopleApi().getGroups(JinxFactory.getInstance().getNsid(), null);
+                logger.info("Got {} groups", groupList.getGroupList().size());
+                groupList.getGroupList()
+                        .sort(Comparator.comparing(group -> group.getName().toLowerCase()));
+                groupArray = groupList.getGroupList().toArray(new Groups.Group[0]);
+            } catch (Exception e) {
+                groupArray = new Groups.Group[0];
+                logger.error("Could not load groups.", e);
+                JOptionPane.showMessageDialog(this,
+                        """
+                                Could not load groups from Flickr.
+                                Adding photos to groups during upload
+                                may experience problems.""",
+                        "Group Load Error",
+                        JOptionPane.INFORMATION_MESSAGE);
+            } finally {
+                disabledGlassPane.deactivate();
+            }
+        });
     }
 
     /**
@@ -134,13 +166,13 @@ public class WorkflowWindow extends JFrame {
         saveWorkflows();
     }
 
-    void renameWorkflow( String name) {
-        ((Workflow)workflowComboBoxModel.getSelectedItem()).setName(name);
+    void renameWorkflow(String name) {
+        ((Workflow) workflowComboBoxModel.getSelectedItem()).setName(name);
         saveWorkflows();
     }
 
     void addNewAction(Action action) {
-        Workflow workflow = (Workflow)workflowComboBoxModel.getSelectedItem();
+        Workflow workflow = (Workflow) workflowComboBoxModel.getSelectedItem();
         workflow.addAction(action);
         actionListModel.clear();
         actionListModel.addAll(workflow.getActions());
@@ -158,7 +190,6 @@ public class WorkflowWindow extends JFrame {
     }
 
     // ------------------------- end callbacks -------------------------
-
 
 
     private void mnuNewWorkflow() {
@@ -195,7 +226,7 @@ public class WorkflowWindow extends JFrame {
 
     private void mnuRenameWorkflow() {
         if (workflowComboBoxModel.getSize() > 0) {
-            Workflow workflow = (Workflow)workflowComboBoxModel.getSelectedItem();
+            Workflow workflow = (Workflow) workflowComboBoxModel.getSelectedItem();
             SwingUtilities.invokeLater(() -> new WorkflowRenameDialog(this, workflow.getName()).setVisible(true));
         }
     }
@@ -218,7 +249,7 @@ public class WorkflowWindow extends JFrame {
 
 
     private void cmbWorkflowsItemStateChanged() {
-        Workflow workflow = (Workflow)workflowComboBoxModel.getSelectedItem();
+        Workflow workflow = (Workflow) workflowComboBoxModel.getSelectedItem();
         actionListModel.clear();
         if (null != workflow) {
             actionListModel.addAll(workflow.getActions());
@@ -268,10 +299,10 @@ public class WorkflowWindow extends JFrame {
     }
 
     private void thisComponentResized() {
-       Configuration configuration = ConfigurationManager.getConfig();
-       configuration.setWindowHeight(getHeight());
-       configuration.setWindowWidth(getWidth());
-       ConfigurationManager.saveConfiguration();
+        Configuration configuration = ConfigurationManager.getConfig();
+        configuration.setWindowHeight(getHeight());
+        configuration.setWindowWidth(getWidth());
+        ConfigurationManager.saveConfiguration();
     }
 
 
@@ -301,6 +332,7 @@ public class WorkflowWindow extends JFrame {
             public void componentMoved(ComponentEvent e) {
                 thisComponentMoved();
             }
+
             @Override
             public void componentResized(ComponentEvent e) {
                 thisComponentResized();
@@ -308,10 +340,10 @@ public class WorkflowWindow extends JFrame {
         });
         var contentPane = getContentPane();
         contentPane.setLayout(new GridBagLayout());
-        ((GridBagLayout)contentPane.getLayout()).columnWidths = new int[] {0, 0, 0};
-        ((GridBagLayout)contentPane.getLayout()).rowHeights = new int[] {0, 0, 0, 0};
-        ((GridBagLayout)contentPane.getLayout()).columnWeights = new double[] {0.0, 0.0, 1.0E-4};
-        ((GridBagLayout)contentPane.getLayout()).rowWeights = new double[] {0.0, 0.0, 0.0, 1.0E-4};
+        ((GridBagLayout) contentPane.getLayout()).columnWidths = new int[]{0, 0, 0};
+        ((GridBagLayout) contentPane.getLayout()).rowHeights = new int[]{0, 0, 0, 0};
+        ((GridBagLayout) contentPane.getLayout()).columnWeights = new double[]{0.0, 0.0, 1.0E-4};
+        ((GridBagLayout) contentPane.getLayout()).rowWeights = new double[]{0.0, 0.0, 0.0, 1.0E-4};
 
         //======== menuBar1 ========
         {
@@ -332,9 +364,13 @@ public class WorkflowWindow extends JFrame {
                 mnuWorkflow.setText(bundle.getString("WorkflowWindow.mnuWorkflow.text"));
                 mnuWorkflow.addMenuListener(new MenuListener() {
                     @Override
-                    public void menuCanceled(MenuEvent e) {}
+                    public void menuCanceled(MenuEvent e) {
+                    }
+
                     @Override
-                    public void menuDeselected(MenuEvent e) {}
+                    public void menuDeselected(MenuEvent e) {
+                    }
+
                     @Override
                     public void menuSelected(MenuEvent e) {
                         mnuWorkflowMenuSelected();
@@ -385,14 +421,14 @@ public class WorkflowWindow extends JFrame {
         //---- label1 ----
         label1.setText(bundle.getString("WorkflowWindow.label1.text"));
         contentPane.add(label1, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
-            GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-            new Insets(5, 5, 10, 10), 0, 0));
+                GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                new Insets(5, 5, 10, 10), 0, 0));
 
         //---- cmbWorkflows ----
         cmbWorkflows.addItemListener(e -> cmbWorkflowsItemStateChanged());
         contentPane.add(cmbWorkflows, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0,
-            GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-            new Insets(0, 0, 5, 0), 0, 0));
+                GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                new Insets(0, 0, 5, 0), 0, 0));
 
         //======== scrollPane1 ========
         {
@@ -408,14 +444,14 @@ public class WorkflowWindow extends JFrame {
             scrollPane1.setViewportView(lstActions);
         }
         contentPane.add(scrollPane1, new GridBagConstraints(0, 1, 2, 1, 0.0, 1.0,
-            GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-            new Insets(5, 5, 10, 5), 0, 0));
+                GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                new Insets(5, 5, 10, 5), 0, 0));
 
         //---- lblStatus ----
         lblStatus.setText(bundle.getString("WorkflowWindow.lblStatus.text"));
         contentPane.add(lblStatus, new GridBagConstraints(0, 2, 2, 1, 0.0, 0.0,
-            GridBagConstraints.WEST, GridBagConstraints.VERTICAL,
-            new Insets(0, 0, 0, 0), 0, 0));
+                GridBagConstraints.WEST, GridBagConstraints.VERTICAL,
+                new Insets(0, 0, 0, 0), 0, 0));
         setLocationRelativeTo(getOwner());
         // JFormDesigner - End of component initialization  //GEN-END:initComponents
     }
