@@ -25,6 +25,7 @@ package net.jeremybrooks.photopipr.gui;
 
 import net.jeremybrooks.jinx.JinxConstants;
 import net.jeremybrooks.jinx.response.groups.Groups;
+import net.jeremybrooks.photopipr.PPConstants;
 import net.jeremybrooks.photopipr.model.GroupRule;
 import net.jeremybrooks.photopipr.model.UploadAction;
 
@@ -304,8 +305,13 @@ public class UploaderDialog extends JDialog {
                     JOptionPane.ERROR_MESSAGE);
         } else {
             GroupRule rule = new GroupRule();
-            rule.setTagModeIndex(cmbTagMode.getSelectedIndex());
-            rule.setTags(Arrays.stream(txtTags.getText().split(" ")).toList());
+            if (radioAllTags.isSelected()) {
+                rule.setTagMode(PPConstants.tagMode.ALL.name());
+            } else {
+                rule.setTagMode(PPConstants.tagMode.ANY.name());
+            }
+            rule.setTags(Arrays.stream(txtTags.getText().split(","))
+                    .map(String::trim).toList());
             for (int i = 0; i < selectedGroupsModel.getSize(); i++) {
                 Groups.Group group = selectedGroupsModel.getElementAt(i);
                 rule.addGroup(group.getGroupId(), group.getName());
@@ -313,7 +319,7 @@ public class UploaderDialog extends JDialog {
             groupRuleListModel.addElement(rule);
 
             // reset the rule creation GUI
-            cmbTagMode.setSelectedIndex(0);
+            radioAllTags.setSelected(true);
             txtGroupFilter.setText("");
             txtTags.setText("");
             availableGroupsModel.setFilterText("");
@@ -386,14 +392,11 @@ public class UploaderDialog extends JDialog {
         radioModerate = new JRadioButton();
         radioRestricted = new JRadioButton();
         panel1 = new JPanel();
-        cmbTagMode = new JComboBox<>();
-        // ORDER MATTERS HERE
-        // DO NOT REORDER
-        cmbTagMode.setModel(new DefaultComboBoxModel<>(new String[] {
-                      bundle.getString("UploaderDialog.cmbTagMode.all"),
-                      bundle.getString("UploaderDialog.cmbTagMode.any")
-                    }));
+        label7 = new JLabel();
         txtTags = new JTextField();
+        panel9 = new JPanel();
+        radioAllTags = new JRadioButton();
+        radioAnyTags = new JRadioButton();
         panel7 = new JPanel();
         label6 = new JLabel();
         txtGroupFilter = new JTextField();
@@ -545,15 +548,35 @@ public class UploaderDialog extends JDialog {
                     {
                         panel1.setLayout(new GridBagLayout());
                         ((GridBagLayout)panel1.getLayout()).columnWidths = new int[] {0, 0, 0};
-                        ((GridBagLayout)panel1.getLayout()).rowHeights = new int[] {0, 0, 0, 0, 0};
+                        ((GridBagLayout)panel1.getLayout()).rowHeights = new int[] {0, 0, 0, 0, 0, 0};
                         ((GridBagLayout)panel1.getLayout()).columnWeights = new double[] {0.0, 0.0, 1.0E-4};
-                        ((GridBagLayout)panel1.getLayout()).rowWeights = new double[] {0.0, 0.0, 0.0, 0.0, 1.0E-4};
-                        panel1.add(cmbTagMode, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
-                            GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-                            new Insets(0, 0, 5, 5), 0, 0));
-                        panel1.add(txtTags, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0,
+                        ((GridBagLayout)panel1.getLayout()).rowWeights = new double[] {0.0, 0.0, 0.0, 0.0, 0.0, 1.0E-4};
+
+                        //---- label7 ----
+                        label7.setText(bundle.getString("UploaderDialog.label7.text"));
+                        panel1.add(label7, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0,
                             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
                             new Insets(0, 0, 5, 0), 0, 0));
+                        panel1.add(txtTags, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0,
+                            GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                            new Insets(0, 0, 5, 0), 0, 0));
+
+                        //======== panel9 ========
+                        {
+                            panel9.setLayout(new GridLayout(2, 0));
+
+                            //---- radioAllTags ----
+                            radioAllTags.setText(bundle.getString("UploaderDialog.radioAllTags.text"));
+                            radioAllTags.setSelected(true);
+                            panel9.add(radioAllTags);
+
+                            //---- radioAnyTags ----
+                            radioAnyTags.setText(bundle.getString("UploaderDialog.radioAnyTags.text"));
+                            panel9.add(radioAnyTags);
+                        }
+                        panel1.add(panel9, new GridBagConstraints(0, 0, 1, 2, 0.0, 0.0,
+                            GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                            new Insets(0, 0, 5, 5), 0, 0));
 
                         //======== panel7 ========
                         {
@@ -638,7 +661,7 @@ public class UploaderDialog extends JDialog {
                                 GridBagConstraints.CENTER, GridBagConstraints.BOTH,
                                 new Insets(0, 0, 0, 0), 0, 0));
                         }
-                        panel1.add(panel7, new GridBagConstraints(0, 1, 2, 1, 0.0, 0.0,
+                        panel1.add(panel7, new GridBagConstraints(0, 2, 2, 1, 0.0, 0.0,
                             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
                             new Insets(0, 0, 5, 0), 0, 0));
 
@@ -651,7 +674,7 @@ public class UploaderDialog extends JDialog {
                             btnAddRule.addActionListener(e -> btnAddRule());
                             panel3.add(btnAddRule);
                         }
-                        panel1.add(panel3, new GridBagConstraints(0, 2, 2, 1, 0.0, 0.0,
+                        panel1.add(panel3, new GridBagConstraints(0, 3, 2, 1, 0.0, 0.0,
                             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
                             new Insets(0, 0, 5, 0), 0, 0));
 
@@ -681,7 +704,7 @@ public class UploaderDialog extends JDialog {
                             }
                             panel4.add(panel5, BorderLayout.SOUTH);
                         }
-                        panel1.add(panel4, new GridBagConstraints(0, 3, 2, 1, 1.0, 1.0,
+                        panel1.add(panel4, new GridBagConstraints(0, 4, 2, 1, 1.0, 1.0,
                             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
                             new Insets(0, 0, 0, 0), 0, 0));
                     }
@@ -818,6 +841,11 @@ public class UploaderDialog extends JDialog {
         buttonGroup2.add(radioModerate);
         buttonGroup2.add(radioRestricted);
 
+        //---- buttonGroup3 ----
+        var buttonGroup3 = new ButtonGroup();
+        buttonGroup3.add(radioAllTags);
+        buttonGroup3.add(radioAnyTags);
+
         //---- buttonGroup1 ----
         var buttonGroup1 = new ButtonGroup();
         buttonGroup1.add(radioMove);
@@ -846,8 +874,11 @@ public class UploaderDialog extends JDialog {
     private JRadioButton radioModerate;
     private JRadioButton radioRestricted;
     private JPanel panel1;
-    private JComboBox<String> cmbTagMode;
+    private JLabel label7;
     private JTextField txtTags;
+    private JPanel panel9;
+    private JRadioButton radioAllTags;
+    private JRadioButton radioAnyTags;
     private JPanel panel7;
     private JLabel label6;
     private JTextField txtGroupFilter;

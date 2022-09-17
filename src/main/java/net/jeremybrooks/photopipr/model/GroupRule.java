@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GroupRule {
-  private int tagModeIndex;
+  private String tagMode;
   private List<String> tags;
   private List<FlickrGroup> groups;
 
@@ -41,12 +41,12 @@ public class GroupRule {
     }
     groups.add(new FlickrGroup(groupId, groupName));
   }
-  public int getTagModeIndex() {
-    return tagModeIndex;
+  public String getTagMode() {
+    return tagMode;
   }
 
-  public void setTagModeIndex(int tagModeIndex) {
-    this.tagModeIndex = tagModeIndex;
+  public void setTagMode(String tagMode) {
+    this.tagMode = tagMode;
   }
 
   public List<String> getTags() {

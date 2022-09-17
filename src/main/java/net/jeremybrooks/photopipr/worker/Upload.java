@@ -30,8 +30,8 @@ import net.jeremybrooks.jinx.response.photos.PermsSetResponse;
 import net.jeremybrooks.jinx.response.photos.upload.UploadResponse;
 import net.jeremybrooks.photopipr.JinxFactory;
 import net.jeremybrooks.photopipr.model.Action;
-import net.jeremybrooks.photopipr.model.UploadAction;
 import net.jeremybrooks.photopipr.model.GroupRule;
+import net.jeremybrooks.photopipr.model.UploadAction;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -269,7 +269,7 @@ public class Upload {
                     .map(s -> s.replaceAll(" ", "").toLowerCase())
                     .toList();
 
-            if (rule.getTagModeIndex() == 0) { // all tags
+            if (rule.getTagMode().equals(tagMode.ALL.name())) {
                 match = CollectionUtils.containsAll(metadata.getKeywords(), tags);
             } else { // any tags
                 match = CollectionUtils.containsAny(metadata.getKeywords(), tags);

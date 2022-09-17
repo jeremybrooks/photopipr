@@ -23,6 +23,10 @@ import java.awt.Color;
 import java.util.List;
 
 public class PPConstants {
+  public enum tagMode {
+    ALL, ANY
+  }
+
   public static final String FLICKR_API_KEY_PROPERTY = "FLICKR_KEY";
   public static final String FLICKR_API_SECRET_PROPERTY = "FLICKR_SECRET";
 

@@ -44,7 +44,7 @@ public class GroupRuleListCellRenderer implements ListCellRenderer<GroupRule> {
         }
 
         cell.setTags(String.format("%s of %s",
-                value.getTagModeIndex() == 0 ? "ALL" : "ANY",
+                value.getTagMode(),
                 value.getTags().toString()));
 
         cell.setGroups(String.format("Add photo to %d group%s",
