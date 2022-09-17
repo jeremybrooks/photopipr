@@ -63,7 +63,7 @@ public class WorkflowRenameDialog extends JDialog {
                     "Please provide a new name for the Workflow.",
                     "Missing Name",
                     JOptionPane.ERROR_MESSAGE);
-        } else if (workflowWindow.getWorkflows().stream()
+        } else if (workflowWindow.getUnmodifiableWorkflows().stream()
                 .anyMatch(workflow -> workflow.getName().equals(name))) {
             JOptionPane.showMessageDialog(this,
                     "This name is already used for a Workflow.",

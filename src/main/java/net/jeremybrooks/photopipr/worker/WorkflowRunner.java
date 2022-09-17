@@ -19,6 +19,7 @@
 
 package net.jeremybrooks.photopipr.worker;
 
+import net.jeremybrooks.photopipr.gui.WorkflowWindow;
 import net.jeremybrooks.photopipr.model.Action;
 import net.jeremybrooks.photopipr.model.FinishAction;
 import net.jeremybrooks.photopipr.model.TimerAction;
@@ -41,6 +42,7 @@ public class WorkflowRunner extends SwingWorker<Void, WorkflowRunner.ActionUpdat
 
     @Override
     protected Void doInBackground() throws Exception {
+        WorkflowWindow.getInstance().setBusy(true);
         // set all the actions to PENDING
         for (int i = 0; i < actionListModel.size(); i++) {
             Action a = actionListModel.get(i);
@@ -83,7 +85,7 @@ public class WorkflowRunner extends SwingWorker<Void, WorkflowRunner.ActionUpdat
                 }
             }
         } while (repeat);
-
+        WorkflowWindow.getInstance().setBusy(false);
         return null;
     }
 

@@ -23,7 +23,6 @@
 
 package net.jeremybrooks.photopipr.gui;
 
-import javax.swing.*;
 import net.jeremybrooks.photopipr.model.FinishAction;
 import net.jeremybrooks.photopipr.model.Workflow;
 
@@ -33,6 +32,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
@@ -61,7 +61,7 @@ public class NewWorkflowDialog extends JDialog {
                     "Please provide a name for the new Workflow.",
                     "Missing Name",
                     JOptionPane.ERROR_MESSAGE);
-        } else if (workflowWindow.getWorkflows().stream()
+        } else if (workflowWindow.getUnmodifiableWorkflows().stream()
                 .anyMatch(workflow -> workflow.getName().equals(name))) {
             JOptionPane.showMessageDialog(this,
                     "This name is already used for a Workflow.",
