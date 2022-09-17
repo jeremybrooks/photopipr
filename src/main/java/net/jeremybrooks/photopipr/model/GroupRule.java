@@ -23,62 +23,84 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GroupRule {
-  private String tagMode;
-  private List<String> tags;
-  private List<FlickrGroup> groups;
+    private String tagMode;
+    private List<String> tags;
+    private List<FlickrGroup> groups;
 
-  public List<FlickrGroup> getGroups() {
-    return groups;
-  }
-  public void setGroups(List<FlickrGroup> groups) {
-    this.groups = groups;
-  }
-
-
-  public void addGroup(String groupId, String groupName) {
-    if (groups == null) {
-      groups = new ArrayList<>();
-    }
-    groups.add(new FlickrGroup(groupId, groupName));
-  }
-  public String getTagMode() {
-    return tagMode;
-  }
-
-  public void setTagMode(String tagMode) {
-    this.tagMode = tagMode;
-  }
-
-  public List<String> getTags() {
-    return tags;
-  }
-
-  public void setTags(List<String> tags) {
-    this.tags = tags;
-  }
-
-  public class FlickrGroup {
-    private String groupName;
-    private String groupId;
-    FlickrGroup(String groupId, String groupName) {
-      this.groupId = groupId;
-      this.groupName = groupName;
+    public List<FlickrGroup> getGroups() {
+        return groups;
     }
 
-    public String getGroupName() {
-      return groupName;
+    public void setGroups(List<FlickrGroup> groups) {
+        this.groups = groups;
     }
 
-    public void setGroupName(String groupName) {
-      this.groupName = groupName;
+
+    public void addGroup(String groupId, String groupName) {
+        if (groups == null) {
+            groups = new ArrayList<>();
+        }
+        groups.add(new FlickrGroup(groupId, groupName));
     }
 
-    public String getGroupId() {
-      return groupId;
+    public String getTagMode() {
+        return tagMode;
     }
 
-    public void setGroupId(String groupId) {
-      this.groupId = groupId;
+    public void setTagMode(String tagMode) {
+        this.tagMode = tagMode;
     }
-  }
+
+    public List<String> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<String> tags) {
+        this.tags = tags;
+    }
+
+    public class FlickrGroup {
+        private String groupName;
+        private String groupId;
+
+        FlickrGroup(String groupId, String groupName) {
+            this.groupId = groupId;
+            this.groupName = groupName;
+        }
+
+        public String getGroupName() {
+            return groupName;
+        }
+
+        public void setGroupName(String groupName) {
+            this.groupName = groupName;
+        }
+
+        public String getGroupId() {
+            return groupId;
+        }
+
+        public void setGroupId(String groupId) {
+            this.groupId = groupId;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+
+            FlickrGroup that = (FlickrGroup) o;
+
+            return groupId.equals(that.groupId);
+        }
+
+        @Override
+        public int hashCode() {
+            return groupId.hashCode();
+        }
+    }
 }

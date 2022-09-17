@@ -46,7 +46,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import static net.jeremybrooks.photopipr.PPConstants.*;
@@ -104,7 +106,7 @@ public class Upload {
                     default -> logger.warn("Unexpected post-upload action {}", uploadAction.getPostUploadAction());
                 }
 
-                processGroupRules(p, uploadMetadata);
+                processGroupRules(p, uploadMetadata, response.getPhotoId());
 
                 // sleep
                 if (count < photos.size() && uploadAction.getInterval() > 0) {
@@ -119,7 +121,7 @@ public class Upload {
         }
         uploadAction.setStatus(Action.Status.IDLE);
         uploadAction.setStatusMessage("Upload action completed at " + new Date());
-        workflowRunner.publish(uploadAction,index);
+        workflowRunner.publish(uploadAction, index);
     }
 
     private List<Path> getPhotos() {
@@ -262,7 +264,12 @@ public class Upload {
         return metadata;
     }
 
-    private void processGroupRules(Path p, UploadMetadata metadata) {
+    private void processGroupRules(Path p, UploadMetadata metadata, String photoId) {
+        Set<GroupRule.FlickrGroup> groupSet = new HashSet<>();
+
+        // attempt to match the keywords in the photo against each rule.
+        // if there's a match, add the group to the groupSet.
+        // This de-duplicates the list of groups.
         for (GroupRule rule : uploadAction.getGroupRules()) {
             boolean match;
             List<String> tags = rule.getTags().stream()
@@ -275,58 +282,66 @@ public class Upload {
                 match = CollectionUtils.containsAny(metadata.getKeywords(), tags);
             }
             if (match) {
-                rule.getGroups().forEach(flickrGroup ->
-                {
-                    logger.info("Adding photo {} to group {}", p, flickrGroup.getGroupId());
-                    uploadAction.setStatusMessage("Adding photo to group " + flickrGroup.getGroupName());
-                    workflowRunner.publish(uploadAction, index);
-                    // todo add photo to group
-                });
+                groupSet.addAll(rule.getGroups());
             }
         }
+
+        // now add the photo to each group in the set
+        groupSet.forEach(flickrGroup ->
+        {
+            logger.info("Adding photo {} to group {}", photoId, flickrGroup.getGroupId());
+            uploadAction.setStatusMessage("Adding photo to group " + flickrGroup.getGroupName());
+            workflowRunner.publish(uploadAction, index);
+            try {
+                JinxFactory.getInstance().getGroupsPoolsApi().add(photoId, flickrGroup.getGroupId());
+            } catch (JinxException je) {
+                logger.error("Error adding photo to group.", je);
+                uploadAction.setHasErrors(true);
+            }
+        });
     }
 
-    private class UploadMetadata {
-        private String title;
-        private String caption;
-        private String dateCreated = "0000-00-00";
+private class UploadMetadata {
+    private String title;
+    private String caption;
+    private String dateCreated = "0000-00-00";
 
-        private List<String> keywords = new ArrayList<>();
+    private List<String> keywords = new ArrayList<>();
 
-        public String getTitle() {
-            return title;
-        }
-
-        public void setTitle(String title) {
-            this.title = title;
-        }
-
-        public String getCaption() {
-            return caption;
-        }
-
-        public void setCaption(String caption) {
-            this.caption = caption;
-        }
-
-        public String getDateCreated() {
-            return dateCreated;
-        }
-
-        public void setDateCreated(String dateCreated) {
-            this.dateCreated = dateCreated;
-        }
-
-        public List<String> getKeywords() {
-            return keywords;
-        }
-
-        public void setKeywords(List<String> keywords) {
-            this.keywords = keywords;
-        }
-
-        public void addKeyword(String keyword) {
-            this.keywords.add(keyword);
-        }
+    public String getTitle() {
+        return title;
     }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getCaption() {
+        return caption;
+    }
+
+    public void setCaption(String caption) {
+        this.caption = caption;
+    }
+
+    public String getDateCreated() {
+        return dateCreated;
+    }
+
+    public void setDateCreated(String dateCreated) {
+        this.dateCreated = dateCreated;
+    }
+
+    public List<String> getKeywords() {
+        return keywords;
+    }
+
+    public void setKeywords(List<String> keywords) {
+        this.keywords = keywords;
+    }
+
+    public void addKeyword(String keyword) {
+        this.keywords.add(keyword);
+    }
+}
 }

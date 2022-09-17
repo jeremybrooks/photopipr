@@ -24,6 +24,7 @@ import net.jeremybrooks.jinx.Jinx;
 import net.jeremybrooks.jinx.JinxConstants;
 import net.jeremybrooks.jinx.JinxException;
 import net.jeremybrooks.jinx.OAuthAccessToken;
+import net.jeremybrooks.jinx.api.GroupsPoolsApi;
 import net.jeremybrooks.jinx.api.OAuthApi;
 import net.jeremybrooks.jinx.api.PeopleApi;
 import net.jeremybrooks.jinx.api.PhotosApi;
@@ -47,6 +48,7 @@ public class JinxFactory {
   private PhotosApi photosApi;
   private PhotosUploadApi photosUploadApi;
   private OAuthApi oAuthApi;
+  private GroupsPoolsApi groupsPoolsApi;
 
   private static final Logger logger = LogManager.getLogger();
 
@@ -109,6 +111,13 @@ public class JinxFactory {
       photosUploadApi = new PhotosUploadApi(jinx);
     }
     return photosUploadApi;
+  }
+
+  public GroupsPoolsApi getGroupsPoolsApi() {
+    if (groupsPoolsApi == null) {
+      groupsPoolsApi = new GroupsPoolsApi(jinx);
+    }
+    return groupsPoolsApi;
   }
 
   public PeopleApi getPeopleApi() {
