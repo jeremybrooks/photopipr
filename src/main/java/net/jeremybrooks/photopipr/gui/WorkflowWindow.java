@@ -179,13 +179,13 @@ public class WorkflowWindow extends JFrame {
     }
 
     /**
-     * Get the current workflows as an unmodifiable list.
+     * Get the current workflows as a List.
      *
      * <p>This method will get the workflows from the model that backs the
      * user interface, then return it as an unmodifiable list. The models
      * that back the user interface will be up-to-date.</p>
      *
-     * @return unmodifiable list reflecting the current state of the Workflows.
+     * @return list reflecting the current state of the Workflows.
      */
     public List<Workflow> getWorkflows() {
         List<Workflow> list = new ArrayList<>();
@@ -194,6 +194,15 @@ public class WorkflowWindow extends JFrame {
         }
         return list;
     }
+    /**
+     * Get the current workflows as an unmodifiable List.
+     *
+     * <p>This method will get the workflows from the model that backs the
+     * user interface, then return it as an unmodifiable list. The models
+     * that back the user interface will be up-to-date.</p>
+     *
+     * @return unmodifiable list reflecting the current state of the Workflows.
+     */
     public List<Workflow> getUnmodifiableWorkflows() {
         return Collections.unmodifiableList(getWorkflows());
     }
