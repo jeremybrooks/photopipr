@@ -1,4 +1,4 @@
-JFDML JFormDesigner: "7.0.7.0.1134" Java: "17.0.3" encoding: "UTF-8"
+JFDML JFormDesigner: "7.0.7.0.1134" Java: "17.0.4" encoding: "UTF-8"
 
 new FormModel {
 	"i18n.autoExternalize": true
@@ -10,8 +10,8 @@ new FormModel {
 		add( new FormWindow( "javax.swing.JDialog", new FormLayoutManager( class java.awt.BorderLayout ) ) {
 			name: "this"
 			"title": new FormMessage( null, "UploaderDialog.this.title" )
-			"$sizePolicy": 1
 			"defaultCloseOperation": 0
+			"$sizePolicy": 1
 			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.BorderLayout ) ) {
 				name: "dialogPane"
 				"border": new javax.swing.border.EmptyBorder( 12, 12, 12, 12 )
@@ -167,30 +167,88 @@ new FormModel {
 							}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 								"gridx": 1
 							} )
-							add( new FormComponent( "javax.swing.JLabel" ) {
-								name: "label8"
-								"text": new FormMessage( null, "UploaderDialog.label8.text" )
+							add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
+								"$columnSpecs": "0, 0, 0:1.0"
+								"$rowSpecs": "0, 0:1.0, 0"
+								"$alignTop": true
+								"$alignLeft": true
+							} ) {
+								name: "panel7"
+								add( new FormComponent( "javax.swing.JLabel" ) {
+									name: "label6"
+									"text": new FormMessage( null, "UploaderDialog.label6.text" )
+								}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) )
+								add( new FormComponent( "javax.swing.JTextField" ) {
+									name: "txtGroupFilter"
+									addEvent( new FormEvent( "java.awt.event.KeyListener", "keyReleased", "txtGroupFilterKeyReleased", false ) )
+								}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+									"gridy": 1
+								} )
+								add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
+									name: "scrollPane3"
+									add( new FormComponent( "javax.swing.JList" ) {
+										name: "lstGroups"
+										auxiliary() {
+											"JavaCodeGenerator.typeParameters": "Groups.Group"
+										}
+										addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "lstGroupsMouseClicked", true ) )
+									} )
+								}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+									"gridy": 2
+									"weightx": 1.0
+								} )
+								add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridLayout ) {
+									"rows": 6
+								} ) {
+									name: "panel8"
+									add( new FormComponent( "javax.swing.JLabel" ) {
+										name: "label4"
+										"text": new FormMessage( null, "UploaderDialog.label4.text" )
+									} )
+									add( new FormComponent( "javax.swing.JLabel" ) {
+										name: "label5"
+										"text": new FormMessage( null, "UploaderDialog.label5.text" )
+									} )
+									add( new FormComponent( "javax.swing.JButton" ) {
+										name: "btnAddGroupToList"
+										"text": new FormMessage( null, "UploaderDialog.btnAddGroupToList.text" )
+										addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnAddGroupToList", false ) )
+									} )
+									add( new FormComponent( "javax.swing.JButton" ) {
+										name: "btnRemoveGroupFromList"
+										"text": new FormMessage( null, "UploaderDialog.btnRemoveGroupFromList.text" )
+										addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnRemoveGroupFromList", false ) )
+									} )
+								}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+									"gridx": 1
+									"gridy": 2
+								} )
+								add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
+									name: "scrollPane4"
+									add( new FormComponent( "javax.swing.JList" ) {
+										name: "lstSelectedGroups"
+										auxiliary() {
+											"JavaCodeGenerator.typeParameters": "Groups.Group"
+										}
+										addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "lstSelectedGroupsMouseClicked", true ) )
+									} )
+								}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+									"gridx": 2
+									"weightx": 1.0
+									"gridy": 2
+								} )
 							}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 								"gridy": 1
-							} )
-							add( new FormComponent( "javax.swing.JComboBox" ) {
-								name: "cmbGroupList"
-								auxiliary() {
-									"JavaCodeGenerator.customCreateCode": "new JComboBox(groupArray);"
-									"JavaCodeGenerator.postInitCode": "cmbGroupList.setRenderer(new GroupComboBoxRenderer());"
-									"JavaCodeGenerator.typeParameters": "Groups.Group"
-								}
-							}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-								"gridx": 1
-								"gridy": 1
+								"gridwidth": 2
 							} )
 							add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.FlowLayout ) {
 								"alignment": 2
 							} ) {
 								name: "panel3"
 								add( new FormComponent( "javax.swing.JButton" ) {
-									name: "button1"
-									"text": new FormMessage( null, "UploaderDialog.button1.text" )
+									name: "btnAddRule"
+									"text": new FormMessage( null, "UploaderDialog.btnAddRule.text" )
+									addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnAddRule", false ) )
 								} )
 							}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 								"gridy": 2
@@ -204,6 +262,10 @@ new FormModel {
 									add( new FormComponent( "javax.swing.JList" ) {
 										name: "lstGroupRules"
 										"selectionMode": 1
+										"visibleRowCount": 4
+										auxiliary() {
+											"JavaCodeGenerator.typeParameters": "GroupRule"
+										}
 									} )
 								}, new FormLayoutConstraints( class java.lang.String ) {
 									"value": "Center"
@@ -213,8 +275,9 @@ new FormModel {
 								} ) {
 									name: "panel5"
 									add( new FormComponent( "javax.swing.JButton" ) {
-										name: "button2"
-										"text": new FormMessage( null, "UploaderDialog.button2.text" )
+										name: "btnDeleteRule"
+										"text": new FormMessage( null, "UploaderDialog.btnDeleteRule.text" )
+										addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnDeleteRule", false ) )
 									} )
 								}, new FormLayoutConstraints( class java.lang.String ) {
 									"value": "South"
@@ -367,7 +430,7 @@ new FormModel {
 			} )
 		}, new FormLayoutConstraints( null ) {
 			"location": new java.awt.Point( 110, 0 )
-			"size": new java.awt.Dimension( 610, 470 )
+			"size": new java.awt.Dimension( 605, 650 )
 		} )
 		add( new FormNonVisual( "javax.swing.ButtonGroup" ) {
 			name: "buttonGroup1"

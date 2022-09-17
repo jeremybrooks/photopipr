@@ -19,30 +19,28 @@
 
 package net.jeremybrooks.photopipr.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class GroupRule {
   private int tagModeIndex;
   private List<String> tags;
-  private String groupId;
-  private String groupName;
+  private List<FlickrGroup> groups;
 
-  public String getGroupId() {
-    return groupId;
+  public List<FlickrGroup> getGroups() {
+    return groups;
+  }
+  public void setGroups(List<FlickrGroup> groups) {
+    this.groups = groups;
   }
 
-  public void setGroupId(String groupId) {
-    this.groupId = groupId;
-  }
 
-  public String getGroupName() {
-    return groupName;
+  public void addGroup(String groupId, String groupName) {
+    if (groups == null) {
+      groups = new ArrayList<>();
+    }
+    groups.add(new FlickrGroup(groupId, groupName));
   }
-
-  public void setGroupName(String groupName) {
-    this.groupName = groupName;
-  }
-
   public int getTagModeIndex() {
     return tagModeIndex;
   }
@@ -57,5 +55,30 @@ public class GroupRule {
 
   public void setTags(List<String> tags) {
     this.tags = tags;
+  }
+
+  public class FlickrGroup {
+    private String groupName;
+    private String groupId;
+    FlickrGroup(String groupId, String groupName) {
+      this.groupId = groupId;
+      this.groupName = groupName;
+    }
+
+    public String getGroupName() {
+      return groupName;
+    }
+
+    public void setGroupName(String groupName) {
+      this.groupName = groupName;
+    }
+
+    public String getGroupId() {
+      return groupId;
+    }
+
+    public void setGroupId(String groupId) {
+      this.groupId = groupId;
+    }
   }
 }

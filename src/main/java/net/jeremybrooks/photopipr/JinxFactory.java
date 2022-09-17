@@ -23,7 +23,6 @@ import com.github.scribejava.core.model.OAuth1RequestToken;
 import net.jeremybrooks.jinx.Jinx;
 import net.jeremybrooks.jinx.JinxConstants;
 import net.jeremybrooks.jinx.JinxException;
-import net.jeremybrooks.jinx.JinxProxy;
 import net.jeremybrooks.jinx.OAuthAccessToken;
 import net.jeremybrooks.jinx.api.OAuthApi;
 import net.jeremybrooks.jinx.api.PeopleApi;
@@ -74,24 +73,10 @@ public class JinxFactory {
     return instance;
   }
 
-  public void setProxy(JinxProxy jinxProxy) {
-    jinx.setProxy(jinxProxy);
-    if (jinxProxy == null) {
-      logger.info("Not using proxy.");
-    } else {
-      logger.info("Using proxy " + jinxProxy.toString());
-    }
-  }
-
   public void setAccessToken(OAuthAccessToken token) {
     jinx.setoAuthAccessToken(token);
   }
 
-
-  public void setLogger(LogInterface jinxLogger) {
-    JinxLogger.setLogger(jinxLogger);
-    jinx.setVerboseLogging(jinxLogger != null);
-  }
 
   public OAuth1RequestToken getRequestToken() throws Exception {
     return JinxFactory.jinx.getRequestToken();
@@ -137,28 +122,28 @@ public class JinxFactory {
   /**
    * Build the photo page URL for this photo.
    * <p>
-   * Photo URL's are in the format
-   * http://www.flickr.com/photos/{user-id}/{photo-id}
+   * Photo URLs are in the format
+   * https://www.flickr.com/photos/{user-id}/{photo-id}
    *
    * @param photo photo to build the URL for.
    * @return string representation of the photo page URL.
    */
   public String buildUrlForPhoto(Photo photo) {
-    return "http://www.flickr.com/photos/" + jinx.getoAuthAccessToken().getNsid() + '/' + photo.getPhotoId();
+    return "https://www.flickr.com/photos/" + jinx.getoAuthAccessToken().getNsid() + '/' + photo.getPhotoId();
   }
 
-  public class JinxLog4jLogger implements LogInterface {
-    private Logger logger = LogManager.getLogger();
+  public static class JinxLog4jLogger implements LogInterface {
+    private static final Logger logger = LogManager.getLogger();
 
     @Override
     public void log(String message) {
-      this.logger.debug(message);
+      logger.debug(message);
     }
 
 
     @Override
     public void log(String message, Throwable t) {
-      this.logger.debug(message, t);
+      logger.debug(message, t);
     }
   }
 }

@@ -77,7 +77,7 @@ public class WorkflowWindow extends JFrame {
     private final ResourceBundle resourceBundle = ResourceBundle.getBundle("net.jeremybrooks.photopipr.workflow");
     private final DefaultComboBoxModel<Workflow> workflowComboBoxModel = new DefaultComboBoxModel<>();
     private final DefaultListModel<Action> actionListModel = new DefaultListModel<>();
-    private Groups.Group[] groupArray;
+    private List<Groups.Group> groups;
 
     private final DisabledGlassPane disabledGlassPane = new DisabledGlassPane();
 
@@ -120,11 +120,12 @@ public class WorkflowWindow extends JFrame {
                 logger.info("Loading groups...");
                 Groups groupList = JinxFactory.getInstance().getPeopleApi().getGroups(JinxFactory.getInstance().getNsid(), null);
                 logger.info("Got {} groups", groupList.getGroupList().size());
-                groupList.getGroupList()
-                        .sort(Comparator.comparing(group -> group.getName().toLowerCase()));
-                groupArray = groupList.getGroupList().toArray(new Groups.Group[0]);
+                groups = groupList.getGroupList()
+                        .stream()
+                        .sorted(Comparator.comparing(group -> group.getName().toLowerCase()))
+                        .toList();
             } catch (Exception e) {
-                groupArray = new Groups.Group[0];
+                groups = new ArrayList<>();
                 logger.error("Could not load groups.", e);
                 JOptionPane.showMessageDialog(this,
                         """
@@ -244,7 +245,7 @@ public class WorkflowWindow extends JFrame {
     private void mnuAddUploadAction() {
         UploadAction uploadAction = new UploadAction();
         addNewAction(uploadAction);
-        SwingUtilities.invokeLater(() -> new UploaderDialog(this, uploadAction, groupArray).setVisible(true));
+        SwingUtilities.invokeLater(() -> new UploaderDialog(this, uploadAction, groups).setVisible(true));
     }
 
 
@@ -272,7 +273,7 @@ public class WorkflowWindow extends JFrame {
             } else if (action instanceof FinishAction) {
                 SwingUtilities.invokeLater(() -> new FinishActionDialog(this, (FinishAction) action).setVisible(true));
             } else if (action instanceof UploadAction) {
-                SwingUtilities.invokeLater(() -> new UploaderDialog(this, (UploadAction) action, groupArray).setVisible(true));
+                SwingUtilities.invokeLater(() -> new UploaderDialog(this, (UploadAction) action, groups).setVisible(true));
             } else {
                 logger.error("Unexpected Action class {}", action.getClass().getName());
                 JOptionPane.showMessageDialog(this,

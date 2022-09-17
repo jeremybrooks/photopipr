@@ -275,10 +275,13 @@ public class Upload {
                 match = CollectionUtils.containsAny(metadata.getKeywords(), tags);
             }
             if (match) {
-                logger.info("Adding photo {} to group {}", p, rule.getGroupName());
-                uploadAction.setStatusMessage("Adding photo to group " + rule.getGroupName());
-                workflowRunner.publish(uploadAction, index);
-                // todo add photo to group
+                rule.getGroups().forEach(flickrGroup ->
+                {
+                    logger.info("Adding photo {} to group {}", p, flickrGroup.getGroupId());
+                    uploadAction.setStatusMessage("Adding photo to group " + flickrGroup.getGroupName());
+                    workflowRunner.publish(uploadAction, index);
+                    // todo add photo to group
+                });
             }
         }
     }

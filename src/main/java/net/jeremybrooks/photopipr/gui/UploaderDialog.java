@@ -25,8 +25,8 @@ package net.jeremybrooks.photopipr.gui;
 
 import net.jeremybrooks.jinx.JinxConstants;
 import net.jeremybrooks.jinx.response.groups.Groups;
-import net.jeremybrooks.photopipr.model.UploadAction;
 import net.jeremybrooks.photopipr.model.GroupRule;
+import net.jeremybrooks.photopipr.model.UploadAction;
 
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
@@ -58,10 +58,14 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.Serial;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import static net.jeremybrooks.photopipr.PPConstants.UPLOAD_DONE_ACTION_DELETE;
@@ -75,18 +79,19 @@ public class UploaderDialog extends JDialog {
     private static final long serialVersionUID = 4023566266781050434L;
     private final ResourceBundle resourceBundle = ResourceBundle.getBundle("net.jeremybrooks.photopipr.uploader");
     private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("");
-    private final Groups.Group[] groupArray;
 
-    private final DefaultListModel<GroupRule> groupRuleDefaultListModel = new DefaultListModel<>();
+    private final DefaultListModel<GroupRule> groupRuleListModel = new DefaultListModel<>();
 
     private final WorkflowWindow workflowWindow;
     private final UploadAction uploadAction;
 
-    public UploaderDialog(WorkflowWindow owner, UploadAction uploadAction, Groups.Group[] groupArray) {
+    private final GroupListModel availableGroupsModel;
+    private final GroupListModel selectedGroupsModel = new GroupListModel();
+
+    public UploaderDialog(WorkflowWindow owner, UploadAction uploadAction, List<Groups.Group> groups) {
         super(owner, true);
         this.workflowWindow = owner;
         this.uploadAction = uploadAction;
-        this.groupArray = (null == groupArray) ? new Groups.Group[0] : groupArray;
         initComponents();
 
         txtSource.setText(uploadAction.getSourcePath());
@@ -99,8 +104,20 @@ public class UploaderDialog extends JDialog {
             case "restricted" -> radioRestricted.setSelected(true);
             default -> radioSafe.setSelected(true);
         }
+        lstGroupRules.setModel(groupRuleListModel);
+        lstGroupRules.setCellRenderer(new GroupRuleListCellRenderer());
+        groupRuleListModel.addAll(uploadAction.getGroupRules());
 
-        groupRuleDefaultListModel.addAll(uploadAction.getGroupRules());
+        if (groups == null) {
+            availableGroupsModel = new GroupListModel();
+        } else {
+            availableGroupsModel = new GroupListModel(groups);
+        }
+        lstGroups.setModel(availableGroupsModel);
+        lstGroups.setCellRenderer(new GroupListCellRenderer());
+
+        lstSelectedGroups.setModel(selectedGroupsModel);
+        lstSelectedGroups.setCellRenderer(new GroupListCellRenderer());
 
         radioDelete.setSelected(uploadAction.getPostUploadAction().equals(UPLOAD_DONE_ACTION_DELETE));
         radioMove.setSelected(uploadAction.getPostUploadAction().equals(UPLOAD_DONE_ACTION_MOVE));
@@ -175,7 +192,7 @@ public class UploaderDialog extends JDialog {
             uploadAction.setMakePrivate(cbxPrivate.isSelected());
 
             uploadAction.getGroupRules().clear();
-            groupRuleDefaultListModel.elements().asIterator()
+            groupRuleListModel.elements().asIterator()
                     .forEachRemaining(groupRule -> uploadAction.getGroupRules().add(groupRule));
 
             if (radioDelete.isSelected()) {
@@ -194,6 +211,10 @@ public class UploaderDialog extends JDialog {
             } else {
                 uploadAction.setSafetyLevel(JinxConstants.SafetyLevel.safe.name());
             }
+
+            List<GroupRule> rules = uploadAction.getGroupRules();
+            rules.clear();
+            groupRuleListModel.elements().asIterator().forEachRemaining(rules::add);
 
             workflowWindow.saveWorkflows();
             setVisible(false);
@@ -270,6 +291,68 @@ public class UploaderDialog extends JDialog {
         }
     }
 
+    private void btnAddRule() {
+        if (txtTags.getText().isBlank()) {
+            JOptionPane.showMessageDialog(this,
+                    resourceBundle.getString("UploaderDialog.missingTags.message"),
+                    resourceBundle.getString("UploaderDialog.missingTags.title"),
+                    JOptionPane.ERROR_MESSAGE);
+        } else if (selectedGroupsModel.getSize() == 0) {
+            JOptionPane.showMessageDialog(this,
+                    resourceBundle.getString("UploaderDialog.missingGroups.message"),
+                    resourceBundle.getString("UploaderDialog.missingGroups.title"),
+                    JOptionPane.ERROR_MESSAGE);
+        } else {
+            GroupRule rule = new GroupRule();
+            rule.setTagModeIndex(cmbTagMode.getSelectedIndex());
+            rule.setTags(Arrays.stream(txtTags.getText().split(" ")).toList());
+            for (int i = 0; i < selectedGroupsModel.getSize(); i++) {
+                Groups.Group group = selectedGroupsModel.getElementAt(i);
+                rule.addGroup(group.getGroupId(), group.getName());
+            }
+            groupRuleListModel.addElement(rule);
+
+            // reset the rule creation GUI
+            cmbTagMode.setSelectedIndex(0);
+            txtGroupFilter.setText("");
+            txtTags.setText("");
+            availableGroupsModel.setFilterText("");
+            selectedGroupsModel.clear();
+        }
+
+    }
+
+    private void txtGroupFilterKeyReleased() {
+        availableGroupsModel.setFilterText(txtGroupFilter.getText());
+    }
+
+    private void btnAddGroupToList() {
+        selectedGroupsModel.addItems(lstGroups.getSelectedValuesList());
+    }
+
+    private void btnRemoveGroupFromList() {
+        selectedGroupsModel.removeItems(lstSelectedGroups.getSelectedValuesList());
+    }
+
+    private void lstGroupsMouseClicked(MouseEvent e) {
+       if (e.getClickCount() == 2) {
+           selectedGroupsModel.addItem(lstGroups.getSelectedValue());
+       }
+    }
+
+    private void lstSelectedGroupsMouseClicked(MouseEvent e) {
+        if (e.getClickCount() == 2) {
+            selectedGroupsModel.removeItem(lstSelectedGroups.getSelectedValue());
+        }
+    }
+
+    private void btnDeleteRule() {
+        int index = lstGroupRules.getSelectedIndex();
+        if (index > -1) {
+            groupRuleListModel.remove(index);
+        }
+    }
+
 
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
@@ -311,15 +394,25 @@ public class UploaderDialog extends JDialog {
                       bundle.getString("UploaderDialog.cmbTagMode.any")
                     }));
         txtTags = new JTextField();
-        label8 = new JLabel();
-        cmbGroupList = new JComboBox(groupArray);
+        panel7 = new JPanel();
+        label6 = new JLabel();
+        txtGroupFilter = new JTextField();
+        scrollPane3 = new JScrollPane();
+        lstGroups = new JList<>();
+        panel8 = new JPanel();
+        label4 = new JLabel();
+        label5 = new JLabel();
+        btnAddGroupToList = new JButton();
+        btnRemoveGroupFromList = new JButton();
+        scrollPane4 = new JScrollPane();
+        lstSelectedGroups = new JList<>();
         panel3 = new JPanel();
-        button1 = new JButton();
+        btnAddRule = new JButton();
         panel4 = new JPanel();
         scrollPane1 = new JScrollPane();
-        lstGroupRules = new JList();
+        lstGroupRules = new JList<>();
         panel5 = new JPanel();
-        button2 = new JButton();
+        btnDeleteRule = new JButton();
         pnlArchive = new JPanel();
         radioMove = new JRadioButton();
         txtMoveTo = new JTextField();
@@ -462,15 +555,90 @@ public class UploaderDialog extends JDialog {
                             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
                             new Insets(0, 0, 5, 0), 0, 0));
 
-                        //---- label8 ----
-                        label8.setText(bundle.getString("UploaderDialog.label8.text"));
-                        panel1.add(label8, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
-                            GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-                            new Insets(0, 0, 5, 5), 0, 0));
+                        //======== panel7 ========
+                        {
+                            panel7.setLayout(new GridBagLayout());
+                            ((GridBagLayout)panel7.getLayout()).columnWidths = new int[] {0, 0, 0, 0};
+                            ((GridBagLayout)panel7.getLayout()).rowHeights = new int[] {0, 0, 0, 0};
+                            ((GridBagLayout)panel7.getLayout()).columnWeights = new double[] {0.0, 0.0, 1.0, 1.0E-4};
+                            ((GridBagLayout)panel7.getLayout()).rowWeights = new double[] {0.0, 1.0, 0.0, 1.0E-4};
 
-                        //---- cmbGroupList ----
-                        cmbGroupList.setRenderer(new GroupComboBoxRenderer());
-                        panel1.add(cmbGroupList, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0,
+                            //---- label6 ----
+                            label6.setText(bundle.getString("UploaderDialog.label6.text"));
+                            panel7.add(label6, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
+                                GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                                new Insets(0, 0, 0, 0), 0, 0));
+
+                            //---- txtGroupFilter ----
+                            txtGroupFilter.addKeyListener(new KeyAdapter() {
+                                @Override
+                                public void keyReleased(KeyEvent e) {
+                                    txtGroupFilterKeyReleased();
+                                }
+                            });
+                            panel7.add(txtGroupFilter, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
+                                GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                                new Insets(0, 0, 0, 0), 0, 0));
+
+                            //======== scrollPane3 ========
+                            {
+
+                                //---- lstGroups ----
+                                lstGroups.addMouseListener(new MouseAdapter() {
+                                    @Override
+                                    public void mouseClicked(MouseEvent e) {
+                                        lstGroupsMouseClicked(e);
+                                    }
+                                });
+                                scrollPane3.setViewportView(lstGroups);
+                            }
+                            panel7.add(scrollPane3, new GridBagConstraints(0, 2, 1, 1, 1.0, 0.0,
+                                GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                                new Insets(0, 0, 0, 0), 0, 0));
+
+                            //======== panel8 ========
+                            {
+                                panel8.setLayout(new GridLayout(6, 0));
+
+                                //---- label4 ----
+                                label4.setText(bundle.getString("UploaderDialog.label4.text"));
+                                panel8.add(label4);
+
+                                //---- label5 ----
+                                label5.setText(bundle.getString("UploaderDialog.label5.text"));
+                                panel8.add(label5);
+
+                                //---- btnAddGroupToList ----
+                                btnAddGroupToList.setText(bundle.getString("UploaderDialog.btnAddGroupToList.text"));
+                                btnAddGroupToList.addActionListener(e -> btnAddGroupToList());
+                                panel8.add(btnAddGroupToList);
+
+                                //---- btnRemoveGroupFromList ----
+                                btnRemoveGroupFromList.setText(bundle.getString("UploaderDialog.btnRemoveGroupFromList.text"));
+                                btnRemoveGroupFromList.addActionListener(e -> btnRemoveGroupFromList());
+                                panel8.add(btnRemoveGroupFromList);
+                            }
+                            panel7.add(panel8, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0,
+                                GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                                new Insets(0, 0, 0, 0), 0, 0));
+
+                            //======== scrollPane4 ========
+                            {
+
+                                //---- lstSelectedGroups ----
+                                lstSelectedGroups.addMouseListener(new MouseAdapter() {
+                                    @Override
+                                    public void mouseClicked(MouseEvent e) {
+                                        lstSelectedGroupsMouseClicked(e);
+                                    }
+                                });
+                                scrollPane4.setViewportView(lstSelectedGroups);
+                            }
+                            panel7.add(scrollPane4, new GridBagConstraints(2, 2, 1, 1, 1.0, 0.0,
+                                GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                                new Insets(0, 0, 0, 0), 0, 0));
+                        }
+                        panel1.add(panel7, new GridBagConstraints(0, 1, 2, 1, 0.0, 0.0,
                             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
                             new Insets(0, 0, 5, 0), 0, 0));
 
@@ -478,9 +646,10 @@ public class UploaderDialog extends JDialog {
                         {
                             panel3.setLayout(new FlowLayout(FlowLayout.RIGHT));
 
-                            //---- button1 ----
-                            button1.setText(bundle.getString("UploaderDialog.button1.text"));
-                            panel3.add(button1);
+                            //---- btnAddRule ----
+                            btnAddRule.setText(bundle.getString("UploaderDialog.btnAddRule.text"));
+                            btnAddRule.addActionListener(e -> btnAddRule());
+                            panel3.add(btnAddRule);
                         }
                         panel1.add(panel3, new GridBagConstraints(0, 2, 2, 1, 0.0, 0.0,
                             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
@@ -496,6 +665,7 @@ public class UploaderDialog extends JDialog {
 
                                 //---- lstGroupRules ----
                                 lstGroupRules.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+                                lstGroupRules.setVisibleRowCount(4);
                                 scrollPane1.setViewportView(lstGroupRules);
                             }
                             panel4.add(scrollPane1, BorderLayout.CENTER);
@@ -504,9 +674,10 @@ public class UploaderDialog extends JDialog {
                             {
                                 panel5.setLayout(new FlowLayout(FlowLayout.RIGHT));
 
-                                //---- button2 ----
-                                button2.setText(bundle.getString("UploaderDialog.button2.text"));
-                                panel5.add(button2);
+                                //---- btnDeleteRule ----
+                                btnDeleteRule.setText(bundle.getString("UploaderDialog.btnDeleteRule.text"));
+                                btnDeleteRule.addActionListener(e -> btnDeleteRule());
+                                panel5.add(btnDeleteRule);
                             }
                             panel4.add(panel5, BorderLayout.SOUTH);
                         }
@@ -638,7 +809,7 @@ public class UploaderDialog extends JDialog {
             dialogPane.add(buttonBar, BorderLayout.SOUTH);
         }
         contentPane.add(dialogPane, BorderLayout.CENTER);
-        setSize(610, 470);
+        setSize(605, 650);
         setLocationRelativeTo(getOwner());
 
         //---- buttonGroup2 ----
@@ -677,15 +848,25 @@ public class UploaderDialog extends JDialog {
     private JPanel panel1;
     private JComboBox<String> cmbTagMode;
     private JTextField txtTags;
-    private JLabel label8;
-    private JComboBox<Groups.Group> cmbGroupList;
+    private JPanel panel7;
+    private JLabel label6;
+    private JTextField txtGroupFilter;
+    private JScrollPane scrollPane3;
+    private JList<Groups.Group> lstGroups;
+    private JPanel panel8;
+    private JLabel label4;
+    private JLabel label5;
+    private JButton btnAddGroupToList;
+    private JButton btnRemoveGroupFromList;
+    private JScrollPane scrollPane4;
+    private JList<Groups.Group> lstSelectedGroups;
     private JPanel panel3;
-    private JButton button1;
+    private JButton btnAddRule;
     private JPanel panel4;
     private JScrollPane scrollPane1;
-    private JList lstGroupRules;
+    private JList<GroupRule> lstGroupRules;
     private JPanel panel5;
-    private JButton button2;
+    private JButton btnDeleteRule;
     private JPanel pnlArchive;
     private JRadioButton radioMove;
     private JTextField txtMoveTo;
