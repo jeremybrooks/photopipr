@@ -23,6 +23,7 @@
 
 package net.jeremybrooks.photopipr.gui;
 
+import javax.swing.*;
 import net.jeremybrooks.jinx.response.groups.Groups;
 import net.jeremybrooks.photopipr.ConfigurationManager;
 import net.jeremybrooks.photopipr.JinxFactory;
@@ -396,6 +397,7 @@ public class WorkflowWindow extends JFrame {
         lblStatus = new JLabel();
 
         //======== this ========
+        setIconImage(new ImageIcon(getClass().getResource("/net/jeremybrooks/photopipr/icons/icon-256.png")).getImage());
         addComponentListener(new ComponentAdapter() {
             @Override
             public void componentMoved(ComponentEvent e) {

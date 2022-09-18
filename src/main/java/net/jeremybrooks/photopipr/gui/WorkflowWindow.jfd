@@ -17,6 +17,7 @@ new FormModel {
 		} ) {
 			name: "this"
 			"$sizePolicy": 2
+			"iconImage": new com.jformdesigner.model.SwingIcon( 0, "/net/jeremybrooks/photopipr/icons/icon-256.png" )
 			addEvent( new FormEvent( "java.awt.event.ComponentListener", "componentMoved", "thisComponentMoved", false ) )
 			addEvent( new FormEvent( "java.awt.event.ComponentListener", "componentResized", "thisComponentResized", false ) )
 			add( new FormComponent( "javax.swing.JLabel" ) {

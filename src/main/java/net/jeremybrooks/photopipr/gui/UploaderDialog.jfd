@@ -12,6 +12,7 @@ new FormModel {
 			"title": new FormMessage( null, "UploaderDialog.this.title" )
 			"defaultCloseOperation": 0
 			"$sizePolicy": 1
+			"modal": true
 			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.BorderLayout ) ) {
 				name: "dialogPane"
 				"border": new javax.swing.border.EmptyBorder( 12, 12, 12, 12 )

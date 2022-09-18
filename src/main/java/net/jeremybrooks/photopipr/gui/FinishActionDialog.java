@@ -98,6 +98,7 @@ public class FinishActionDialog extends JDialog {
     //======== this ========
     setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
     setTitle(bundle.getString("FinishActionDialog.this.title"));
+    setModal(true);
     var contentPane = getContentPane();
     contentPane.setLayout(new BorderLayout());
 
