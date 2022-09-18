@@ -435,6 +435,7 @@ public class UploaderDialog extends JDialog {
         //======== this ========
         setTitle(bundle.getString("UploaderDialog.this.title"));
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+        setModal(true);
         var contentPane = getContentPane();
         contentPane.setLayout(new BorderLayout());
 
