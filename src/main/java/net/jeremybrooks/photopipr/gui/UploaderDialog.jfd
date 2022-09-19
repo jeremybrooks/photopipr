@@ -79,7 +79,7 @@ new FormModel {
 							add( new FormComponent( "javax.swing.JComboBox" ) {
 								name: "cmbSelectionOrder"
 								auxiliary() {
-									"JavaCodeGenerator.postCreateCode": "// ORDER MATTERS HERE\n// DO NOT REORDER\ncmbSelectionOrder.setModel(new DefaultComboBoxModel<>(new String[] {\n              bundle.getString(\"UploaderDialog.cmbSelectionOrder.random\"),\nbundle.getString(\"UploaderDialog.cmbSelectionOrder.newest\"),\nbundle.getString(\"UploaderDialog.cmbSelectionOrder.oldest\"),\nbundle.getString(\"UploaderDialog.cmbSelectionOrder.asc\"),\nbundle.getString(\"UploaderDialog.cmbSelectionOrder.desc\")\n            }));"
+									"JavaCodeGenerator.postCreateCode": "// ORDER MATTERS HERE\n// DO NOT REORDER\ncmbSelectionOrder.setModel(new DefaultComboBoxModel<>(new String[] {\n              bundle.getString(\"UploaderDialog.cmbSelectionOrder.RANDOM\"),\nbundle.getString(\"UploaderDialog.cmbSelectionOrder.DATE_DESC\"),\nbundle.getString(\"UploaderDialog.cmbSelectionOrder.DATE_ASC\"),\nbundle.getString(\"UploaderDialog.cmbSelectionOrder.ALPHA_ASC\"),\nbundle.getString(\"UploaderDialog.cmbSelectionOrder.ALPHA_DESC\")\n            }));"
 									"JavaCodeGenerator.typeParameters": "String"
 								}
 							}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {

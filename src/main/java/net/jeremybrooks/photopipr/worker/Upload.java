@@ -29,6 +29,7 @@ import net.jeremybrooks.jinx.api.PhotosApi;
 import net.jeremybrooks.jinx.response.photos.PermsSetResponse;
 import net.jeremybrooks.jinx.response.photos.upload.UploadResponse;
 import net.jeremybrooks.photopipr.JinxFactory;
+import net.jeremybrooks.photopipr.PPConstants;
 import net.jeremybrooks.photopipr.model.Action;
 import net.jeremybrooks.photopipr.model.GroupRule;
 import net.jeremybrooks.photopipr.model.UploadAction;
@@ -141,13 +142,13 @@ public class Upload {
             tempList = new ArrayList<>();
         }
 
-        switch (uploadAction.getSelectionOrderIndex()) {
-            case 0 -> { //random
+        switch (PPConstants.SelectionOrder.valueOf(uploadAction.getSelectionOrder())) {
+            case RANDOM -> { //random
                 List<Path> mutableList = new ArrayList<>(tempList);
                 Collections.shuffle(mutableList);
                 list = mutableList.stream().limit(uploadAction.getQuantity()).toList();
             }
-            case 1 -> // newest
+            case DATE_DESC -> // newest
                     list = tempList.stream().sorted(Comparator.comparing((Path o) -> {
                                 try {
                                     return Files.getLastModifiedTime(o);
@@ -157,7 +158,7 @@ public class Upload {
                             }))
                             .limit(uploadAction.getQuantity())
                             .toList();
-            case 2 -> //oldest
+            case DATE_ASC -> //oldest
                     list = tempList.stream().sorted((o1, o2) -> {
                                 try {
                                     return Files.getLastModifiedTime(o2).compareTo(Files.getLastModifiedTime(o1));
@@ -167,11 +168,11 @@ public class Upload {
                             })
                             .limit(uploadAction.getQuantity())
                             .toList();
-            case 3 -> // a-z
+            case ALPHA_ASC -> // a-z
                     list = tempList.stream().sorted(Comparator.naturalOrder())
                             .limit(uploadAction.getQuantity())
                             .toList();
-            case 4 -> // z-a
+            case ALPHA_DESC -> // z-a
                     list = tempList.stream().sorted(Comparator.reverseOrder())
                             .limit(uploadAction.getQuantity())
                             .toList();
@@ -276,7 +277,7 @@ public class Upload {
                     .map(s -> s.replaceAll(" ", "").toLowerCase())
                     .toList();
 
-            if (rule.getTagMode().equals(tagMode.ALL.name())) {
+            if (rule.getTagMode().equals(TagMode.ALL.name())) {
                 match = CollectionUtils.containsAll(metadata.getKeywords(), tags);
             } else { // any tags
                 match = CollectionUtils.containsAny(metadata.getKeywords(), tags);

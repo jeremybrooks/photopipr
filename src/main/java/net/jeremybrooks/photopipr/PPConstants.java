@@ -23,8 +23,15 @@ import java.awt.Color;
 import java.util.List;
 
 public class PPConstants {
-  public enum tagMode {
+  public enum TagMode {
     ALL, ANY
+  }
+  public enum SelectionOrder {
+    RANDOM,
+    DATE_DESC,
+    DATE_ASC,
+    ALPHA_ASC,
+    ALPHA_DESC
   }
 
   public static final String FLICKR_API_KEY_PROPERTY = "FLICKR_KEY";

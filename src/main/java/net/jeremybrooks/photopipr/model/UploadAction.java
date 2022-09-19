@@ -30,7 +30,7 @@ public class UploadAction implements Action {
   private String sourcePath = System.getProperty("user.home") + "/Pictures";
   private int quantity = 1;
   private int interval = 1;
-  private int selectionOrderIndex;
+  private String selectionOrder = PPConstants.SelectionOrder.RANDOM.name();
   private boolean makePrivate = false;
   private String safetyLevel = "safe";
   private transient boolean hasErrors = false;
@@ -128,14 +128,6 @@ public class UploadAction implements Action {
     this.postUploadAction = postUploadAction;
   }
 
-  public int getSelectionOrderIndex() {
-    return selectionOrderIndex;
-  }
-
-  public void setSelectionOrderIndex(int selectionOrderIndex) {
-    this.selectionOrderIndex = selectionOrderIndex;
-  }
-
   public boolean isCreateFolders() {
     return createFolders;
   }
@@ -176,5 +168,13 @@ public class UploadAction implements Action {
 
   public void setSafetyLevel(String safetyLevel) {
     this.safetyLevel = safetyLevel;
+  }
+
+  public String getSelectionOrder() {
+    return selectionOrder;
+  }
+
+  public void setSelectionOrder(String selectionOrder) {
+    this.selectionOrder = selectionOrder;
   }
 }

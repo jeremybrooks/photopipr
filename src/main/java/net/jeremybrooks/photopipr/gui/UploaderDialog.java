@@ -98,7 +98,14 @@ public class UploaderDialog extends JDialog {
         txtSource.setText(uploadAction.getSourcePath());
         spinnerQuantity.setValue(uploadAction.getQuantity());
         spinnerInterval.setValue(uploadAction.getInterval());
-        cmbSelectionOrder.setSelectedIndex(uploadAction.getSelectionOrderIndex());
+
+        switch(PPConstants.SelectionOrder.valueOf(uploadAction.getSelectionOrder())) {
+            case RANDOM -> cmbSelectionOrder.setSelectedIndex(0);
+            case DATE_DESC -> cmbSelectionOrder.setSelectedIndex(1);
+            case DATE_ASC -> cmbSelectionOrder.setSelectedIndex(2);
+            case ALPHA_ASC -> cmbSelectionOrder.setSelectedIndex(3);
+            case ALPHA_DESC -> cmbSelectionOrder.setSelectedIndex(4);
+        }
         cbxPrivate.setSelected(uploadAction.isMakePrivate());
         switch (uploadAction.getSafetyLevel()) {
             case "moderate" -> radioModerate.setSelected(true);
@@ -189,7 +196,13 @@ public class UploaderDialog extends JDialog {
             uploadAction.setSourcePath(txtSource.getText().trim());
             uploadAction.setQuantity(((SpinnerNumberModel) spinnerQuantity.getModel()).getNumber().intValue());
             uploadAction.setInterval(((SpinnerNumberModel) spinnerInterval.getModel()).getNumber().intValue());
-            uploadAction.setSelectionOrderIndex(cmbSelectionOrder.getSelectedIndex());
+            switch (cmbSelectionOrder.getSelectedIndex()) {
+                case 0 -> uploadAction.setSelectionOrder(PPConstants.SelectionOrder.RANDOM.name());
+                case 1 -> uploadAction.setSelectionOrder(PPConstants.SelectionOrder.DATE_DESC.name());
+                case 2 -> uploadAction.setSelectionOrder(PPConstants.SelectionOrder.DATE_ASC.name());
+                case 3 -> uploadAction.setSelectionOrder(PPConstants.SelectionOrder.ALPHA_ASC.name());
+                case 4 -> uploadAction.setSelectionOrder(PPConstants.SelectionOrder.ALPHA_DESC.name());
+            }
             uploadAction.setMakePrivate(cbxPrivate.isSelected());
 
             uploadAction.getGroupRules().clear();
@@ -306,9 +319,9 @@ public class UploaderDialog extends JDialog {
         } else {
             GroupRule rule = new GroupRule();
             if (radioAllTags.isSelected()) {
-                rule.setTagMode(PPConstants.tagMode.ALL.name());
+                rule.setTagMode(PPConstants.TagMode.ALL.name());
             } else {
-                rule.setTagMode(PPConstants.tagMode.ANY.name());
+                rule.setTagMode(PPConstants.TagMode.ANY.name());
             }
             rule.setTags(Arrays.stream(txtTags.getText().split(","))
                     .map(String::trim).toList());
@@ -377,11 +390,11 @@ public class UploaderDialog extends JDialog {
         // ORDER MATTERS HERE
         // DO NOT REORDER
         cmbSelectionOrder.setModel(new DefaultComboBoxModel<>(new String[] {
-                      bundle.getString("UploaderDialog.cmbSelectionOrder.random"),
-        bundle.getString("UploaderDialog.cmbSelectionOrder.newest"),
-        bundle.getString("UploaderDialog.cmbSelectionOrder.oldest"),
-        bundle.getString("UploaderDialog.cmbSelectionOrder.asc"),
-        bundle.getString("UploaderDialog.cmbSelectionOrder.desc")
+                      bundle.getString("UploaderDialog.cmbSelectionOrder.RANDOM"),
+        bundle.getString("UploaderDialog.cmbSelectionOrder.DATE_DESC"),
+        bundle.getString("UploaderDialog.cmbSelectionOrder.DATE_ASC"),
+        bundle.getString("UploaderDialog.cmbSelectionOrder.ALPHA_ASC"),
+        bundle.getString("UploaderDialog.cmbSelectionOrder.ALPHA_DESC")
                     }));
         lblInterval = new JLabel();
         spinnerInterval = new JSpinner();
