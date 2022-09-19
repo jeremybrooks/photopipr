@@ -50,6 +50,10 @@ public class Workflow {
         }
     }
 
+    public void removeAction(Action action) {
+        actions.remove(action);
+    }
+
     @Override
     public String toString() {
         return name;

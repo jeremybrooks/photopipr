@@ -23,15 +23,14 @@
 
 package net.jeremybrooks.photopipr.gui;
 
-import javax.swing.*;
 import net.jeremybrooks.jinx.response.groups.Groups;
 import net.jeremybrooks.photopipr.ConfigurationManager;
 import net.jeremybrooks.photopipr.JinxFactory;
 import net.jeremybrooks.photopipr.model.Action;
+import net.jeremybrooks.photopipr.model.Configuration;
 import net.jeremybrooks.photopipr.model.FinishAction;
 import net.jeremybrooks.photopipr.model.TimerAction;
 import net.jeremybrooks.photopipr.model.UploadAction;
-import net.jeremybrooks.photopipr.model.Configuration;
 import net.jeremybrooks.photopipr.model.Workflow;
 import net.jeremybrooks.photopipr.worker.WorkflowRunner;
 import org.apache.logging.log4j.LogManager;
@@ -39,6 +38,7 @@ import org.apache.logging.log4j.Logger;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -122,6 +122,7 @@ public class WorkflowWindow extends JFrame {
         // hide some menu items if running on macOS
         if (System.getProperty("os.name").toLowerCase().contains("mac")) {
             mnuFile.setVisible(false);
+            mnuAbout.setVisible(false);
         }
     }
 
@@ -235,8 +236,14 @@ public class WorkflowWindow extends JFrame {
     void addNewAction(Action action) {
         Workflow workflow = (Workflow) workflowComboBoxModel.getSelectedItem();
         workflow.addAction(action);
+        saveWorkflows();
         actionListModel.clear();
         actionListModel.addAll(workflow.getActions());
+
+        // make the newly added action the selected action
+        // the addAction method puts the new action just before the Finish Action,
+        // which is always last in the list.
+        lstActions.setSelectedIndex(actionListModel.size() - 2);
     }
 
     void saveWorkflows() {
@@ -375,6 +382,29 @@ public class WorkflowWindow extends JFrame {
         }
     }
 
+    private void mnuDeleteAction() {
+        int index = lstActions.getSelectedIndex();
+        if (index > -1) {
+            Action action = lstActions.getSelectedValue();
+           if (action instanceof FinishAction) {
+               JOptionPane.showMessageDialog(this,
+                       resourceBundle.getString("WorkflowWindow.cantdelete.message"),
+                       resourceBundle.getString("WorkflowWindow.cantdelete.title"),
+                       JOptionPane.ERROR_MESSAGE);
+           } else {
+               Workflow workflow = (Workflow) workflowComboBoxModel.getSelectedItem();
+               workflow.removeAction(action);
+               actionListModel.clear();
+               actionListModel.addAll(workflow.getActions());
+               saveWorkflows();
+           }
+        }
+    }
+
+    private void mnuAbout() {
+        new AboutDialog(this).setVisible(true);
+    }
+
 
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
@@ -390,6 +420,10 @@ public class WorkflowWindow extends JFrame {
         mnuAddAction = new JMenu();
         mnuAddUploadAction = new JMenuItem();
         mnuAddTimedAction = new JMenuItem();
+        mnuDeleteAction = new JMenuItem();
+        muHelp = new JMenu();
+        menuItem1 = new JMenuItem();
+        mnuAbout = new JMenuItem();
         label1 = new JLabel();
         cmbWorkflows = new JComboBox<>();
         scrollPane1 = new JScrollPane();
@@ -479,8 +513,28 @@ public class WorkflowWindow extends JFrame {
                     mnuAddAction.add(mnuAddTimedAction);
                 }
                 mnuWorkflow.add(mnuAddAction);
+
+                //---- mnuDeleteAction ----
+                mnuDeleteAction.setText(bundle.getString("WorkflowWindow.mnuDeleteAction.text"));
+                mnuDeleteAction.addActionListener(e -> mnuDeleteAction());
+                mnuWorkflow.add(mnuDeleteAction);
             }
             menuBar1.add(mnuWorkflow);
+
+            //======== muHelp ========
+            {
+                muHelp.setText(bundle.getString("WorkflowWindow.muHelp.text"));
+
+                //---- menuItem1 ----
+                menuItem1.setText(bundle.getString("WorkflowWindow.menuItem1.text"));
+                muHelp.add(menuItem1);
+
+                //---- mnuAbout ----
+                mnuAbout.setText(bundle.getString("WorkflowWindow.mnuAbout.text"));
+                mnuAbout.addActionListener(e -> mnuAbout());
+                muHelp.add(mnuAbout);
+            }
+            menuBar1.add(muHelp);
         }
         setJMenuBar(menuBar1);
 
@@ -517,7 +571,7 @@ public class WorkflowWindow extends JFrame {
         lblStatus.setText(bundle.getString("WorkflowWindow.lblStatus.text"));
         contentPane.add(lblStatus, new GridBagConstraints(0, 2, 2, 1, 0.0, 0.0,
             GridBagConstraints.WEST, GridBagConstraints.VERTICAL,
-            new Insets(0, 0, 0, 0), 0, 0));
+            new Insets(3, 5, 3, 0), 0, 0));
         setLocationRelativeTo(getOwner());
         // JFormDesigner - End of component initialization  //GEN-END:initComponents
     }
@@ -534,6 +588,10 @@ public class WorkflowWindow extends JFrame {
     private JMenu mnuAddAction;
     private JMenuItem mnuAddUploadAction;
     private JMenuItem mnuAddTimedAction;
+    private JMenuItem mnuDeleteAction;
+    private JMenu muHelp;
+    private JMenuItem menuItem1;
+    private JMenuItem mnuAbout;
     private JLabel label1;
     private JComboBox<Workflow> cmbWorkflows;
     private JScrollPane scrollPane1;
