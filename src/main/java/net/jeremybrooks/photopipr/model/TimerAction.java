@@ -19,20 +19,29 @@
 
 package net.jeremybrooks.photopipr.model;
 
+import net.jeremybrooks.photopipr.PPConstants;
+
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+
 public class TimerAction implements Action {
 
     private int hours = 1;
     private int minutes;
     private int seconds;
+    private String timerMode = PPConstants.TimerMode.TIMER.name();
 
     private transient Status status = Status.IDLE;
     private transient String statusMessage;
 
 
     public String getDescription() {
-        return String.format("Sleep %02d:%02d:%02d", hours, minutes, seconds);
+        if (timerMode.equals(PPConstants.TimerMode.TIMER.name())) {
+            return String.format("Sleep for %02d:%02d:%02d", hours, minutes, seconds);
+        } else {
+            return String.format("Sleep until %02d:%02d:%02d", hours, minutes, seconds);
+        }
     }
-
 
     @Override
     public Status getStatus() {
@@ -83,6 +92,28 @@ public class TimerAction implements Action {
     }
 
     public long getSleepMillis() {
-        return ((hours * 3600L) + (minutes * 60L) + seconds) * 1000;
+        if (timerMode.equals(PPConstants.TimerMode.TIMER.name())) {
+            return ((hours * 3600L) + (minutes * 60L) + seconds) * 1000;
+        } else {
+            // make a calendar with current time/date
+            Calendar cal = new GregorianCalendar();
+            // set the calendar time fields to the selected wake time
+            cal.set(Calendar.HOUR_OF_DAY, hours);
+            cal.set(Calendar.MINUTE, minutes);
+            cal.set(Calendar.SECOND, seconds);
+            // if the time is earlier than the current time, make it tomorrow
+            if (cal.getTimeInMillis() < System.currentTimeMillis()) {
+                cal.set(Calendar.DAY_OF_MONTH, cal.get(Calendar.DAY_OF_MONTH) + 1);
+            }
+            return (cal.getTimeInMillis() - System.currentTimeMillis());
+        }
+    }
+
+    public String getTimerMode() {
+        return timerMode;
+    }
+
+    public void setTimerMode(String timerMode) {
+        this.timerMode = timerMode;
     }
 }

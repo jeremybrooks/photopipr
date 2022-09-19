@@ -34,6 +34,10 @@ public class PPConstants {
     ALPHA_DESC
   }
 
+  public enum TimerMode {
+    TIMER, ALARM
+  }
+
   public static final String FLICKR_API_KEY_PROPERTY = "FLICKR_KEY";
   public static final String FLICKR_API_SECRET_PROPERTY = "FLICKR_SECRET";
 

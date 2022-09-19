@@ -63,10 +63,14 @@ public class ActionListCellRenderer implements ListCellRenderer<Action> {
         cell.setDescription(value.getDescription());
         cell.setStatus(value.getStatusMessage());
 
-        if (value instanceof FinishAction) {
+        if (value instanceof FinishAction ) {
             cell.setIcon(ActionListCell.ICON_FINISH);
-        } else if (value instanceof TimerAction) {
-            cell.setIcon(ActionListCell.ICON_TIMER);
+        } else if (value instanceof TimerAction ta) {
+            if (ta.getTimerMode().equals(PPConstants.TimerMode.TIMER.name())) {
+                cell.setIcon(ActionListCell.ICON_TIMER);
+            } else {
+                cell.setIcon(ActionListCell.ICON_ALARM);
+            }
         } else {
             cell.setIcon(ActionListCell.ICON_UPLOAD);
         }

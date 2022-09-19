@@ -40,6 +40,7 @@ public class ActionListCell extends JPanel {
 
     public static final ImageIcon ICON_UPLOAD = new ImageIcon(ActionListCell.class.getResource("/net/jeremybrooks/photopipr/icons/168-upload-photo-2.png"));
     public static final ImageIcon ICON_TIMER = new ImageIcon(ActionListCell.class.getResource("/net/jeremybrooks/photopipr/icons/1097-timer-2.png"));
+    public static final ImageIcon ICON_ALARM = new ImageIcon(ActionListCell.class.getResource("/net/jeremybrooks/photopipr/icons/310-alarm-clock.png"));
     public static final ImageIcon ICON_FINISH = new ImageIcon(ActionListCell.class.getResource("/net/jeremybrooks/photopipr/icons/1243-stop.png"));
 
 

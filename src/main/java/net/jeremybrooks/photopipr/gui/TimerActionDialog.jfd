@@ -1,4 +1,4 @@
-JFDML JFormDesigner: "7.0.7.0.1134" Java: "17.0.3" encoding: "UTF-8"
+JFDML JFormDesigner: "7.0.7.0.1134" Java: "17.0.4" encoding: "UTF-8"
 
 new FormModel {
 	"i18n.autoExternalize": true
@@ -15,56 +15,120 @@ new FormModel {
 			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.BorderLayout ) ) {
 				name: "dialogPane"
 				"border": new javax.swing.border.EmptyBorder( 12, 12, 12, 12 )
-				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
-					"$columnSpecs": "0, 0, 0, 0, 0"
-					"$rowSpecs": "0, 0"
-					"$hGap": 5
-					"$vGap": 5
-					"$alignLeft": true
-					"$alignTop": true
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridLayout ) {
+					"rows": 2
 				} ) {
 					name: "contentPanel"
-					add( new FormComponent( "javax.swing.JLabel" ) {
-						name: "label3"
-						"text": new FormMessage( null, "TimerActionDialog.label3.text" )
-					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-						"gridwidth": 5
+					add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
+						"$columnSpecs": "0, 0, 0, 0, 0, 0"
+						"$rowSpecs": "0, 0"
+						"$hGap": 5
+						"$vGap": 5
+						"$alignLeft": true
+						"$alignTop": true
+					} ) {
+						name: "timerPanel"
+						"border": new javax.swing.border.TitledBorder( "Timer" )
+						add( new FormComponent( "javax.swing.JRadioButton" ) {
+							name: "radioTimer"
+							"text": new FormMessage( null, "TimerActionDialog.radioTimer.text" )
+							"$buttonGroup": new FormReference( "buttonGroup1" )
+							"selected": true
+							addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "radioTimer", false ) )
+						}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+							"gridwidth": 6
+						} )
+						add( new FormComponent( "javax.swing.JSpinner" ) {
+							name: "hourSpinner"
+							"model": new javax.swing.SpinnerNumberModel( 0, 0, 23, 1 )
+						}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+							"gridy": 1
+						} )
+						add( new FormComponent( "javax.swing.JLabel" ) {
+							name: "label4"
+							"text": new FormMessage( null, "TimerActionDialog.label4.text" )
+						}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+							"gridx": 1
+							"gridy": 1
+							"hAlign": 0
+						} )
+						add( new FormComponent( "javax.swing.JSpinner" ) {
+							name: "minuteSpinner"
+							"model": new javax.swing.SpinnerNumberModel( 0, 0, 59, 1 )
+						}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+							"gridy": 1
+							"gridx": 2
+						} )
+						add( new FormComponent( "javax.swing.JLabel" ) {
+							name: "label5"
+							"text": new FormMessage( null, "TimerActionDialog.label5.text" )
+						}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+							"gridy": 1
+							"gridx": 3
+						} )
+						add( new FormComponent( "javax.swing.JSpinner" ) {
+							name: "secondSpinner"
+							"model": new javax.swing.SpinnerNumberModel( 0, 0, 59, 1 )
+						}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+							"gridy": 1
+							"gridx": 4
+						} )
+						add( new FormComponent( "javax.swing.JLabel" ) {
+							name: "label2"
+							"text": new FormMessage( null, "TimerActionDialog.label2.text" )
+						}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+							"gridx": 5
+							"gridy": 1
+							"weightx": 1.0
+						} )
 					} )
-					add( new FormComponent( "javax.swing.JSpinner" ) {
-						name: "hourSpinner"
-						"model": new javax.swing.SpinnerNumberModel( 0, 0, 23, 1 )
-					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-						"gridy": 1
-					} )
-					add( new FormComponent( "javax.swing.JLabel" ) {
-						name: "label4"
-						"text": new FormMessage( null, "TimerActionDialog.label4.text" )
-					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-						"gridx": 1
-						"gridy": 1
-						"hAlign": 0
-					} )
-					add( new FormComponent( "javax.swing.JSpinner" ) {
-						name: "minuteSpinner"
-						"model": new javax.swing.SpinnerNumberModel( 0, 0, 59, 1 )
-					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-						"gridx": 2
-						"gridy": 1
-					} )
-					add( new FormComponent( "javax.swing.JLabel" ) {
-						name: "label5"
-						"text": new FormMessage( null, "TimerActionDialog.label5.text" )
-					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-						"gridx": 3
-						"gridy": 1
-						"hAlign": 0
-					} )
-					add( new FormComponent( "javax.swing.JSpinner" ) {
-						name: "secondSpinner"
-						"model": new javax.swing.SpinnerNumberModel( 0, 0, 59, 1 )
-					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-						"gridx": 4
-						"gridy": 1
+					add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
+						"$columnSpecs": "0, 0, 0, 0"
+						"$rowSpecs": "0, 0"
+						"$hGap": 5
+						"$vGap": 5
+						"$alignLeft": true
+						"$alignTop": true
+					} ) {
+						name: "alarmPanel"
+						"border": new javax.swing.border.TitledBorder( "i18nKey=TimerActionDialog.alarmPanel.border" )
+						add( new FormComponent( "javax.swing.JRadioButton" ) {
+							name: "radioAlarm"
+							"text": new FormMessage( null, "TimerActionDialog.radioAlarm.text" )
+							"$buttonGroup": new FormReference( "buttonGroup1" )
+							addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "radioAlarm", false ) )
+						}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+							"gridwidth": 3
+						} )
+						add( new FormComponent( "javax.swing.JSpinner" ) {
+							name: "hourSpinnerAlarm"
+							"model": new javax.swing.SpinnerNumberModel( 0, 0, 23, 1 )
+						}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+							"gridy": 1
+						} )
+						add( new FormComponent( "javax.swing.JLabel" ) {
+							name: "label1"
+							"text": new FormMessage( null, "TimerActionDialog.label1.text" )
+						}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+							"gridx": 1
+							"gridy": 1
+							"hAlign": 0
+						} )
+						add( new FormComponent( "javax.swing.JSpinner" ) {
+							name: "minuteSpinnerAlarm"
+							"model": new javax.swing.SpinnerNumberModel( 0, 0, 59, 1 )
+						}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+							"gridx": 2
+							"gridy": 1
+						} )
+						add( new FormComponent( "javax.swing.JLabel" ) {
+							name: "label3"
+							"text": new FormMessage( null, "TimerActionDialog.label3.text" )
+						}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+							"gridx": 3
+							"gridy": 1
+							"weightx": 1.0
+						} )
 					} )
 				}, new FormLayoutConstraints( class java.lang.String ) {
 					"value": "Center"
@@ -103,6 +167,11 @@ new FormModel {
 		}, new FormLayoutConstraints( null ) {
 			"location": new java.awt.Point( 0, 0 )
 			"size": new java.awt.Dimension( 400, 300 )
+		} )
+		add( new FormNonVisual( "javax.swing.ButtonGroup" ) {
+			name: "buttonGroup1"
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 0, 316 )
 		} )
 	}
 }

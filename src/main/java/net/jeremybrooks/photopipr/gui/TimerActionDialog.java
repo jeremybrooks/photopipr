@@ -23,21 +23,27 @@
 
 package net.jeremybrooks.photopipr.gui;
 
-import javax.swing.*;
+import net.jeremybrooks.photopipr.PPConstants;
 import net.jeremybrooks.photopipr.model.TimerAction;
 
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.TitledBorder;
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.Insets;
 import java.io.Serial;
+import java.util.Arrays;
 import java.util.ResourceBundle;
 
 /**
@@ -54,9 +60,18 @@ public class TimerActionDialog extends JDialog {
         this.workflowWindow = owner;
         this.timerAction = timerAction;
         initComponents();
-        hourSpinner.setValue(timerAction.getHours());
-        minuteSpinner.setValue(timerAction.getMinutes());
-        secondSpinner.setValue(timerAction.getSeconds());
+
+        if (timerAction.getTimerMode().equals(PPConstants.TimerMode.TIMER.name())) {
+            radioTimer.setSelected(true);
+            hourSpinner.setValue(timerAction.getHours());
+            minuteSpinner.setValue(timerAction.getMinutes());
+            secondSpinner.setValue(timerAction.getSeconds());
+        } else {
+            radioAlarm.setSelected(true);
+            hourSpinnerAlarm.setValue(timerAction.getHours());
+            minuteSpinnerAlarm.setValue(timerAction.getMinutes());
+        }
+        updateSpinners();
     }
 
     private void cancel() {
@@ -64,13 +79,44 @@ public class TimerActionDialog extends JDialog {
     }
 
     private void ok() {
-        timerAction.setHours((Integer)hourSpinner.getValue());
-        timerAction.setMinutes((Integer)minuteSpinner.getValue());
-        timerAction.setSeconds((Integer)secondSpinner.getValue());
+        if (radioTimer.isSelected()) {
+            timerAction.setTimerMode(PPConstants.TimerMode.TIMER.name());
+            timerAction.setHours((Integer) hourSpinner.getValue());
+            timerAction.setMinutes((Integer) minuteSpinner.getValue());
+            timerAction.setSeconds((Integer) secondSpinner.getValue());
+        } else {
+            timerAction.setTimerMode(PPConstants.TimerMode.ALARM.name());
+            timerAction.setHours((Integer) hourSpinnerAlarm.getValue());
+            timerAction.setMinutes((Integer) minuteSpinnerAlarm.getValue());
+            timerAction.setSeconds(0);
+        }
         workflowWindow.saveWorkflows();
         this.setVisible(false);
         this.dispose();
     }
+
+    private void radioTimer() {
+       updateSpinners();
+    }
+
+    private void radioAlarm() {
+        updateSpinners();
+    }
+
+    private void updateSpinners() {
+        Arrays.stream(timerPanel.getComponents()).forEach(c -> {
+            if (!(c instanceof JRadioButton)) {
+                c.setEnabled(radioTimer.isSelected());
+            }
+        });
+        Arrays.stream(alarmPanel.getComponents()).forEach(c -> {
+            if (!(c instanceof JRadioButton)) {
+                c.setEnabled(radioAlarm.isSelected());
+            }
+        });
+    }
+
+
 
 
 
@@ -81,12 +127,20 @@ public class TimerActionDialog extends JDialog {
         ResourceBundle bundle = ResourceBundle.getBundle("net.jeremybrooks.photopipr.timeraction");
         dialogPane = new JPanel();
         contentPanel = new JPanel();
-        label3 = new JLabel();
+        timerPanel = new JPanel();
+        radioTimer = new JRadioButton();
         hourSpinner = new JSpinner();
         label4 = new JLabel();
         minuteSpinner = new JSpinner();
         label5 = new JLabel();
         secondSpinner = new JSpinner();
+        label2 = new JLabel();
+        alarmPanel = new JPanel();
+        radioAlarm = new JRadioButton();
+        hourSpinnerAlarm = new JSpinner();
+        label1 = new JLabel();
+        minuteSpinnerAlarm = new JSpinner();
+        label3 = new JLabel();
         buttonBar = new JPanel();
         okButton = new JButton();
         cancelButton = new JButton();
@@ -105,47 +159,104 @@ public class TimerActionDialog extends JDialog {
 
             //======== contentPanel ========
             {
-                contentPanel.setLayout(new GridBagLayout());
-                ((GridBagLayout)contentPanel.getLayout()).columnWidths = new int[] {0, 0, 0, 0, 0, 0};
-                ((GridBagLayout)contentPanel.getLayout()).rowHeights = new int[] {0, 0, 0};
-                ((GridBagLayout)contentPanel.getLayout()).columnWeights = new double[] {0.0, 0.0, 0.0, 0.0, 0.0, 1.0E-4};
-                ((GridBagLayout)contentPanel.getLayout()).rowWeights = new double[] {0.0, 0.0, 1.0E-4};
+                contentPanel.setLayout(new GridLayout(2, 0));
 
-                //---- label3 ----
-                label3.setText(bundle.getString("TimerActionDialog.label3.text"));
-                contentPanel.add(label3, new GridBagConstraints(0, 0, 5, 1, 0.0, 0.0,
-                    GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-                    new Insets(0, 0, 5, 0), 0, 0));
+                //======== timerPanel ========
+                {
+                    timerPanel.setBorder(new TitledBorder("Timer"));
+                    timerPanel.setLayout(new GridBagLayout());
+                    ((GridBagLayout)timerPanel.getLayout()).columnWidths = new int[] {0, 0, 0, 0, 0, 0, 0};
+                    ((GridBagLayout)timerPanel.getLayout()).rowHeights = new int[] {0, 0, 0};
+                    ((GridBagLayout)timerPanel.getLayout()).columnWeights = new double[] {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0E-4};
+                    ((GridBagLayout)timerPanel.getLayout()).rowWeights = new double[] {0.0, 0.0, 1.0E-4};
 
-                //---- hourSpinner ----
-                hourSpinner.setModel(new SpinnerNumberModel(0, 0, 23, 1));
-                contentPanel.add(hourSpinner, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
-                    GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-                    new Insets(0, 0, 0, 5), 0, 0));
+                    //---- radioTimer ----
+                    radioTimer.setText(bundle.getString("TimerActionDialog.radioTimer.text"));
+                    radioTimer.setSelected(true);
+                    radioTimer.addActionListener(e -> radioTimer());
+                    timerPanel.add(radioTimer, new GridBagConstraints(0, 0, 6, 1, 0.0, 0.0,
+                        GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                        new Insets(0, 0, 5, 0), 0, 0));
 
-                //---- label4 ----
-                label4.setText(bundle.getString("TimerActionDialog.label4.text"));
-                contentPanel.add(label4, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0,
-                    GridBagConstraints.CENTER, GridBagConstraints.VERTICAL,
-                    new Insets(0, 0, 0, 5), 0, 0));
+                    //---- hourSpinner ----
+                    hourSpinner.setModel(new SpinnerNumberModel(0, 0, 23, 1));
+                    timerPanel.add(hourSpinner, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
+                        GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                        new Insets(0, 0, 0, 5), 0, 0));
 
-                //---- minuteSpinner ----
-                minuteSpinner.setModel(new SpinnerNumberModel(0, 0, 59, 1));
-                contentPanel.add(minuteSpinner, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0,
-                    GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-                    new Insets(0, 0, 0, 5), 0, 0));
+                    //---- label4 ----
+                    label4.setText(bundle.getString("TimerActionDialog.label4.text"));
+                    timerPanel.add(label4, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0,
+                        GridBagConstraints.CENTER, GridBagConstraints.VERTICAL,
+                        new Insets(0, 0, 0, 5), 0, 0));
 
-                //---- label5 ----
-                label5.setText(bundle.getString("TimerActionDialog.label5.text"));
-                contentPanel.add(label5, new GridBagConstraints(3, 1, 1, 1, 0.0, 0.0,
-                    GridBagConstraints.CENTER, GridBagConstraints.VERTICAL,
-                    new Insets(0, 0, 0, 5), 0, 0));
+                    //---- minuteSpinner ----
+                    minuteSpinner.setModel(new SpinnerNumberModel(0, 0, 59, 1));
+                    timerPanel.add(minuteSpinner, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0,
+                        GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                        new Insets(0, 0, 0, 5), 0, 0));
 
-                //---- secondSpinner ----
-                secondSpinner.setModel(new SpinnerNumberModel(0, 0, 59, 1));
-                contentPanel.add(secondSpinner, new GridBagConstraints(4, 1, 1, 1, 0.0, 0.0,
-                    GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-                    new Insets(0, 0, 0, 0), 0, 0));
+                    //---- label5 ----
+                    label5.setText(bundle.getString("TimerActionDialog.label5.text"));
+                    timerPanel.add(label5, new GridBagConstraints(3, 1, 1, 1, 0.0, 0.0,
+                        GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                        new Insets(0, 0, 0, 5), 0, 0));
+
+                    //---- secondSpinner ----
+                    secondSpinner.setModel(new SpinnerNumberModel(0, 0, 59, 1));
+                    timerPanel.add(secondSpinner, new GridBagConstraints(4, 1, 1, 1, 0.0, 0.0,
+                        GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                        new Insets(0, 0, 0, 5), 0, 0));
+
+                    //---- label2 ----
+                    label2.setText(bundle.getString("TimerActionDialog.label2.text"));
+                    timerPanel.add(label2, new GridBagConstraints(5, 1, 1, 1, 1.0, 0.0,
+                        GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                        new Insets(0, 0, 0, 0), 0, 0));
+                }
+                contentPanel.add(timerPanel);
+
+                //======== alarmPanel ========
+                {
+                    alarmPanel.setBorder(new TitledBorder(bundle.getString("TimerActionDialog.alarmPanel.border")));
+                    alarmPanel.setLayout(new GridBagLayout());
+                    ((GridBagLayout)alarmPanel.getLayout()).columnWidths = new int[] {0, 0, 0, 0, 0};
+                    ((GridBagLayout)alarmPanel.getLayout()).rowHeights = new int[] {0, 0, 0};
+                    ((GridBagLayout)alarmPanel.getLayout()).columnWeights = new double[] {0.0, 0.0, 0.0, 0.0, 1.0E-4};
+                    ((GridBagLayout)alarmPanel.getLayout()).rowWeights = new double[] {0.0, 0.0, 1.0E-4};
+
+                    //---- radioAlarm ----
+                    radioAlarm.setText(bundle.getString("TimerActionDialog.radioAlarm.text"));
+                    radioAlarm.addActionListener(e -> radioAlarm());
+                    alarmPanel.add(radioAlarm, new GridBagConstraints(0, 0, 3, 1, 0.0, 0.0,
+                        GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                        new Insets(0, 0, 5, 5), 0, 0));
+
+                    //---- hourSpinnerAlarm ----
+                    hourSpinnerAlarm.setModel(new SpinnerNumberModel(0, 0, 23, 1));
+                    alarmPanel.add(hourSpinnerAlarm, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
+                        GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                        new Insets(0, 0, 0, 5), 0, 0));
+
+                    //---- label1 ----
+                    label1.setText(bundle.getString("TimerActionDialog.label1.text"));
+                    alarmPanel.add(label1, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0,
+                        GridBagConstraints.CENTER, GridBagConstraints.VERTICAL,
+                        new Insets(0, 0, 0, 5), 0, 0));
+
+                    //---- minuteSpinnerAlarm ----
+                    minuteSpinnerAlarm.setModel(new SpinnerNumberModel(0, 0, 59, 1));
+                    alarmPanel.add(minuteSpinnerAlarm, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0,
+                        GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                        new Insets(0, 0, 0, 5), 0, 0));
+
+                    //---- label3 ----
+                    label3.setText(bundle.getString("TimerActionDialog.label3.text"));
+                    alarmPanel.add(label3, new GridBagConstraints(3, 1, 1, 1, 1.0, 0.0,
+                        GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                        new Insets(0, 0, 0, 0), 0, 0));
+                }
+                contentPanel.add(alarmPanel);
             }
             dialogPane.add(contentPanel, BorderLayout.CENTER);
 
@@ -175,18 +286,31 @@ public class TimerActionDialog extends JDialog {
         contentPane.add(dialogPane, BorderLayout.CENTER);
         pack();
         setLocationRelativeTo(getOwner());
+
+        //---- buttonGroup1 ----
+        var buttonGroup1 = new ButtonGroup();
+        buttonGroup1.add(radioTimer);
+        buttonGroup1.add(radioAlarm);
         // JFormDesigner - End of component initialization  //GEN-END:initComponents
     }
 
     // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
     private JPanel dialogPane;
     private JPanel contentPanel;
-    private JLabel label3;
+    private JPanel timerPanel;
+    private JRadioButton radioTimer;
     private JSpinner hourSpinner;
     private JLabel label4;
     private JSpinner minuteSpinner;
     private JLabel label5;
     private JSpinner secondSpinner;
+    private JLabel label2;
+    private JPanel alarmPanel;
+    private JRadioButton radioAlarm;
+    private JSpinner hourSpinnerAlarm;
+    private JLabel label1;
+    private JSpinner minuteSpinnerAlarm;
+    private JLabel label3;
     private JPanel buttonBar;
     private JButton okButton;
     private JButton cancelButton;
