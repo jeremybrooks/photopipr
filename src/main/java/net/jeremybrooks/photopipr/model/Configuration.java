@@ -24,6 +24,7 @@ public class Configuration {
     private int windowPositionY = 100;
     private int windowWidth = 600;
     private int windowHeight = 400;
+    private boolean enableVerboseLogging = false;
 
     public int getWindowPositionX() {
         return windowPositionX;
@@ -55,5 +56,13 @@ public class Configuration {
 
     public void setWindowHeight(int windowHeight) {
         this.windowHeight = windowHeight;
+    }
+
+    public boolean isEnableVerboseLogging() {
+        return enableVerboseLogging;
+    }
+
+    public void setEnableVerboseLogging(boolean enableVerboseLogging) {
+        this.enableVerboseLogging = enableVerboseLogging;
     }
 }

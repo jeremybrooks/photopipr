@@ -67,6 +67,11 @@ new FormModel {
 					name: "mnuFile"
 					"text": new FormMessage( null, "WorkflowWindow.mnuFile.text" )
 					add( new FormComponent( "javax.swing.JMenuItem" ) {
+						name: "mnuPreferences"
+						"text": new FormMessage( null, "WorkflowWindow.mnuPreferences.text" )
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "mnuPreferences", false ) )
+					} )
+					add( new FormComponent( "javax.swing.JMenuItem" ) {
 						name: "mnuQuit"
 						"text": new FormMessage( null, "WorkflowWindow.mnuQuit.text" )
 						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "mnuQuit", false ) )

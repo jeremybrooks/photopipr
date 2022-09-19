@@ -405,12 +405,17 @@ public class WorkflowWindow extends JFrame {
         new AboutDialog(this).setVisible(true);
     }
 
+    private void mnuPreferences() {
+        new PreferencesDialog(this).setVisible(true);
+    }
+
 
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
         ResourceBundle bundle = ResourceBundle.getBundle("net.jeremybrooks.photopipr.workflow");
         menuBar1 = new JMenuBar();
         mnuFile = new JMenu();
+        mnuPreferences = new JMenuItem();
         mnuQuit = new JMenuItem();
         mnuWorkflow = new JMenu();
         mnuNewWorkflow = new JMenuItem();
@@ -455,6 +460,11 @@ public class WorkflowWindow extends JFrame {
             //======== mnuFile ========
             {
                 mnuFile.setText(bundle.getString("WorkflowWindow.mnuFile.text"));
+
+                //---- mnuPreferences ----
+                mnuPreferences.setText(bundle.getString("WorkflowWindow.mnuPreferences.text"));
+                mnuPreferences.addActionListener(e -> mnuPreferences());
+                mnuFile.add(mnuPreferences);
 
                 //---- mnuQuit ----
                 mnuQuit.setText(bundle.getString("WorkflowWindow.mnuQuit.text"));
@@ -579,6 +589,7 @@ public class WorkflowWindow extends JFrame {
     // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
     private JMenuBar menuBar1;
     private JMenu mnuFile;
+    private JMenuItem mnuPreferences;
     private JMenuItem mnuQuit;
     private JMenu mnuWorkflow;
     private JMenuItem mnuNewWorkflow;

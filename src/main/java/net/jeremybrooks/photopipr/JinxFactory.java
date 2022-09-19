@@ -60,7 +60,7 @@ public class JinxFactory {
         properties.getProperty(PPConstants.FLICKR_API_SECRET_PROPERTY),
         JinxConstants.OAuthPermissions.write);
     JinxLogger.setLogger(new JinxLog4jLogger());
-    jinx.setVerboseLogging(true);
+    jinx.setVerboseLogging(ConfigurationManager.getConfig().isEnableVerboseLogging());
   }
 
   public static JinxFactory getInstance() {
@@ -73,6 +73,11 @@ public class JinxFactory {
       }
     }
     return instance;
+  }
+
+  public void setVerboseLogging(boolean verboseLogging) {
+    logger.info("Setting verbose logging to {}", verboseLogging);
+    jinx.setVerboseLogging(verboseLogging);
   }
 
   public void setAccessToken(OAuthAccessToken token) {

@@ -40,10 +40,10 @@ public class PPConstants {
 
   public static final String FLICKR_API_KEY_PROPERTY = "FLICKR_KEY";
   public static final String FLICKR_API_SECRET_PROPERTY = "FLICKR_SECRET";
-
+  public static final String PHOTOPIPR_HOME = System.getProperty("user.home") + "/.photopipr";
+  public static final String PHOTOPIPR_AUTH_TOKEN = "photopipr_auth_token";
   public static final String WORKFLOWS_FILENAME = "PhotoPiprWorkflows.json";
   public static final String CONFIGURATION_FILENAME = "PhotoPiprConfig.json";
-
   public static final String FINISH_ACTION_STOP = "Stop";
   public static final String FINISH_ACTION_REPEAT = "Repeat";
   public static final String FINISH_ACTION_EXIT = "Exit";

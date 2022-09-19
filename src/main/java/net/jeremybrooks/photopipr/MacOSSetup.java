@@ -1,6 +1,7 @@
 package net.jeremybrooks.photopipr;
 
 import net.jeremybrooks.photopipr.gui.AboutDialog;
+import net.jeremybrooks.photopipr.gui.PreferencesDialog;
 import net.jeremybrooks.photopipr.gui.WorkflowWindow;
 
 import java.awt.Desktop;
@@ -14,7 +15,7 @@ public class MacOSSetup {
         Desktop.getDesktop().setQuitHandler((qe, qr) ->
             WorkflowWindow.getInstance().confirmAndExit(qr));
 
-        //todo
-//        Desktop.getDesktop().setPreferencesHandler(pe -> new SettingsDialog(WorkflowWindow.getInstance()).setVisible(true));
+        Desktop.getDesktop().setPreferencesHandler(pe ->
+                new PreferencesDialog(WorkflowWindow.getInstance()).setVisible(true));
     }
 }

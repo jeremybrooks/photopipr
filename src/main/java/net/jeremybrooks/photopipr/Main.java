@@ -50,10 +50,9 @@ public class Main {
     private static List<Workflow> workflows;
 
     /* This is where the authorization token will be saved */
-    public static final Path APP_HOME = Paths.get(System.getProperty("user.home"), "/.photopipr");
-    private static final Path AUTH_TOKEN_FILE = Paths.get(APP_HOME.toString(), "/photopipr_auth_token");
+    public static final Path APP_HOME = Paths.get(PPConstants.PHOTOPIPR_HOME);
+    private static final Path AUTH_TOKEN_FILE = Paths.get(PPConstants.PHOTOPIPR_HOME, PPConstants.PHOTOPIPR_AUTH_TOKEN);
     public static String VERSION;
-    public static final String APPNAME = "PhotoPipr";
 
     public static void main(String... args) {
         if (System.getProperty("os.name").toLowerCase().contains("mac")) {
@@ -124,32 +123,11 @@ public class Main {
     }
 
     public static void showMainWindow() {
-//    SwingUtilities.invokeLater(() -> {
-//      Groups.Group[] groups = new Groups.Group[0];
-//      try {
-//        logger.info("Loading groups...");
-//        Groups groupList = JinxFactory.getInstance().getPeopleApi().getGroups(JinxFactory.getInstance().getNsid(), null);
-//        logger.info("Got {} groups", groupList.getGroupList().size());
-//        groupList.getGroupList().sort(Comparator.comparing(group -> group.getName().toLowerCase()));
-//        groups = groupList.getGroupList().toArray(new Groups.Group[0]);
-//      } catch (Exception e) {
-//        logger.error("Could not load groups.", e);
-//        JOptionPane.showMessageDialog(null,
-//                """
-//                        Could not load groups from Flickr.
-//                        Adding photos to groups during upload
-//                        may experience problems.""",
-//            "Group Load Error",
-//            JOptionPane.INFORMATION_MESSAGE);
-//      } finally {
-//        Groups.Group[] finalGroups = groups;
         SwingUtilities.invokeLater(() -> {
             WorkflowWindow ww = new WorkflowWindow(workflows);
             ww.setVisible(true);
             ww.loadGroups();
         });
-//      }
-//    });
     }
 
     private static void errExit(String message, Exception cause) {
