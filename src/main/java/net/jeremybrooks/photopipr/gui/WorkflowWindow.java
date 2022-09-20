@@ -369,6 +369,7 @@ public class WorkflowWindow extends JFrame {
     }
 
     private void mnuRunWorkflow() {
+        lstActions.clearSelection();
         new WorkflowRunner(actionListModel).execute();
     }
 
