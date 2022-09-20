@@ -132,6 +132,9 @@ public class JinxFactory {
   public String getNsid() {
     return jinx.getoAuthAccessToken() == null ? null : jinx.getoAuthAccessToken().getNsid();
   }
+  public String getUsername() {
+    return jinx.getoAuthAccessToken() == null ? "not authorized" : jinx.getoAuthAccessToken().getUsername();
+  }
 
   /**
    * Build the photo page URL for this photo.

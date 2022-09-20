@@ -41,7 +41,9 @@ public class UploadAction implements Action {
   /* Post upload parameters */
   private String postUploadAction = PPConstants.UPLOAD_DONE_ACTION_DELETE;
   private String movePath = "";
-  private boolean createFolders = false;
+
+  private String directoryCreateStrategy = PPConstants.DirectoryCreateStrategy.NO_NEW_DIRECTORIES.name();
+
   private String dateFormat = "yyyy-MM-dd";
 
   private transient Status status = Status.IDLE;
@@ -128,14 +130,6 @@ public class UploadAction implements Action {
     this.postUploadAction = postUploadAction;
   }
 
-  public boolean isCreateFolders() {
-    return createFolders;
-  }
-
-  public void setCreateFolders(boolean createFolders) {
-    this.createFolders = createFolders;
-  }
-
   @Override
   public String getStatusMessage() {
     return statusMessage;
@@ -176,5 +170,13 @@ public class UploadAction implements Action {
 
   public void setSelectionOrder(String selectionOrder) {
     this.selectionOrder = selectionOrder;
+  }
+
+  public String getDirectoryCreateStrategy() {
+    return directoryCreateStrategy;
+  }
+
+  public void setDirectoryCreateStrategy(String directoryCreateStrategy) {
+    this.directoryCreateStrategy = directoryCreateStrategy;
   }
 }

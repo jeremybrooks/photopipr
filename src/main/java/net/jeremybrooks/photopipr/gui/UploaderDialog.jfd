@@ -37,7 +37,6 @@ new FormModel {
 							} )
 							add( new FormComponent( "javax.swing.JTextField" ) {
 								name: "txtSource"
-								"editable": false
 							}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 								"gridx": 1
 								"weightx": 1.0
@@ -330,7 +329,6 @@ new FormModel {
 							} )
 							add( new FormComponent( "javax.swing.JTextField" ) {
 								name: "txtMoveTo"
-								"editable": false
 							}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 								"weightx": 1.0
 								"gridx": 1
@@ -344,13 +342,15 @@ new FormModel {
 								"gridx": 2
 								"gridy": 1
 							} )
-							add( new FormComponent( "javax.swing.JCheckBox" ) {
-								name: "cbxCreateFolders"
-								"text": new FormMessage( null, "UploaderDialog.cbxCreateFolders.text" )
-								addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "cbxUseDateActionPerformed", false ) )
+							add( new FormComponent( "javax.swing.JComboBox" ) {
+								name: "cmbFolderCreateStrategy"
+								auxiliary() {
+									"JavaCodeGenerator.typeParameters": "String"
+								}
+								addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "cmbFolderCreateStrategy", false ) )
 							}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-								"gridy": 2
 								"gridx": 1
+								"gridy": 2
 							} )
 							add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
 								"$columnSpecs": "0, 0, 0"

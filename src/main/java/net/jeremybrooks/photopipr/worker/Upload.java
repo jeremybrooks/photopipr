@@ -19,10 +19,6 @@
 
 package net.jeremybrooks.photopipr.worker;
 
-import com.drew.imaging.ImageMetadataReader;
-import com.drew.metadata.Metadata;
-import com.drew.metadata.Tag;
-import com.drew.metadata.iptc.IptcDirectory;
 import net.jeremybrooks.jinx.JinxConstants;
 import net.jeremybrooks.jinx.JinxException;
 import net.jeremybrooks.jinx.api.PhotosApi;
@@ -30,6 +26,8 @@ import net.jeremybrooks.jinx.response.photos.PermsSetResponse;
 import net.jeremybrooks.jinx.response.photos.upload.UploadResponse;
 import net.jeremybrooks.photopipr.JinxFactory;
 import net.jeremybrooks.photopipr.PPConstants;
+import net.jeremybrooks.photopipr.helper.PhotoMetadata;
+import net.jeremybrooks.photopipr.helper.PhotoMetadataHelper;
 import net.jeremybrooks.photopipr.model.Action;
 import net.jeremybrooks.photopipr.model.GroupRule;
 import net.jeremybrooks.photopipr.model.UploadAction;
@@ -39,10 +37,10 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.util.FileUtils;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -61,10 +59,13 @@ public class Upload {
 
     private final WorkflowRunner workflowRunner;
 
+    private final SimpleDateFormat simpleDateFormat;
+
     public Upload(UploadAction uploadAction, int index, WorkflowRunner workflowRunner) {
         this.uploadAction = uploadAction;
         this.index = index;
         this.workflowRunner = workflowRunner;
+        this.simpleDateFormat = new SimpleDateFormat(uploadAction.getDateFormat());
     }
 
     void go() {
@@ -78,7 +79,7 @@ public class Upload {
         logger.info("Got {} photos to upload", photos.size());
         for (Path p : photos) {
             try {
-                UploadMetadata uploadMetadata = readMetadata(p);
+                PhotoMetadata uploadMetadata = PhotoMetadataHelper.readMetadata(p);
                 count++;
                 logger.info("Uploading photo {}", p);
                 uploadAction.setStatusMessage(String.format("[%d/%d] Uploading photo %s...", count,
@@ -98,7 +99,6 @@ public class Upload {
                 if (!uploadAction.getSafetyLevel().equals(JinxConstants.SafetyLevel.safe.name())) {
                     changeSafetyLevel(response.getPhotoId(), count, photos.size());
                 }
-
 
                 // handle uploaded photo
                 switch (uploadAction.getPostUploadAction()) {
@@ -221,16 +221,28 @@ public class Upload {
         }
     }
 
-    private void move(Path p, UploadMetadata metadata) {
+    private void move(Path p, PhotoMetadata metadata) {
         Path destDir;
         try {
-            if (uploadAction.isCreateFolders()) {
-                destDir = Paths.get(uploadAction.getMovePath(), metadata.getDateCreated());
-                if (Files.notExists(destDir)) {
-                    Files.createDirectories(destDir);
+            switch (PPConstants.DirectoryCreateStrategy.valueOf(uploadAction.getDirectoryCreateStrategy())) {
+                case NO_NEW_DIRECTORIES -> destDir = Paths.get(uploadAction.getMovePath());
+                case DATE_TAKEN -> {
+                    Date date = PhotoMetadataHelper.parseDateCreated(metadata);
+                    if (date == null) {
+                        date = new Date();
+                    }
+                    destDir = Paths.get(uploadAction.getMovePath(), simpleDateFormat.format(date));
+                    if (Files.notExists(destDir)) {
+                        Files.createDirectories(destDir);
+                    }
                 }
-            } else {
-                destDir = Paths.get(uploadAction.getMovePath());
+                case DATE_UPLOADED -> {
+                    destDir = Paths.get(uploadAction.getMovePath(), simpleDateFormat.format(new Date()));
+                    if (Files.notExists(destDir)) {
+                        Files.createDirectories(destDir);
+                    }
+                }
+                default -> throw new Exception("Invalid directory create strategy " + uploadAction.getDirectoryCreateStrategy());
             }
             Path dest = destDir.resolve(p.getFileName());
             logger.info("Moving {} to {}", p, dest);
@@ -241,31 +253,8 @@ public class Upload {
         }
     }
 
-    private UploadMetadata readMetadata(Path p) {
-        UploadMetadata metadata = new UploadMetadata();
-        metadata.setTitle(String.valueOf(p.getFileName()));
-        try (InputStream in = Files.newInputStream(p)) {
-            Metadata m = ImageMetadataReader.readMetadata(in);
-            for (IptcDirectory d : m.getDirectoriesOfType(IptcDirectory.class)) {
-                for (Tag t : d.getTags()) {
-                    switch (t.getTagType()) {
-                        case 517 -> metadata.setTitle(t.getDescription());
-                        case 632 -> metadata.setCaption(t.getDescription());
-                        case 567 -> metadata.setDateCreated(t.getDescription());
-                    }
-                }
-                if (d.getKeywords() != null) {
-                    d.getKeywords().forEach(k ->
-                            metadata.addKeyword(k.replaceAll(" ", "").toLowerCase()));
-                }
-            }
-        } catch (Exception e) {
-            logger.info("Error reading metadata from file {}", p, e);
-        }
-        return metadata;
-    }
 
-    private void processGroupRules(Path p, UploadMetadata metadata, String photoId) {
+    private void processGroupRules(Path p, PhotoMetadata metadata, String photoId) {
         Set<GroupRule.FlickrGroup> groupSet = new HashSet<>();
 
         // attempt to match the keywords in the photo against each rule.
@@ -302,47 +291,4 @@ public class Upload {
         });
     }
 
-private class UploadMetadata {
-    private String title;
-    private String caption;
-    private String dateCreated = "0000-00-00";
-
-    private List<String> keywords = new ArrayList<>();
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getCaption() {
-        return caption;
-    }
-
-    public void setCaption(String caption) {
-        this.caption = caption;
-    }
-
-    public String getDateCreated() {
-        return dateCreated;
-    }
-
-    public void setDateCreated(String dateCreated) {
-        this.dateCreated = dateCreated;
-    }
-
-    public List<String> getKeywords() {
-        return keywords;
-    }
-
-    public void setKeywords(List<String> keywords) {
-        this.keywords = keywords;
-    }
-
-    public void addKeyword(String keyword) {
-        this.keywords.add(keyword);
-    }
-}
 }

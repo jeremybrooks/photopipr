@@ -16,7 +16,7 @@ new FormModel {
 				"border": new javax.swing.border.EmptyBorder( 12, 12, 12, 12 )
 				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
 					"$columnSpecs": "0"
-					"$rowSpecs": "0, 0"
+					"$rowSpecs": "0, 0, 0"
 					"$hGap": 5
 					"$vGap": 5
 					"$alignTop": true
@@ -28,12 +28,21 @@ new FormModel {
 						"text": new FormMessage( null, "PreferencesDialog.cbxVerboseLogging.text" )
 						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "cbxVerboseLogging", false ) )
 					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "lblUser"
+						"text": new FormMessage( null, "PreferencesDialog.lblUser.text" )
+						auxiliary() {
+							"JavaCodeGenerator.postInitCode": "lblUser.setText(String.format(bundle.getString(\"PreferencesDialog.lblUser.text\"),\nJinxFactory.getInstance().getUsername()));\n"
+						}
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+						"gridy": 1
+					} )
 					add( new FormComponent( "javax.swing.JButton" ) {
 						name: "btnDeleteToken"
 						"text": new FormMessage( null, "PreferencesDialog.btnDeleteToken.text" )
 						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnDeleteToken", false ) )
 					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-						"gridy": 1
+						"gridy": 2
 					} )
 				}, new FormLayoutConstraints( class java.lang.String ) {
 					"value": "Center"

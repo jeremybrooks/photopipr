@@ -33,6 +33,7 @@ import org.apache.logging.log4j.Logger;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -100,6 +101,7 @@ public class PreferencesDialog extends JDialog {
         dialogPane = new JPanel();
         contentPanel = new JPanel();
         cbxVerboseLogging = new JCheckBox();
+        lblUser = new JLabel();
         btnDeleteToken = new JButton();
         buttonBar = new JPanel();
         okButton = new JButton();
@@ -119,9 +121,9 @@ public class PreferencesDialog extends JDialog {
             {
                 contentPanel.setLayout(new GridBagLayout());
                 ((GridBagLayout)contentPanel.getLayout()).columnWidths = new int[] {0, 0};
-                ((GridBagLayout)contentPanel.getLayout()).rowHeights = new int[] {0, 0, 0};
+                ((GridBagLayout)contentPanel.getLayout()).rowHeights = new int[] {0, 0, 0, 0};
                 ((GridBagLayout)contentPanel.getLayout()).columnWeights = new double[] {0.0, 1.0E-4};
-                ((GridBagLayout)contentPanel.getLayout()).rowWeights = new double[] {0.0, 0.0, 1.0E-4};
+                ((GridBagLayout)contentPanel.getLayout()).rowWeights = new double[] {0.0, 0.0, 0.0, 1.0E-4};
 
                 //---- cbxVerboseLogging ----
                 cbxVerboseLogging.setText(bundle.getString("PreferencesDialog.cbxVerboseLogging.text"));
@@ -130,10 +132,18 @@ public class PreferencesDialog extends JDialog {
                     GridBagConstraints.CENTER, GridBagConstraints.BOTH,
                     new Insets(0, 0, 5, 0), 0, 0));
 
+                //---- lblUser ----
+                lblUser.setText(bundle.getString("PreferencesDialog.lblUser.text"));
+                lblUser.setText(String.format(bundle.getString("PreferencesDialog.lblUser.text"),
+                JinxFactory.getInstance().getUsername()));
+                contentPanel.add(lblUser, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
+                    GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                    new Insets(0, 0, 5, 0), 0, 0));
+
                 //---- btnDeleteToken ----
                 btnDeleteToken.setText(bundle.getString("PreferencesDialog.btnDeleteToken.text"));
                 btnDeleteToken.addActionListener(e -> btnDeleteToken());
-                contentPanel.add(btnDeleteToken, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
+                contentPanel.add(btnDeleteToken, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0,
                     GridBagConstraints.CENTER, GridBagConstraints.BOTH,
                     new Insets(0, 0, 0, 0), 0, 0));
             }
@@ -165,6 +175,7 @@ public class PreferencesDialog extends JDialog {
     private JPanel dialogPane;
     private JPanel contentPanel;
     private JCheckBox cbxVerboseLogging;
+    private JLabel lblUser;
     private JButton btnDeleteToken;
     private JPanel buttonBar;
     private JButton okButton;

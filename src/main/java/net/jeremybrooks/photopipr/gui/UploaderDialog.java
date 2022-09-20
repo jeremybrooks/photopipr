@@ -99,7 +99,7 @@ public class UploaderDialog extends JDialog {
         spinnerQuantity.setValue(uploadAction.getQuantity());
         spinnerInterval.setValue(uploadAction.getInterval());
 
-        switch(PPConstants.SelectionOrder.valueOf(uploadAction.getSelectionOrder())) {
+        switch (PPConstants.SelectionOrder.valueOf(uploadAction.getSelectionOrder())) {
             case RANDOM -> cmbSelectionOrder.setSelectedIndex(0);
             case DATE_DESC -> cmbSelectionOrder.setSelectedIndex(1);
             case DATE_ASC -> cmbSelectionOrder.setSelectedIndex(2);
@@ -130,7 +130,17 @@ public class UploaderDialog extends JDialog {
         radioDelete.setSelected(uploadAction.getPostUploadAction().equals(UPLOAD_DONE_ACTION_DELETE));
         radioMove.setSelected(uploadAction.getPostUploadAction().equals(UPLOAD_DONE_ACTION_MOVE));
         txtMoveTo.setText(uploadAction.getMovePath());
-        cbxCreateFolders.setSelected(uploadAction.isCreateFolders());
+        ResourceBundle bundle = ResourceBundle.getBundle("net.jeremybrooks.photopipr.uploader");
+        DefaultComboBoxModel<String> folderCreateStrategyModel = new DefaultComboBoxModel<>();
+        folderCreateStrategyModel.addElement(bundle.getString("UploaderDialog.noNewDirectories"));
+        folderCreateStrategyModel.addElement(bundle.getString("UploaderDialog.dateTaken"));
+        folderCreateStrategyModel.addElement(bundle.getString("UploaderDialog.dateUploaded"));
+        cmbFolderCreateStrategy.setModel(folderCreateStrategyModel);
+        switch (PPConstants.DirectoryCreateStrategy.valueOf(uploadAction.getDirectoryCreateStrategy())) {
+            case NO_NEW_DIRECTORIES -> cmbFolderCreateStrategy.setSelectedIndex(0);
+            case DATE_TAKEN -> cmbFolderCreateStrategy.setSelectedIndex(1);
+            case DATE_UPLOADED -> cmbFolderCreateStrategy.setSelectedIndex(2);
+        }
         txtDateFormat.setText(uploadAction.getDateFormat());
 
         updateSampleDateFormat();
@@ -145,26 +155,20 @@ public class UploaderDialog extends JDialog {
         updateMoveFolderSelection();
     }
 
-    private void cbxUseDateActionPerformed() {
-        updateDateFolderComponents();
-    }
-
     private void updateMoveFolderSelection() {
         boolean enabled = radioMove.isSelected();
+        cmbFolderCreateStrategy.setEnabled(enabled);
         txtMoveTo.setEnabled(enabled);
         btnBrowseMove.setEnabled(enabled);
-        cbxCreateFolders.setEnabled(enabled);
-        updateDateFolderComponents();
-    }
 
-    private void updateDateFolderComponents() {
-        boolean enabled = cbxCreateFolders.isSelected() && radioMove.isSelected();
+        enabled = (enabled && cmbFolderCreateStrategy.getSelectedIndex() > 0);
         txtDateFormat.setEnabled(enabled);
         lblDateFormat.setEnabled(enabled);
         lblDateSample.setEnabled(enabled);
         btnDefaultDate.setEnabled(enabled);
         lblFolderNameSample.setEnabled(enabled);
     }
+
 
     private void btnCancelActionPerformed() {
         int confirm = JOptionPane.showConfirmDialog(this,
@@ -215,7 +219,14 @@ public class UploaderDialog extends JDialog {
                 uploadAction.setPostUploadAction(UPLOAD_DONE_ACTION_MOVE);
             }
             uploadAction.setMovePath(txtMoveTo.getText().trim());
-            uploadAction.setCreateFolders(cbxCreateFolders.isSelected());
+            switch (cmbFolderCreateStrategy.getSelectedIndex()) {
+                case 0 ->
+                        uploadAction.setDirectoryCreateStrategy(PPConstants.DirectoryCreateStrategy.NO_NEW_DIRECTORIES.name());
+                case 1 ->
+                        uploadAction.setDirectoryCreateStrategy(PPConstants.DirectoryCreateStrategy.DATE_TAKEN.name());
+                case 2 ->
+                        uploadAction.setDirectoryCreateStrategy(PPConstants.DirectoryCreateStrategy.DATE_UPLOADED.name());
+            }
             uploadAction.setDateFormat(txtDateFormat.getText().trim());
 
             if (radioModerate.isSelected()) {
@@ -250,13 +261,13 @@ public class UploaderDialog extends JDialog {
         }
 
         // if "move" is set, must have a valid directory
-        if (txtMoveTo.getText().equals(UPLOAD_DONE_ACTION_MOVE) &&
+        if (radioMove.isSelected() &&
                 !new File(txtMoveTo.getText()).exists()) {
             JOptionPane.showMessageDialog(this,
                     resourceBundle.getString("UploaderDialog.validationMoveDir.message"),
                     resourceBundle.getString("UploaderDialog.validation.title"),
                     JOptionPane.ERROR_MESSAGE);
-            tabbedPane1.setSelectedIndex(1);
+            tabbedPane1.setSelectedIndex(2);
             btnBrowseMove.requestFocus();
             return false;
         }
@@ -295,12 +306,12 @@ public class UploaderDialog extends JDialog {
         if (choice == JFileChooser.APPROVE_OPTION) {
             File f = jFileChooser.getSelectedFile();
             if (f.exists() && f.isDirectory()) {
-              txtMoveTo.setText(f.getAbsolutePath());
+                txtMoveTo.setText(f.getAbsolutePath());
             } else {
                 JOptionPane.showMessageDialog(this,
                         resourceBundle.getString("UploaderDialog.invalidLocation.message") + "\n" + f.getAbsolutePath(),
                         resourceBundle.getString("UploaderDialog.invalidLocation.title"),
-                        JOptionPane.ERROR_MESSAGE );
+                        JOptionPane.ERROR_MESSAGE);
             }
         }
     }
@@ -354,9 +365,9 @@ public class UploaderDialog extends JDialog {
     }
 
     private void lstGroupsMouseClicked(MouseEvent e) {
-       if (e.getClickCount() == 2) {
-           selectedGroupsModel.addItem(lstGroups.getSelectedValue());
-       }
+        if (e.getClickCount() == 2) {
+            selectedGroupsModel.addItem(lstGroups.getSelectedValue());
+        }
     }
 
     private void lstSelectedGroupsMouseClicked(MouseEvent e) {
@@ -370,6 +381,10 @@ public class UploaderDialog extends JDialog {
         if (index > -1) {
             groupRuleListModel.remove(index);
         }
+    }
+
+    private void cmbFolderCreateStrategy() {
+        updateMoveFolderSelection();
     }
 
 
@@ -433,7 +448,7 @@ public class UploaderDialog extends JDialog {
         radioMove = new JRadioButton();
         txtMoveTo = new JTextField();
         btnBrowseMove = new JButton();
-        cbxCreateFolders = new JCheckBox();
+        cmbFolderCreateStrategy = new JComboBox<>();
         panel2 = new JPanel();
         lblDateFormat = new JLabel();
         txtDateFormat = new JTextField();
@@ -477,9 +492,6 @@ public class UploaderDialog extends JDialog {
                         pnlBasic.add(label2, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
                             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
                             new Insets(0, 5, 5, 5), 0, 0));
-
-                        //---- txtSource ----
-                        txtSource.setEditable(false);
                         pnlBasic.add(txtSource, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0,
                             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
                             new Insets(0, 5, 5, 5), 0, 0));
@@ -739,9 +751,6 @@ public class UploaderDialog extends JDialog {
                         pnlArchive.add(radioMove, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
                             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
                             new Insets(0, 0, 5, 5), 0, 0));
-
-                        //---- txtMoveTo ----
-                        txtMoveTo.setEditable(false);
                         pnlArchive.add(txtMoveTo, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0,
                             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
                             new Insets(0, 0, 5, 5), 0, 0));
@@ -753,10 +762,9 @@ public class UploaderDialog extends JDialog {
                             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
                             new Insets(0, 0, 5, 0), 0, 0));
 
-                        //---- cbxCreateFolders ----
-                        cbxCreateFolders.setText(bundle.getString("UploaderDialog.cbxCreateFolders.text"));
-                        cbxCreateFolders.addActionListener(e -> cbxUseDateActionPerformed());
-                        pnlArchive.add(cbxCreateFolders, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0,
+                        //---- cmbFolderCreateStrategy ----
+                        cmbFolderCreateStrategy.addActionListener(e -> cmbFolderCreateStrategy());
+                        pnlArchive.add(cmbFolderCreateStrategy, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0,
                             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
                             new Insets(0, 0, 5, 5), 0, 0));
 
@@ -916,7 +924,7 @@ public class UploaderDialog extends JDialog {
     private JRadioButton radioMove;
     private JTextField txtMoveTo;
     private JButton btnBrowseMove;
-    private JCheckBox cbxCreateFolders;
+    private JComboBox<String> cmbFolderCreateStrategy;
     private JPanel panel2;
     private JLabel lblDateFormat;
     private JTextField txtDateFormat;

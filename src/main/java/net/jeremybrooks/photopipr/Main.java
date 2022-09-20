@@ -55,6 +55,7 @@ public class Main {
     public static String VERSION;
 
     public static void main(String... args) {
+        logger.info("PhotoPipr starting");
         if (System.getProperty("os.name").toLowerCase().contains("mac")) {
             System.setProperty("apple.laf.useScreenMenuBar", "true");
             System.setProperty("com.apple.mrj.application.apple.menu.about.name", "PhotoPipr");

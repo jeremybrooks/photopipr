@@ -38,6 +38,12 @@ public class PPConstants {
     TIMER, ALARM
   }
 
+  public enum DirectoryCreateStrategy {
+    NO_NEW_DIRECTORIES,
+    DATE_TAKEN,
+    DATE_UPLOADED
+  }
+
   public static final String FLICKR_API_KEY_PROPERTY = "FLICKR_KEY";
   public static final String FLICKR_API_SECRET_PROPERTY = "FLICKR_SECRET";
   public static final String PHOTOPIPR_HOME = System.getProperty("user.home") + "/.photopipr";
