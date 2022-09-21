@@ -47,6 +47,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
@@ -344,26 +345,6 @@ public class WorkflowWindow extends JFrame {
                 new TimerActionDialog(this, timerAction).setVisible(true));
     }
 
-    private void lstWorkflowMouseClicked(MouseEvent e) {
-        if (e.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(e)) {
-            int index = lstActions.getSelectedIndex();
-            Action action = actionListModel.getElementAt(index);
-            if (action instanceof TimerAction) {
-                SwingUtilities.invokeLater(() -> new TimerActionDialog(this, (TimerAction) action).setVisible(true));
-            } else if (action instanceof FinishAction) {
-                SwingUtilities.invokeLater(() -> new FinishActionDialog(this, (FinishAction) action).setVisible(true));
-            } else if (action instanceof UploadAction) {
-                SwingUtilities.invokeLater(() -> new UploaderDialog(this, (UploadAction) action, groups).setVisible(true));
-            } else {
-                logger.error("Unexpected Action class {}", action.getClass().getName());
-                JOptionPane.showMessageDialog(this,
-                        String.format(resourceBundle.getString("WorkflowWindow.dialog.badType.message"), action.getClass().getName()),
-                        resourceBundle.getString("WorkflowWindow.dialog.badType.title"),
-                        JOptionPane.ERROR_MESSAGE);
-            }
-        }
-    }
-
     private void mnuQuit() {
         System.exit(0);
     }
@@ -397,6 +378,33 @@ public class WorkflowWindow extends JFrame {
     }
 
     private void mnuDeleteAction() {
+        deleteAction();
+    }
+
+    private void mnuAbout() {
+        new AboutDialog(this).setVisible(true);
+    }
+
+    private void mnuPreferences() {
+        new PreferencesDialog(this).setVisible(true);
+    }
+
+    private void editAction() {
+        int index = lstActions.getSelectedIndex();
+        if (index > -1) {
+            Action action = actionListModel.getElementAt(index);
+            if (action instanceof TimerAction) {
+                SwingUtilities.invokeLater(() -> new TimerActionDialog(this, (TimerAction) action).setVisible(true));
+            } else if (action instanceof FinishAction) {
+                SwingUtilities.invokeLater(() -> new FinishActionDialog(this, (FinishAction) action).setVisible(true));
+            } else if (action instanceof UploadAction) {
+                SwingUtilities.invokeLater(() -> new UploaderDialog(this, (UploadAction) action, groups).setVisible(true));
+            }
+        }
+    }
+
+
+    private void deleteAction() {
         int index = lstActions.getSelectedIndex();
         if (index > -1) {
             Action action = lstActions.getSelectedValue();
@@ -415,12 +423,76 @@ public class WorkflowWindow extends JFrame {
         }
     }
 
-    private void mnuAbout() {
-        new AboutDialog(this).setVisible(true);
+    /*
+     * Check for popup in both mouse pressed and mouse released for maximum compatibility.
+     */
+    private void lstActionsMousePressed(MouseEvent e) {
+        if (e.isPopupTrigger()) {
+            showActionContextMenu(e);
+        } else if (e.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(e)) {
+            editAction();
+        }
     }
 
-    private void mnuPreferences() {
-        new PreferencesDialog(this).setVisible(true);
+    /*
+     * Check for popup in both mouse pressed and mouse released for maximum compatibility.
+     */
+    private void lstActionsMouseReleased(MouseEvent e) {
+        if (e.isPopupTrigger()) {
+            showActionContextMenu(e);
+        }
+    }
+
+    private void showActionContextMenu(MouseEvent e) {
+        if (e.getComponent() instanceof JList list) {
+            int index = e.getY() / (int) list.getCellBounds(0, 0).getHeight();
+            // show popup if the index is in bounds of the model size
+            if (index < list.getModel().getSize()) {
+                list.setSelectedIndex(index);
+                mnuCtxMoveDown.setEnabled(canActionMoveDown());
+                mnuCtxMoveUp.setEnabled(canActionMoveUp());
+                mnuCtxAction.show(e.getComponent(), e.getX(), e.getY());
+            }
+        }
+    }
+
+    private void mnuCtxEditAction() {
+        editAction();
+    }
+
+    private void mnuCtxDeleteAction() {
+        deleteAction();
+    }
+
+    private void mnuCtxMoveUp() {
+        if (canActionMoveUp()) {
+            int index = lstActions.getSelectedIndex();
+            Action action = actionListModel.remove(index);
+            actionListModel.add(index - 1, action);
+        }
+    }
+
+    private void mnuCtxMoveDown() {
+        if (canActionMoveDown()) {
+            int index = lstActions.getSelectedIndex();
+            Action action = actionListModel.remove(index);
+            actionListModel.add(index + 1, action);
+        }
+    }
+    private boolean canActionMoveUp() {
+        int index = lstActions.getSelectedIndex();
+        return index > 0 && index < (lstActions.getModel().getSize() - 1);
+    }
+    private boolean canActionMoveDown() {
+        return lstActions.getSelectedIndex() < (lstActions.getModel().getSize() - 2);
+    }
+
+    private void mnuCtxAddUpload() {
+        mnuAddUploadAction();
+    }
+
+    private void mnuCtxAddTime() {
+        mnuAddTimedAction();
     }
 
 
@@ -448,6 +520,14 @@ public class WorkflowWindow extends JFrame {
         scrollPane1 = new JScrollPane();
         lstActions = new JList<>();
         lblStatus = new JLabel();
+        mnuCtxAction = new JPopupMenu();
+        mnuCtxEditAction = new JMenuItem();
+        mnuCtxMoveUp = new JMenuItem();
+        mnuCtxMoveDown = new JMenuItem();
+        mnuCtxDeleteAction = new JMenuItem();
+        menu1 = new JMenu();
+        mnuCtxAddUpload = new JMenuItem();
+        mnuCtxAddTime = new JMenuItem();
 
         //======== this ========
         setIconImage(new ImageIcon(getClass().getResource("/net/jeremybrooks/photopipr/icons/icon-256.png")).getImage());
@@ -456,7 +536,6 @@ public class WorkflowWindow extends JFrame {
             public void componentMoved(ComponentEvent e) {
                 thisComponentMoved();
             }
-
             @Override
             public void componentResized(ComponentEvent e) {
                 thisComponentResized();
@@ -464,10 +543,10 @@ public class WorkflowWindow extends JFrame {
         });
         var contentPane = getContentPane();
         contentPane.setLayout(new GridBagLayout());
-        ((GridBagLayout) contentPane.getLayout()).columnWidths = new int[]{0, 0, 0};
-        ((GridBagLayout) contentPane.getLayout()).rowHeights = new int[]{0, 0, 0, 0};
-        ((GridBagLayout) contentPane.getLayout()).columnWeights = new double[]{0.0, 0.0, 1.0E-4};
-        ((GridBagLayout) contentPane.getLayout()).rowWeights = new double[]{0.0, 0.0, 0.0, 1.0E-4};
+        ((GridBagLayout)contentPane.getLayout()).columnWidths = new int[] {0, 0, 0};
+        ((GridBagLayout)contentPane.getLayout()).rowHeights = new int[] {0, 0, 0, 0};
+        ((GridBagLayout)contentPane.getLayout()).columnWeights = new double[] {0.0, 0.0, 1.0E-4};
+        ((GridBagLayout)contentPane.getLayout()).rowWeights = new double[] {0.0, 0.0, 0.0, 1.0E-4};
 
         //======== menuBar1 ========
         {
@@ -478,11 +557,13 @@ public class WorkflowWindow extends JFrame {
 
                 //---- mnuPreferences ----
                 mnuPreferences.setText(bundle.getString("WorkflowWindow.mnuPreferences.text"));
+                mnuPreferences.setIcon(new ImageIcon(getClass().getResource("/net/jeremybrooks/photopipr/icons/1200-file-type-settings.png")));
                 mnuPreferences.addActionListener(e -> mnuPreferences());
                 mnuFile.add(mnuPreferences);
 
                 //---- mnuQuit ----
                 mnuQuit.setText(bundle.getString("WorkflowWindow.mnuQuit.text"));
+                mnuQuit.setIcon(new ImageIcon(getClass().getResource("/net/jeremybrooks/photopipr/icons/602-exit.png")));
                 mnuQuit.addActionListener(e -> mnuQuit());
                 mnuFile.add(mnuQuit);
             }
@@ -493,13 +574,9 @@ public class WorkflowWindow extends JFrame {
                 mnuWorkflow.setText(bundle.getString("WorkflowWindow.mnuWorkflow.text"));
                 mnuWorkflow.addMenuListener(new MenuListener() {
                     @Override
-                    public void menuCanceled(MenuEvent e) {
-                    }
-
+                    public void menuCanceled(MenuEvent e) {}
                     @Override
-                    public void menuDeselected(MenuEvent e) {
-                    }
-
+                    public void menuDeselected(MenuEvent e) {}
                     @Override
                     public void menuSelected(MenuEvent e) {
                         mnuWorkflowMenuSelected();
@@ -508,21 +585,25 @@ public class WorkflowWindow extends JFrame {
 
                 //---- mnuNewWorkflow ----
                 mnuNewWorkflow.setText(bundle.getString("WorkflowWindow.mnuNewWorkflow.text"));
+                mnuNewWorkflow.setIcon(new ImageIcon(getClass().getResource("/net/jeremybrooks/photopipr/icons/33-circle-plus.png")));
                 mnuNewWorkflow.addActionListener(e -> mnuNewWorkflow());
                 mnuWorkflow.add(mnuNewWorkflow);
 
                 //---- mnuRenameWorkflow ----
                 mnuRenameWorkflow.setText(bundle.getString("WorkflowWindow.mnuRenameWorkflow.text"));
+                mnuRenameWorkflow.setIcon(new ImageIcon(getClass().getResource("/net/jeremybrooks/photopipr/icons/591-pencil.png")));
                 mnuRenameWorkflow.addActionListener(e -> mnuRenameWorkflow());
                 mnuWorkflow.add(mnuRenameWorkflow);
 
                 //---- mnuDeleteWorkflow ----
                 mnuDeleteWorkflow.setText(bundle.getString("WorkflowWindow.mnuDeleteWorkflow.text"));
+                mnuDeleteWorkflow.setIcon(new ImageIcon(getClass().getResource("/net/jeremybrooks/photopipr/icons/34-circle.minus.png")));
                 mnuDeleteWorkflow.addActionListener(e -> mnuDeleteWorkflow());
                 mnuWorkflow.add(mnuDeleteWorkflow);
 
                 //---- mnuRunWorkflow ----
                 mnuRunWorkflow.setText(bundle.getString("WorkflowWindow.mnuRunWorkflow.text"));
+                mnuRunWorkflow.setIcon(new ImageIcon(getClass().getResource("/net/jeremybrooks/photopipr/icons/36-circle-play.png")));
                 mnuRunWorkflow.addActionListener(e -> mnuRunWorkflow());
                 mnuWorkflow.add(mnuRunWorkflow);
                 mnuWorkflow.addSeparator();
@@ -530,6 +611,7 @@ public class WorkflowWindow extends JFrame {
                 //======== mnuAddAction ========
                 {
                     mnuAddAction.setText(bundle.getString("WorkflowWindow.mnuAddAction.text"));
+                    mnuAddAction.setIcon(new ImageIcon(getClass().getResource("/net/jeremybrooks/photopipr/icons/33-circle-plus.png")));
 
                     //---- mnuAddUploadAction ----
                     mnuAddUploadAction.setText(bundle.getString("WorkflowWindow.mnuAddUploadAction.text"));
@@ -545,6 +627,7 @@ public class WorkflowWindow extends JFrame {
 
                 //---- mnuDeleteAction ----
                 mnuDeleteAction.setText(bundle.getString("WorkflowWindow.mnuDeleteAction.text"));
+                mnuDeleteAction.setIcon(new ImageIcon(getClass().getResource("/net/jeremybrooks/photopipr/icons/34-circle.minus.png")));
                 mnuDeleteAction.addActionListener(e -> mnuDeleteAction());
                 mnuWorkflow.add(mnuDeleteAction);
             }
@@ -556,10 +639,12 @@ public class WorkflowWindow extends JFrame {
 
                 //---- menuItem1 ----
                 menuItem1.setText(bundle.getString("WorkflowWindow.menuItem1.text"));
+                menuItem1.setIcon(new ImageIcon(getClass().getResource("/net/jeremybrooks/photopipr/icons/441-help-symbol1.png")));
                 muHelp.add(menuItem1);
 
                 //---- mnuAbout ----
                 mnuAbout.setText(bundle.getString("WorkflowWindow.mnuAbout.text"));
+                mnuAbout.setIcon(new ImageIcon(getClass().getResource("/net/jeremybrooks/photopipr/icons/59-info-symbol.png")));
                 mnuAbout.addActionListener(e -> mnuAbout());
                 muHelp.add(mnuAbout);
             }
@@ -570,14 +655,14 @@ public class WorkflowWindow extends JFrame {
         //---- label1 ----
         label1.setText(bundle.getString("WorkflowWindow.label1.text"));
         contentPane.add(label1, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
-                GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-                new Insets(5, 5, 10, 10), 0, 0));
+            GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+            new Insets(5, 5, 10, 10), 0, 0));
 
         //---- cmbWorkflows ----
         cmbWorkflows.addItemListener(e -> cmbWorkflowsItemStateChanged());
         contentPane.add(cmbWorkflows, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0,
-                GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-                new Insets(0, 0, 5, 0), 0, 0));
+            GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+            new Insets(0, 0, 5, 0), 0, 0));
 
         //======== scrollPane1 ========
         {
@@ -586,22 +671,71 @@ public class WorkflowWindow extends JFrame {
             lstActions.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
             lstActions.addMouseListener(new MouseAdapter() {
                 @Override
-                public void mouseClicked(MouseEvent e) {
-                    lstWorkflowMouseClicked(e);
+                public void mousePressed(MouseEvent e) {
+                    lstActionsMousePressed(e);
+                }
+                @Override
+                public void mouseReleased(MouseEvent e) {
+                    lstActionsMouseReleased(e);
                 }
             });
             scrollPane1.setViewportView(lstActions);
         }
         contentPane.add(scrollPane1, new GridBagConstraints(0, 1, 2, 1, 0.0, 1.0,
-                GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-                new Insets(5, 5, 10, 5), 0, 0));
+            GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+            new Insets(5, 5, 10, 5), 0, 0));
 
         //---- lblStatus ----
         lblStatus.setText(bundle.getString("WorkflowWindow.lblStatus.text"));
         contentPane.add(lblStatus, new GridBagConstraints(0, 2, 2, 1, 0.0, 0.0,
-                GridBagConstraints.WEST, GridBagConstraints.VERTICAL,
-                new Insets(3, 5, 3, 0), 0, 0));
+            GridBagConstraints.WEST, GridBagConstraints.VERTICAL,
+            new Insets(3, 5, 3, 0), 0, 0));
         setLocationRelativeTo(getOwner());
+
+        //======== mnuCtxAction ========
+        {
+
+            //---- mnuCtxEditAction ----
+            mnuCtxEditAction.setText(bundle.getString("WorkflowWindow.mnuCtxEditAction.text"));
+            mnuCtxEditAction.setIcon(new ImageIcon(getClass().getResource("/net/jeremybrooks/photopipr/icons/591-pencil.png")));
+            mnuCtxEditAction.addActionListener(e -> mnuCtxEditAction());
+            mnuCtxAction.add(mnuCtxEditAction);
+
+            //---- mnuCtxMoveUp ----
+            mnuCtxMoveUp.setText(bundle.getString("WorkflowWindow.mnuCtxMoveUp.text"));
+            mnuCtxMoveUp.setIcon(new ImageIcon(getClass().getResource("/net/jeremybrooks/photopipr/icons/27-circle-north.png")));
+            mnuCtxMoveUp.addActionListener(e -> mnuCtxMoveUp());
+            mnuCtxAction.add(mnuCtxMoveUp);
+
+            //---- mnuCtxMoveDown ----
+            mnuCtxMoveDown.setText(bundle.getString("WorkflowWindow.mnuCtxMoveDown.text"));
+            mnuCtxMoveDown.setIcon(new ImageIcon(getClass().getResource("/net/jeremybrooks/photopipr/icons/23-circle-south.png")));
+            mnuCtxMoveDown.addActionListener(e -> mnuCtxMoveDown());
+            mnuCtxAction.add(mnuCtxMoveDown);
+
+            //---- mnuCtxDeleteAction ----
+            mnuCtxDeleteAction.setText(bundle.getString("WorkflowWindow.mnuCtxDeleteAction.text"));
+            mnuCtxDeleteAction.setIcon(new ImageIcon(getClass().getResource("/net/jeremybrooks/photopipr/icons/34-circle.minus.png")));
+            mnuCtxDeleteAction.addActionListener(e -> mnuCtxDeleteAction());
+            mnuCtxAction.add(mnuCtxDeleteAction);
+
+            //======== menu1 ========
+            {
+                menu1.setText(bundle.getString("WorkflowWindow.menu1.text"));
+                menu1.setIcon(new ImageIcon(getClass().getResource("/net/jeremybrooks/photopipr/icons/33-circle-plus.png")));
+
+                //---- mnuCtxAddUpload ----
+                mnuCtxAddUpload.setText(bundle.getString("WorkflowWindow.mnuCtxAddUpload.text"));
+                mnuCtxAddUpload.addActionListener(e -> mnuCtxAddUpload());
+                menu1.add(mnuCtxAddUpload);
+
+                //---- mnuCtxAddTime ----
+                mnuCtxAddTime.setText(bundle.getString("WorkflowWindow.mnuCtxAddTime.text"));
+                mnuCtxAddTime.addActionListener(e -> mnuCtxAddTime());
+                menu1.add(mnuCtxAddTime);
+            }
+            mnuCtxAction.add(menu1);
+        }
         // JFormDesigner - End of component initialization  //GEN-END:initComponents
     }
 
@@ -627,5 +761,13 @@ public class WorkflowWindow extends JFrame {
     private JScrollPane scrollPane1;
     private JList<Action> lstActions;
     private JLabel lblStatus;
+    private JPopupMenu mnuCtxAction;
+    private JMenuItem mnuCtxEditAction;
+    private JMenuItem mnuCtxMoveUp;
+    private JMenuItem mnuCtxMoveDown;
+    private JMenuItem mnuCtxDeleteAction;
+    private JMenu menu1;
+    private JMenuItem mnuCtxAddUpload;
+    private JMenuItem mnuCtxAddTime;
     // JFormDesigner - End of variables declaration  //GEN-END:variables
 }

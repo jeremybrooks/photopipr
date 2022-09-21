@@ -44,7 +44,8 @@ new FormModel {
 					auxiliary() {
 						"JavaCodeGenerator.typeParameters": "Action"
 					}
-					addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "lstWorkflowMouseClicked", true ) )
+					addEvent( new FormEvent( "java.awt.event.MouseListener", "mousePressed", "lstActionsMousePressed", true ) )
+					addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseReleased", "lstActionsMouseReleased", true ) )
 				} )
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 				"gridy": 1
@@ -69,11 +70,13 @@ new FormModel {
 					add( new FormComponent( "javax.swing.JMenuItem" ) {
 						name: "mnuPreferences"
 						"text": new FormMessage( null, "WorkflowWindow.mnuPreferences.text" )
+						"icon": new com.jformdesigner.model.SwingIcon( 0, "/net/jeremybrooks/photopipr/icons/1200-file-type-settings.png" )
 						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "mnuPreferences", false ) )
 					} )
 					add( new FormComponent( "javax.swing.JMenuItem" ) {
 						name: "mnuQuit"
 						"text": new FormMessage( null, "WorkflowWindow.mnuQuit.text" )
+						"icon": new com.jformdesigner.model.SwingIcon( 0, "/net/jeremybrooks/photopipr/icons/602-exit.png" )
 						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "mnuQuit", false ) )
 					} )
 				} )
@@ -84,21 +87,25 @@ new FormModel {
 					add( new FormComponent( "javax.swing.JMenuItem" ) {
 						name: "mnuNewWorkflow"
 						"text": new FormMessage( null, "WorkflowWindow.mnuNewWorkflow.text" )
+						"icon": new com.jformdesigner.model.SwingIcon( 0, "/net/jeremybrooks/photopipr/icons/33-circle-plus.png" )
 						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "mnuNewWorkflow", false ) )
 					} )
 					add( new FormComponent( "javax.swing.JMenuItem" ) {
 						name: "mnuRenameWorkflow"
 						"text": new FormMessage( null, "WorkflowWindow.mnuRenameWorkflow.text" )
+						"icon": new com.jformdesigner.model.SwingIcon( 0, "/net/jeremybrooks/photopipr/icons/591-pencil.png" )
 						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "mnuRenameWorkflow", false ) )
 					} )
 					add( new FormComponent( "javax.swing.JMenuItem" ) {
 						name: "mnuDeleteWorkflow"
 						"text": new FormMessage( null, "WorkflowWindow.mnuDeleteWorkflow.text" )
+						"icon": new com.jformdesigner.model.SwingIcon( 0, "/net/jeremybrooks/photopipr/icons/34-circle.minus.png" )
 						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "mnuDeleteWorkflow", false ) )
 					} )
 					add( new FormComponent( "javax.swing.JMenuItem" ) {
 						name: "mnuRunWorkflow"
 						"text": new FormMessage( null, "WorkflowWindow.mnuRunWorkflow.text" )
+						"icon": new com.jformdesigner.model.SwingIcon( 0, "/net/jeremybrooks/photopipr/icons/36-circle-play.png" )
 						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "mnuRunWorkflow", false ) )
 					} )
 					add( new FormComponent( "javax.swing.JPopupMenu$Separator" ) {
@@ -107,6 +114,7 @@ new FormModel {
 					add( new FormContainer( "javax.swing.JMenu", new FormLayoutManager( class javax.swing.JMenu ) ) {
 						name: "mnuAddAction"
 						"text": new FormMessage( null, "WorkflowWindow.mnuAddAction.text" )
+						"icon": new com.jformdesigner.model.SwingIcon( 0, "/net/jeremybrooks/photopipr/icons/33-circle-plus.png" )
 						add( new FormComponent( "javax.swing.JMenuItem" ) {
 							name: "mnuAddUploadAction"
 							"text": new FormMessage( null, "WorkflowWindow.mnuAddUploadAction.text" )
@@ -121,6 +129,7 @@ new FormModel {
 					add( new FormComponent( "javax.swing.JMenuItem" ) {
 						name: "mnuDeleteAction"
 						"text": new FormMessage( null, "WorkflowWindow.mnuDeleteAction.text" )
+						"icon": new com.jformdesigner.model.SwingIcon( 0, "/net/jeremybrooks/photopipr/icons/34-circle.minus.png" )
 						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "mnuDeleteAction", false ) )
 					} )
 				} )
@@ -130,10 +139,12 @@ new FormModel {
 					add( new FormComponent( "javax.swing.JMenuItem" ) {
 						name: "menuItem1"
 						"text": new FormMessage( null, "WorkflowWindow.menuItem1.text" )
+						"icon": new com.jformdesigner.model.SwingIcon( 0, "/net/jeremybrooks/photopipr/icons/441-help-symbol1.png" )
 					} )
 					add( new FormComponent( "javax.swing.JMenuItem" ) {
 						name: "mnuAbout"
 						"text": new FormMessage( null, "WorkflowWindow.mnuAbout.text" )
+						"icon": new com.jformdesigner.model.SwingIcon( 0, "/net/jeremybrooks/photopipr/icons/59-info-symbol.png" )
 						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "mnuAbout", false ) )
 					} )
 				} )
@@ -141,6 +152,50 @@ new FormModel {
 		}, new FormLayoutConstraints( null ) {
 			"location": new java.awt.Point( 0, 0 )
 			"size": new java.awt.Dimension( 550, 300 )
+		} )
+		add( new FormContainer( "javax.swing.JPopupMenu", new FormLayoutManager( class javax.swing.JPopupMenu ) ) {
+			name: "mnuCtxAction"
+			add( new FormComponent( "javax.swing.JMenuItem" ) {
+				name: "mnuCtxEditAction"
+				"text": new FormMessage( null, "WorkflowWindow.mnuCtxEditAction.text" )
+				"icon": new com.jformdesigner.model.SwingIcon( 0, "/net/jeremybrooks/photopipr/icons/591-pencil.png" )
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "mnuCtxEditAction", false ) )
+			} )
+			add( new FormComponent( "javax.swing.JMenuItem" ) {
+				name: "mnuCtxMoveUp"
+				"text": new FormMessage( null, "WorkflowWindow.mnuCtxMoveUp.text" )
+				"icon": new com.jformdesigner.model.SwingIcon( 0, "/net/jeremybrooks/photopipr/icons/27-circle-north.png" )
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "mnuCtxMoveUp", false ) )
+			} )
+			add( new FormComponent( "javax.swing.JMenuItem" ) {
+				name: "mnuCtxMoveDown"
+				"text": new FormMessage( null, "WorkflowWindow.mnuCtxMoveDown.text" )
+				"icon": new com.jformdesigner.model.SwingIcon( 0, "/net/jeremybrooks/photopipr/icons/23-circle-south.png" )
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "mnuCtxMoveDown", false ) )
+			} )
+			add( new FormComponent( "javax.swing.JMenuItem" ) {
+				name: "mnuCtxDeleteAction"
+				"text": new FormMessage( null, "WorkflowWindow.mnuCtxDeleteAction.text" )
+				"icon": new com.jformdesigner.model.SwingIcon( 0, "/net/jeremybrooks/photopipr/icons/34-circle.minus.png" )
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "mnuCtxDeleteAction", false ) )
+			} )
+			add( new FormContainer( "javax.swing.JMenu", new FormLayoutManager( class javax.swing.JMenu ) ) {
+				name: "menu1"
+				"text": new FormMessage( null, "WorkflowWindow.menu1.text" )
+				"icon": new com.jformdesigner.model.SwingIcon( 0, "/net/jeremybrooks/photopipr/icons/33-circle-plus.png" )
+				add( new FormComponent( "javax.swing.JMenuItem" ) {
+					name: "mnuCtxAddUpload"
+					"text": new FormMessage( null, "WorkflowWindow.mnuCtxAddUpload.text" )
+					addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "mnuCtxAddUpload", false ) )
+				} )
+				add( new FormComponent( "javax.swing.JMenuItem" ) {
+					name: "mnuCtxAddTime"
+					"text": new FormMessage( null, "WorkflowWindow.mnuCtxAddTime.text" )
+					addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "mnuCtxAddTime", false ) )
+				} )
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 5, 355 )
 		} )
 	}
 }
