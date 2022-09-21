@@ -228,9 +228,9 @@ public class TimerActionDialog extends JDialog {
                     //---- radioAlarm ----
                     radioAlarm.setText(bundle.getString("TimerActionDialog.radioAlarm.text"));
                     radioAlarm.addActionListener(e -> radioAlarm());
-                    alarmPanel.add(radioAlarm, new GridBagConstraints(0, 0, 3, 1, 0.0, 0.0,
+                    alarmPanel.add(radioAlarm, new GridBagConstraints(0, 0, 4, 1, 0.0, 0.0,
                         GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-                        new Insets(0, 0, 5, 5), 0, 0));
+                        new Insets(0, 0, 5, 0), 0, 0));
 
                     //---- hourSpinnerAlarm ----
                     hourSpinnerAlarm.setModel(new SpinnerNumberModel(0, 0, 23, 1));
