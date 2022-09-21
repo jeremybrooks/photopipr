@@ -557,13 +557,13 @@ public class WorkflowWindow extends JFrame {
 
                 //---- mnuPreferences ----
                 mnuPreferences.setText(bundle.getString("WorkflowWindow.mnuPreferences.text"));
-                mnuPreferences.setIcon(new ImageIcon(getClass().getResource("/net/jeremybrooks/photopipr/icons/1200-file-type-settings.png")));
+                mnuPreferences.setIcon(new ImageIcon(getClass().getResource("/net/jeremybrooks/photopipr/icons/14-gear-16.png")));
                 mnuPreferences.addActionListener(e -> mnuPreferences());
                 mnuFile.add(mnuPreferences);
 
                 //---- mnuQuit ----
                 mnuQuit.setText(bundle.getString("WorkflowWindow.mnuQuit.text"));
-                mnuQuit.setIcon(new ImageIcon(getClass().getResource("/net/jeremybrooks/photopipr/icons/602-exit.png")));
+                mnuQuit.setIcon(new ImageIcon(getClass().getResource("/net/jeremybrooks/photopipr/icons/602-exit-16.png")));
                 mnuQuit.addActionListener(e -> mnuQuit());
                 mnuFile.add(mnuQuit);
             }
@@ -585,25 +585,25 @@ public class WorkflowWindow extends JFrame {
 
                 //---- mnuNewWorkflow ----
                 mnuNewWorkflow.setText(bundle.getString("WorkflowWindow.mnuNewWorkflow.text"));
-                mnuNewWorkflow.setIcon(new ImageIcon(getClass().getResource("/net/jeremybrooks/photopipr/icons/33-circle-plus.png")));
+                mnuNewWorkflow.setIcon(new ImageIcon(getClass().getResource("/net/jeremybrooks/photopipr/icons/33-circle-plus-16.png")));
                 mnuNewWorkflow.addActionListener(e -> mnuNewWorkflow());
                 mnuWorkflow.add(mnuNewWorkflow);
 
                 //---- mnuRenameWorkflow ----
                 mnuRenameWorkflow.setText(bundle.getString("WorkflowWindow.mnuRenameWorkflow.text"));
-                mnuRenameWorkflow.setIcon(new ImageIcon(getClass().getResource("/net/jeremybrooks/photopipr/icons/591-pencil.png")));
+                mnuRenameWorkflow.setIcon(new ImageIcon(getClass().getResource("/net/jeremybrooks/photopipr/icons/591-pencil-16.png")));
                 mnuRenameWorkflow.addActionListener(e -> mnuRenameWorkflow());
                 mnuWorkflow.add(mnuRenameWorkflow);
 
                 //---- mnuDeleteWorkflow ----
                 mnuDeleteWorkflow.setText(bundle.getString("WorkflowWindow.mnuDeleteWorkflow.text"));
-                mnuDeleteWorkflow.setIcon(new ImageIcon(getClass().getResource("/net/jeremybrooks/photopipr/icons/34-circle.minus.png")));
+                mnuDeleteWorkflow.setIcon(new ImageIcon(getClass().getResource("/net/jeremybrooks/photopipr/icons/34-circle.minus-16.png")));
                 mnuDeleteWorkflow.addActionListener(e -> mnuDeleteWorkflow());
                 mnuWorkflow.add(mnuDeleteWorkflow);
 
                 //---- mnuRunWorkflow ----
                 mnuRunWorkflow.setText(bundle.getString("WorkflowWindow.mnuRunWorkflow.text"));
-                mnuRunWorkflow.setIcon(new ImageIcon(getClass().getResource("/net/jeremybrooks/photopipr/icons/36-circle-play.png")));
+                mnuRunWorkflow.setIcon(new ImageIcon(getClass().getResource("/net/jeremybrooks/photopipr/icons/36-circle-play-16.png")));
                 mnuRunWorkflow.addActionListener(e -> mnuRunWorkflow());
                 mnuWorkflow.add(mnuRunWorkflow);
                 mnuWorkflow.addSeparator();
@@ -611,15 +611,17 @@ public class WorkflowWindow extends JFrame {
                 //======== mnuAddAction ========
                 {
                     mnuAddAction.setText(bundle.getString("WorkflowWindow.mnuAddAction.text"));
-                    mnuAddAction.setIcon(new ImageIcon(getClass().getResource("/net/jeremybrooks/photopipr/icons/33-circle-plus.png")));
+                    mnuAddAction.setIcon(new ImageIcon(getClass().getResource("/net/jeremybrooks/photopipr/icons/33-circle-plus-16.png")));
 
                     //---- mnuAddUploadAction ----
                     mnuAddUploadAction.setText(bundle.getString("WorkflowWindow.mnuAddUploadAction.text"));
+                    mnuAddUploadAction.setIcon(new ImageIcon(getClass().getResource("/net/jeremybrooks/photopipr/icons/168-upload-photo-2-16.png")));
                     mnuAddUploadAction.addActionListener(e -> mnuAddUploadAction());
                     mnuAddAction.add(mnuAddUploadAction);
 
                     //---- mnuAddTimedAction ----
                     mnuAddTimedAction.setText(bundle.getString("WorkflowWindow.mnuAddTimedAction.text"));
+                    mnuAddTimedAction.setIcon(new ImageIcon(getClass().getResource("/net/jeremybrooks/photopipr/icons/1097-timer-2-16.png")));
                     mnuAddTimedAction.addActionListener(e -> mnuAddTimedAction());
                     mnuAddAction.add(mnuAddTimedAction);
                 }
@@ -627,7 +629,7 @@ public class WorkflowWindow extends JFrame {
 
                 //---- mnuDeleteAction ----
                 mnuDeleteAction.setText(bundle.getString("WorkflowWindow.mnuDeleteAction.text"));
-                mnuDeleteAction.setIcon(new ImageIcon(getClass().getResource("/net/jeremybrooks/photopipr/icons/34-circle.minus.png")));
+                mnuDeleteAction.setIcon(new ImageIcon(getClass().getResource("/net/jeremybrooks/photopipr/icons/34-circle.minus-16.png")));
                 mnuDeleteAction.addActionListener(e -> mnuDeleteAction());
                 mnuWorkflow.add(mnuDeleteAction);
             }
@@ -639,12 +641,12 @@ public class WorkflowWindow extends JFrame {
 
                 //---- menuItem1 ----
                 menuItem1.setText(bundle.getString("WorkflowWindow.menuItem1.text"));
-                menuItem1.setIcon(new ImageIcon(getClass().getResource("/net/jeremybrooks/photopipr/icons/441-help-symbol1.png")));
+                menuItem1.setIcon(new ImageIcon(getClass().getResource("/net/jeremybrooks/photopipr/icons/441-help-symbol1-16.png")));
                 muHelp.add(menuItem1);
 
                 //---- mnuAbout ----
                 mnuAbout.setText(bundle.getString("WorkflowWindow.mnuAbout.text"));
-                mnuAbout.setIcon(new ImageIcon(getClass().getResource("/net/jeremybrooks/photopipr/icons/59-info-symbol.png")));
+                mnuAbout.setIcon(new ImageIcon(getClass().getResource("/net/jeremybrooks/photopipr/icons/59-info-symbol-16.png")));
                 mnuAbout.addActionListener(e -> mnuAbout());
                 muHelp.add(mnuAbout);
             }
@@ -697,40 +699,42 @@ public class WorkflowWindow extends JFrame {
 
             //---- mnuCtxEditAction ----
             mnuCtxEditAction.setText(bundle.getString("WorkflowWindow.mnuCtxEditAction.text"));
-            mnuCtxEditAction.setIcon(new ImageIcon(getClass().getResource("/net/jeremybrooks/photopipr/icons/591-pencil.png")));
+            mnuCtxEditAction.setIcon(new ImageIcon(getClass().getResource("/net/jeremybrooks/photopipr/icons/591-pencil-16.png")));
             mnuCtxEditAction.addActionListener(e -> mnuCtxEditAction());
             mnuCtxAction.add(mnuCtxEditAction);
 
             //---- mnuCtxMoveUp ----
             mnuCtxMoveUp.setText(bundle.getString("WorkflowWindow.mnuCtxMoveUp.text"));
-            mnuCtxMoveUp.setIcon(new ImageIcon(getClass().getResource("/net/jeremybrooks/photopipr/icons/27-circle-north.png")));
+            mnuCtxMoveUp.setIcon(new ImageIcon(getClass().getResource("/net/jeremybrooks/photopipr/icons/27-circle-north-16.png")));
             mnuCtxMoveUp.addActionListener(e -> mnuCtxMoveUp());
             mnuCtxAction.add(mnuCtxMoveUp);
 
             //---- mnuCtxMoveDown ----
             mnuCtxMoveDown.setText(bundle.getString("WorkflowWindow.mnuCtxMoveDown.text"));
-            mnuCtxMoveDown.setIcon(new ImageIcon(getClass().getResource("/net/jeremybrooks/photopipr/icons/23-circle-south.png")));
+            mnuCtxMoveDown.setIcon(new ImageIcon(getClass().getResource("/net/jeremybrooks/photopipr/icons/23-circle-south-16.png")));
             mnuCtxMoveDown.addActionListener(e -> mnuCtxMoveDown());
             mnuCtxAction.add(mnuCtxMoveDown);
 
             //---- mnuCtxDeleteAction ----
             mnuCtxDeleteAction.setText(bundle.getString("WorkflowWindow.mnuCtxDeleteAction.text"));
-            mnuCtxDeleteAction.setIcon(new ImageIcon(getClass().getResource("/net/jeremybrooks/photopipr/icons/34-circle.minus.png")));
+            mnuCtxDeleteAction.setIcon(new ImageIcon(getClass().getResource("/net/jeremybrooks/photopipr/icons/34-circle.minus-16.png")));
             mnuCtxDeleteAction.addActionListener(e -> mnuCtxDeleteAction());
             mnuCtxAction.add(mnuCtxDeleteAction);
 
             //======== menu1 ========
             {
                 menu1.setText(bundle.getString("WorkflowWindow.menu1.text"));
-                menu1.setIcon(new ImageIcon(getClass().getResource("/net/jeremybrooks/photopipr/icons/33-circle-plus.png")));
+                menu1.setIcon(new ImageIcon(getClass().getResource("/net/jeremybrooks/photopipr/icons/33-circle-plus-16.png")));
 
                 //---- mnuCtxAddUpload ----
                 mnuCtxAddUpload.setText(bundle.getString("WorkflowWindow.mnuCtxAddUpload.text"));
+                mnuCtxAddUpload.setIcon(new ImageIcon(getClass().getResource("/net/jeremybrooks/photopipr/icons/168-upload-photo-2-16.png")));
                 mnuCtxAddUpload.addActionListener(e -> mnuCtxAddUpload());
                 menu1.add(mnuCtxAddUpload);
 
                 //---- mnuCtxAddTime ----
                 mnuCtxAddTime.setText(bundle.getString("WorkflowWindow.mnuCtxAddTime.text"));
+                mnuCtxAddTime.setIcon(new ImageIcon(getClass().getResource("/net/jeremybrooks/photopipr/icons/1097-timer-2-16.png")));
                 mnuCtxAddTime.addActionListener(e -> mnuCtxAddTime());
                 menu1.add(mnuCtxAddTime);
             }
