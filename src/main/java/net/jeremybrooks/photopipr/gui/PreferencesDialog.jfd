@@ -14,35 +14,34 @@ new FormModel {
 			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.BorderLayout ) ) {
 				name: "dialogPane"
 				"border": new javax.swing.border.EmptyBorder( 12, 12, 12, 12 )
-				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
-					"$columnSpecs": "0"
-					"$rowSpecs": "0, 0, 0"
-					"$hGap": 5
-					"$vGap": 5
-					"$alignTop": true
-					"$alignLeft": true
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridLayout ) {
+					"rows": 2
 				} ) {
 					name: "contentPanel"
-					add( new FormComponent( "javax.swing.JCheckBox" ) {
-						name: "cbxVerboseLogging"
-						"text": new FormMessage( null, "PreferencesDialog.cbxVerboseLogging.text" )
-						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "cbxVerboseLogging", false ) )
-					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) )
-					add( new FormComponent( "javax.swing.JLabel" ) {
-						name: "lblUser"
-						"text": new FormMessage( null, "PreferencesDialog.lblUser.text" )
-						auxiliary() {
-							"JavaCodeGenerator.postInitCode": "lblUser.setText(String.format(bundle.getString(\"PreferencesDialog.lblUser.text\"),\nJinxFactory.getInstance().getUsername()));\n"
-						}
-					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-						"gridy": 1
+					add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.FlowLayout ) ) {
+						name: "panel2"
+						"border": new javax.swing.border.TitledBorder( "i18nKey=PreferencesDialog.panel2.border" )
+						add( new FormComponent( "javax.swing.JCheckBox" ) {
+							name: "cbxVerboseLogging"
+							"text": new FormMessage( null, "PreferencesDialog.cbxVerboseLogging.text" )
+							addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "cbxVerboseLogging", false ) )
+						} )
 					} )
-					add( new FormComponent( "javax.swing.JButton" ) {
-						name: "btnDeleteToken"
-						"text": new FormMessage( null, "PreferencesDialog.btnDeleteToken.text" )
-						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnDeleteToken", false ) )
-					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-						"gridy": 2
+					add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.FlowLayout ) ) {
+						name: "panel1"
+						"border": new javax.swing.border.TitledBorder( "Flickr Authorization" )
+						add( new FormComponent( "javax.swing.JLabel" ) {
+							name: "lblUser"
+							"text": new FormMessage( null, "PreferencesDialog.lblUser.text" )
+							auxiliary() {
+								"JavaCodeGenerator.postInitCode": "lblUser.setText(String.format(bundle.getString(\"PreferencesDialog.lblUser.text\"),\nJinxFactory.getInstance().getUsername()));\n"
+							}
+						} )
+						add( new FormComponent( "javax.swing.JButton" ) {
+							name: "btnDeleteToken"
+							"text": new FormMessage( null, "PreferencesDialog.btnDeleteToken.text" )
+							addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnDeleteToken", false ) )
+						} )
 					} )
 				}, new FormLayoutConstraints( class java.lang.String ) {
 					"value": "Center"

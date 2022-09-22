@@ -61,7 +61,7 @@
         <commons-collections4.version>4.4</commons-collections4.version>
         <jinx.version>3.0.2</jinx.version>
         <junit.version>4.11</junit.version>
-        <log4j.version>2.18.0</log4j.version>
+        <log4j.version>2.19.0</log4j.version>
         <metadata-extractor.version>2.18.0</metadata-extractor.version>
 
         <!-- plugin versions -->

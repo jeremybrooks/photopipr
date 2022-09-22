@@ -23,6 +23,8 @@
 
 package net.jeremybrooks.photopipr.gui;
 
+import java.awt.*;
+import javax.swing.border.*;
 import net.jeremybrooks.photopipr.ConfigurationManager;
 import net.jeremybrooks.photopipr.JinxFactory;
 import net.jeremybrooks.photopipr.PPConstants;
@@ -100,7 +102,9 @@ public class PreferencesDialog extends JDialog {
         ResourceBundle bundle = ResourceBundle.getBundle("net.jeremybrooks.photopipr.preferences");
         dialogPane = new JPanel();
         contentPanel = new JPanel();
+        panel2 = new JPanel();
         cbxVerboseLogging = new JCheckBox();
+        panel1 = new JPanel();
         lblUser = new JLabel();
         btnDeleteToken = new JButton();
         buttonBar = new JPanel();
@@ -119,33 +123,37 @@ public class PreferencesDialog extends JDialog {
 
             //======== contentPanel ========
             {
-                contentPanel.setLayout(new GridBagLayout());
-                ((GridBagLayout)contentPanel.getLayout()).columnWidths = new int[] {0, 0};
-                ((GridBagLayout)contentPanel.getLayout()).rowHeights = new int[] {0, 0, 0, 0};
-                ((GridBagLayout)contentPanel.getLayout()).columnWeights = new double[] {0.0, 1.0E-4};
-                ((GridBagLayout)contentPanel.getLayout()).rowWeights = new double[] {0.0, 0.0, 0.0, 1.0E-4};
+                contentPanel.setLayout(new GridLayout(2, 0));
 
-                //---- cbxVerboseLogging ----
-                cbxVerboseLogging.setText(bundle.getString("PreferencesDialog.cbxVerboseLogging.text"));
-                cbxVerboseLogging.addActionListener(e -> cbxVerboseLogging());
-                contentPanel.add(cbxVerboseLogging, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
-                    GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-                    new Insets(0, 0, 5, 0), 0, 0));
+                //======== panel2 ========
+                {
+                    panel2.setBorder(new TitledBorder(bundle.getString("PreferencesDialog.panel2.border")));
+                    panel2.setLayout(new FlowLayout());
 
-                //---- lblUser ----
-                lblUser.setText(bundle.getString("PreferencesDialog.lblUser.text"));
-                lblUser.setText(String.format(bundle.getString("PreferencesDialog.lblUser.text"),
-                JinxFactory.getInstance().getUsername()));
-                contentPanel.add(lblUser, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
-                    GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-                    new Insets(0, 0, 5, 0), 0, 0));
+                    //---- cbxVerboseLogging ----
+                    cbxVerboseLogging.setText(bundle.getString("PreferencesDialog.cbxVerboseLogging.text"));
+                    cbxVerboseLogging.addActionListener(e -> cbxVerboseLogging());
+                    panel2.add(cbxVerboseLogging);
+                }
+                contentPanel.add(panel2);
 
-                //---- btnDeleteToken ----
-                btnDeleteToken.setText(bundle.getString("PreferencesDialog.btnDeleteToken.text"));
-                btnDeleteToken.addActionListener(e -> btnDeleteToken());
-                contentPanel.add(btnDeleteToken, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0,
-                    GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-                    new Insets(0, 0, 0, 0), 0, 0));
+                //======== panel1 ========
+                {
+                    panel1.setBorder(new TitledBorder("Flickr Authorization"));
+                    panel1.setLayout(new FlowLayout());
+
+                    //---- lblUser ----
+                    lblUser.setText(bundle.getString("PreferencesDialog.lblUser.text"));
+                    lblUser.setText(String.format(bundle.getString("PreferencesDialog.lblUser.text"),
+                    JinxFactory.getInstance().getUsername()));
+                    panel1.add(lblUser);
+
+                    //---- btnDeleteToken ----
+                    btnDeleteToken.setText(bundle.getString("PreferencesDialog.btnDeleteToken.text"));
+                    btnDeleteToken.addActionListener(e -> btnDeleteToken());
+                    panel1.add(btnDeleteToken);
+                }
+                contentPanel.add(panel1);
             }
             dialogPane.add(contentPanel, BorderLayout.CENTER);
 
@@ -174,7 +182,9 @@ public class PreferencesDialog extends JDialog {
     // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
     private JPanel dialogPane;
     private JPanel contentPanel;
+    private JPanel panel2;
     private JCheckBox cbxVerboseLogging;
+    private JPanel panel1;
     private JLabel lblUser;
     private JButton btnDeleteToken;
     private JPanel buttonBar;
