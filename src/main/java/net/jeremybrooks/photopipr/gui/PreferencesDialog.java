@@ -23,8 +23,6 @@
 
 package net.jeremybrooks.photopipr.gui;
 
-import java.awt.*;
-import javax.swing.border.*;
 import net.jeremybrooks.photopipr.ConfigurationManager;
 import net.jeremybrooks.photopipr.JinxFactory;
 import net.jeremybrooks.photopipr.PPConstants;
@@ -39,16 +37,27 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.TitledBorder;
 import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.Window;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.Serial;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ResourceBundle;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 /**
  * @author Jeremy Brooks
@@ -97,6 +106,44 @@ public class PreferencesDialog extends JDialog {
         JinxFactory.getInstance().setVerboseLogging(cbxVerboseLogging.isSelected());
     }
 
+    private void btnZipLogs() {
+        File zipfile = Paths.get(System.getProperty("user.home"), "Desktop",
+                        "PhotoPiprLogs_" + Instant.now().truncatedTo(ChronoUnit.SECONDS) + ".zip")
+                .toFile();
+        AtomicBoolean error = new AtomicBoolean(false);
+        try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(zipfile))) {
+            Path logDir = Paths.get(System.getProperty("user.home"), ".photopipr", "logs");
+            Files.list(logDir).forEach(path -> {
+                ZipEntry e = new ZipEntry("logs/" + path.getFileName().toString());
+                try {
+                    out.putNextEntry(e);
+                    byte[] data = Files.readAllBytes(path);
+                    out.write(data, 0, data.length);
+                    out.closeEntry();
+                } catch (IOException ioe) {
+                    logger.error("Error adding a zip entry.", ioe);
+                    error.set(true);
+                }
+            });
+        } catch (Exception e) {
+            logger.error("Error creating zip file.", e);
+            error.set(true);
+        }
+        ResourceBundle bundle = ResourceBundle.getBundle("net.jeremybrooks.photopipr.preferences");
+        if (error.get()) {
+            JOptionPane.showMessageDialog(this,
+                    bundle.getString("PreferencesDialog.ziperror.message"),
+                    bundle.getString("PreferencesDialog.ziperror.title"),
+                    JOptionPane.ERROR_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(this,
+                    String.format(bundle.getString("PreferencesDialog.zipok.message"), zipfile),
+                    bundle.getString("PreferencesDialog.zipok.title"),
+                    JOptionPane.INFORMATION_MESSAGE);
+        }
+
+    }
+
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
         ResourceBundle bundle = ResourceBundle.getBundle("net.jeremybrooks.photopipr.preferences");
@@ -104,6 +151,7 @@ public class PreferencesDialog extends JDialog {
         contentPanel = new JPanel();
         panel2 = new JPanel();
         cbxVerboseLogging = new JCheckBox();
+        btnZipLogs = new JButton();
         panel1 = new JPanel();
         lblUser = new JLabel();
         btnDeleteToken = new JButton();
@@ -134,6 +182,11 @@ public class PreferencesDialog extends JDialog {
                     cbxVerboseLogging.setText(bundle.getString("PreferencesDialog.cbxVerboseLogging.text"));
                     cbxVerboseLogging.addActionListener(e -> cbxVerboseLogging());
                     panel2.add(cbxVerboseLogging);
+
+                    //---- btnZipLogs ----
+                    btnZipLogs.setText(bundle.getString("PreferencesDialog.btnZipLogs.text"));
+                    btnZipLogs.addActionListener(e -> btnZipLogs());
+                    panel2.add(btnZipLogs);
                 }
                 contentPanel.add(panel2);
 
@@ -145,7 +198,7 @@ public class PreferencesDialog extends JDialog {
                     //---- lblUser ----
                     lblUser.setText(bundle.getString("PreferencesDialog.lblUser.text"));
                     lblUser.setText(String.format(bundle.getString("PreferencesDialog.lblUser.text"),
-                    JinxFactory.getInstance().getUsername()));
+                            JinxFactory.getInstance().getUsername()));
                     panel1.add(lblUser);
 
                     //---- btnDeleteToken ----
@@ -161,15 +214,15 @@ public class PreferencesDialog extends JDialog {
             {
                 buttonBar.setBorder(new EmptyBorder(12, 0, 0, 0));
                 buttonBar.setLayout(new GridBagLayout());
-                ((GridBagLayout)buttonBar.getLayout()).columnWidths = new int[] {0, 80};
-                ((GridBagLayout)buttonBar.getLayout()).columnWeights = new double[] {1.0, 0.0};
+                ((GridBagLayout) buttonBar.getLayout()).columnWidths = new int[]{0, 80};
+                ((GridBagLayout) buttonBar.getLayout()).columnWeights = new double[]{1.0, 0.0};
 
                 //---- okButton ----
                 okButton.setText(bundle.getString("PreferencesDialog.okButton.text"));
                 okButton.addActionListener(e -> ok());
                 buttonBar.add(okButton, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0,
-                    GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-                    new Insets(0, 0, 0, 0), 0, 0));
+                        GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                        new Insets(0, 0, 0, 0), 0, 0));
             }
             dialogPane.add(buttonBar, BorderLayout.SOUTH);
         }
@@ -184,6 +237,7 @@ public class PreferencesDialog extends JDialog {
     private JPanel contentPanel;
     private JPanel panel2;
     private JCheckBox cbxVerboseLogging;
+    private JButton btnZipLogs;
     private JPanel panel1;
     private JLabel lblUser;
     private JButton btnDeleteToken;
