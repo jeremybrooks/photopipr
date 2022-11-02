@@ -1,4 +1,4 @@
-JFDML JFormDesigner: "7.0.7.0.1134" Java: "17.0.4" encoding: "UTF-8"
+JFDML JFormDesigner: "8.0.0.0.194" Java: "17.0.4.1" encoding: "UTF-8"
 
 new FormModel {
 	"i18n.autoExternalize": true
@@ -11,46 +11,10 @@ new FormModel {
 			name: "this"
 			"modal": true
 			"title": new FormMessage( null, "PreferencesDialog.this.title" )
+			"$sizePolicy": 1
 			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.BorderLayout ) ) {
 				name: "dialogPane"
 				"border": new javax.swing.border.EmptyBorder( 12, 12, 12, 12 )
-				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridLayout ) {
-					"rows": 2
-				} ) {
-					name: "contentPanel"
-					add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.FlowLayout ) ) {
-						name: "panel2"
-						"border": new javax.swing.border.TitledBorder( "i18nKey=PreferencesDialog.panel2.border" )
-						add( new FormComponent( "javax.swing.JCheckBox" ) {
-							name: "cbxVerboseLogging"
-							"text": new FormMessage( null, "PreferencesDialog.cbxVerboseLogging.text" )
-							addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "cbxVerboseLogging", false ) )
-						} )
-						add( new FormComponent( "javax.swing.JButton" ) {
-							name: "btnZipLogs"
-							"text": new FormMessage( null, "PreferencesDialog.btnZipLogs.text" )
-							addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnZipLogs", false ) )
-						} )
-					} )
-					add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.FlowLayout ) ) {
-						name: "panel1"
-						"border": new javax.swing.border.TitledBorder( "Flickr Authorization" )
-						add( new FormComponent( "javax.swing.JLabel" ) {
-							name: "lblUser"
-							"text": new FormMessage( null, "PreferencesDialog.lblUser.text" )
-							auxiliary() {
-								"JavaCodeGenerator.postInitCode": "lblUser.setText(String.format(bundle.getString(\"PreferencesDialog.lblUser.text\"),\nJinxFactory.getInstance().getUsername()));\n"
-							}
-						} )
-						add( new FormComponent( "javax.swing.JButton" ) {
-							name: "btnDeleteToken"
-							"text": new FormMessage( null, "PreferencesDialog.btnDeleteToken.text" )
-							addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnDeleteToken", false ) )
-						} )
-					} )
-				}, new FormLayoutConstraints( class java.lang.String ) {
-					"value": "Center"
-				} )
 				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
 					"$columnSpecs": "0:1.0, 80"
 					"$rowSpecs": "0"
@@ -69,6 +33,106 @@ new FormModel {
 					} )
 				}, new FormLayoutConstraints( class java.lang.String ) {
 					"value": "South"
+				} )
+				add( new FormContainer( "javax.swing.JTabbedPane", new FormLayoutManager( class javax.swing.JTabbedPane ) ) {
+					name: "tabbedPane1"
+					add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
+						"$columnSpecs": "0"
+						"$rowSpecs": "0, 0"
+						"$hGap": 5
+						"$vGap": 5
+						"$alignTop": true
+						"$alignLeft": true
+					} ) {
+						name: "panel1"
+						"border": sfield com.jformdesigner.model.FormObject NULL_VALUE
+						add( new FormComponent( "javax.swing.JLabel" ) {
+							name: "lblUser"
+							"text": new FormMessage( null, "PreferencesDialog.lblUser.text" )
+							auxiliary() {
+								"JavaCodeGenerator.postInitCode": "lblUser.setText(String.format(bundle.getString(\"PreferencesDialog.lblUser.text\"),\nJinxFactory.getInstance().getUsername()));\n"
+							}
+						}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+							"weightx": 1.0
+							"insets": new java.awt.Insets( 5, 5, 5, 5 )
+						} )
+						add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.FlowLayout ) {
+							"alignment": 2
+						} ) {
+							name: "panel3"
+							add( new FormComponent( "javax.swing.JButton" ) {
+								name: "btnDeleteToken"
+								"text": new FormMessage( null, "PreferencesDialog.btnDeleteToken.text" )
+								addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnDeleteToken", false ) )
+							} )
+						}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+							"gridy": 1
+						} )
+					}, new FormLayoutConstraints( null ) {
+						"title": "Flickr Authorization"
+					} )
+					add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
+						"$columnSpecs": "0"
+						"$rowSpecs": "0, 0"
+						"$hGap": 5
+						"$vGap": 5
+						"$alignTop": true
+						"$alignLeft": true
+					} ) {
+						name: "panel2"
+						"border": sfield com.jformdesigner.model.FormObject NULL_VALUE
+						add( new FormComponent( "javax.swing.JCheckBox" ) {
+							name: "cbxVerboseLogging"
+							"text": new FormMessage( null, "PreferencesDialog.cbxVerboseLogging.text" )
+							addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "cbxVerboseLogging", false ) )
+						}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+							"weightx": 1.0
+							"insets": new java.awt.Insets( 5, 5, 5, 5 )
+						} )
+						add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.FlowLayout ) {
+							"alignment": 2
+						} ) {
+							name: "panel4"
+							add( new FormComponent( "javax.swing.JButton" ) {
+								name: "btnZipLogs"
+								"text": new FormMessage( null, "PreferencesDialog.btnZipLogs.text" )
+								addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnZipLogs", false ) )
+							} )
+						}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+							"gridy": 1
+						} )
+					}, new FormLayoutConstraints( null ) {
+						"title": "Logging"
+					} )
+					add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
+						"$columnSpecs": "0, 0"
+						"$rowSpecs": "0"
+						"$hGap": 5
+						"$vGap": 5
+						"$alignLeft": true
+						"$alignTop": true
+					} ) {
+						name: "panel5"
+						add( new FormComponent( "javax.swing.JCheckBox" ) {
+							name: "cbxDesktopAlert"
+							"text": new FormMessage( null, "PreferencesDialog.cbxDesktopAlert.text" )
+							addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "cbxDesktopAlerts", false ) )
+						}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+							"insets": new java.awt.Insets( 5, 5, 5, 5 )
+							"weightx": 1.0
+						} )
+						add( new FormComponent( "javax.swing.JButton" ) {
+							name: "btnSendTest"
+							"text": new FormMessage( null, "PreferencesDialog.btnSendTest.text" )
+							addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "btnSendTest", false ) )
+						}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+							"gridx": 1
+						} )
+					}, new FormLayoutConstraints( null ) {
+						"title": "Alerts"
+					} )
+				}, new FormLayoutConstraints( class java.lang.String ) {
+					"value": "North"
 				} )
 			}, new FormLayoutConstraints( class java.lang.String ) {
 				"value": "Center"

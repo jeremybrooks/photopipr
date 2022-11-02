@@ -25,6 +25,7 @@ public class Configuration {
     private int windowWidth = 600;
     private int windowHeight = 400;
     private boolean enableVerboseLogging = false;
+    private boolean enableDesktopAlerts = false;
 
     public int getWindowPositionX() {
         return windowPositionX;
@@ -65,4 +66,13 @@ public class Configuration {
     public void setEnableVerboseLogging(boolean enableVerboseLogging) {
         this.enableVerboseLogging = enableVerboseLogging;
     }
+
+    public boolean isEnableDesktopAlerts() {
+        return enableDesktopAlerts;
+    }
+
+    public void setEnableDesktopAlerts(boolean enableDesktopAlerts) {
+        this.enableDesktopAlerts = enableDesktopAlerts;
+    }
+
 }

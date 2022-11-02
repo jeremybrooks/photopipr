@@ -26,6 +26,7 @@ import net.jeremybrooks.jinx.response.photos.PermsSetResponse;
 import net.jeremybrooks.jinx.response.photos.upload.UploadResponse;
 import net.jeremybrooks.photopipr.JinxFactory;
 import net.jeremybrooks.photopipr.PPConstants;
+import net.jeremybrooks.photopipr.helper.DesktopAlert;
 import net.jeremybrooks.photopipr.helper.PhotoMetadata;
 import net.jeremybrooks.photopipr.helper.PhotoMetadataHelper;
 import net.jeremybrooks.photopipr.model.Action;
@@ -71,7 +72,7 @@ public class Upload {
     void go() {
         uploadAction.setHasErrors(false);
         uploadAction.setStatus(Action.Status.RUNNING);
-        uploadAction.setStatusMessage("Selecting " + uploadAction.getQuantity() + " photos...");
+        uploadAction.setStatusMessage("Selecting " + uploadAction.getQuantity() + " photos..." );
         workflowRunner.publish(uploadAction, index);
 
         List<Path> photos = getPhotos();
@@ -118,6 +119,11 @@ public class Upload {
             } catch (Exception e) {
                 logger.error("Error while processing photo {}", p, e);
                 uploadAction.setHasErrors(true);
+                new DesktopAlert()
+                        .withTitle("PhotoPipr Upload Error" )
+                        .withMessage("There was an error while uploading photo "
+                                + p.getFileName() + ".\nSee the logs for details.")
+                        .showAlert();
             }
         }
         uploadAction.setStatus(Action.Status.IDLE);
@@ -242,7 +248,8 @@ public class Upload {
                         Files.createDirectories(destDir);
                     }
                 }
-                default -> throw new Exception("Invalid directory create strategy " + uploadAction.getDirectoryCreateStrategy());
+                default ->
+                        throw new Exception("Invalid directory create strategy " + uploadAction.getDirectoryCreateStrategy());
             }
             Path dest = destDir.resolve(p.getFileName());
             logger.info("Moving {} to {}", p, dest);
@@ -263,7 +270,7 @@ public class Upload {
         for (GroupRule rule : uploadAction.getGroupRules()) {
             boolean match;
             List<String> tags = rule.getTags().stream()
-                    .map(s -> s.replaceAll(" ", "").toLowerCase())
+                    .map(s -> s.replaceAll(" ", "" ).toLowerCase())
                     .toList();
 
             if (rule.getTagMode().equals(TagMode.ALL.name())) {
