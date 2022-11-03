@@ -78,57 +78,63 @@ public class Upload {
         List<Path> photos = getPhotos();
         int count = 0;
         logger.info("Got {} photos to upload", photos.size());
-        for (Path p : photos) {
-            try {
-                PhotoMetadata uploadMetadata = PhotoMetadataHelper.readMetadata(p);
-                count++;
-                logger.info("Uploading photo {}", p);
-                uploadAction.setStatusMessage(String.format("[%d/%d] Uploading photo %s...", count,
-                        photos.size(), p.getFileName()));
-                workflowRunner.publish(uploadAction, index);
-                UploadResponse response = JinxFactory.getInstance().getPhotosUploadApi().upload(
-                        Files.readAllBytes(p),
-                        uploadMetadata.getTitle(), uploadAction.getDescription(),
-                        null, false, false, false, null,
-                        null, false, false);
-                logger.info(response);
-                logger.info("Photo {} uploaded with ID {}", p, response.getPhotoId());
+        if (photos.isEmpty()) {
+            uploadAction.setStatus(Action.Status.IDLE);
+            uploadAction.setStatusMessage("No photos found to upload at " + new Date());
+            workflowRunner.publish(uploadAction, index);
+        } else {
+            for (Path p : photos) {
+                try {
+                    PhotoMetadata uploadMetadata = PhotoMetadataHelper.readMetadata(p);
+                    count++;
+                    logger.info("Uploading photo {}", p);
+                    uploadAction.setStatusMessage(String.format("[%d/%d] Uploading photo %s...", count,
+                            photos.size(), p.getFileName()));
+                    workflowRunner.publish(uploadAction, index);
+                    UploadResponse response = JinxFactory.getInstance().getPhotosUploadApi().upload(
+                            Files.readAllBytes(p),
+                            uploadMetadata.getTitle(), uploadAction.getDescription(),
+                            null, false, false, false, null,
+                            null, false, false);
+                    logger.info(response);
+                    logger.info("Photo {} uploaded with ID {}", p, response.getPhotoId());
 
-                if (uploadAction.isMakePrivate()) {
-                    makePrivate(response.getPhotoId(), count, photos.size());
-                }
-                if (!uploadAction.getSafetyLevel().equals(JinxConstants.SafetyLevel.safe.name())) {
-                    changeSafetyLevel(response.getPhotoId(), count, photos.size());
-                }
+                    if (uploadAction.isMakePrivate()) {
+                        makePrivate(response.getPhotoId(), count, photos.size());
+                    }
+                    if (!uploadAction.getSafetyLevel().equals(JinxConstants.SafetyLevel.safe.name())) {
+                        changeSafetyLevel(response.getPhotoId(), count, photos.size());
+                    }
 
-                // handle uploaded photo
-                switch (uploadAction.getPostUploadAction()) {
-                    case UPLOAD_DONE_ACTION_DELETE -> delete(p);
-                    case UPLOAD_DONE_ACTION_MOVE -> move(p, uploadMetadata);
-                    default -> logger.warn("Unexpected post-upload action {}", uploadAction.getPostUploadAction());
-                }
+                    // handle uploaded photo
+                    switch (uploadAction.getPostUploadAction()) {
+                        case UPLOAD_DONE_ACTION_DELETE -> delete(p);
+                        case UPLOAD_DONE_ACTION_MOVE -> move(p, uploadMetadata);
+                        default -> logger.warn("Unexpected post-upload action {}", uploadAction.getPostUploadAction());
+                    }
 
-                processGroupRules(p, uploadMetadata, response.getPhotoId());
+                    processGroupRules(p, uploadMetadata, response.getPhotoId());
 
-                // sleep
-                if (count < photos.size() && uploadAction.getInterval() > 0) {
-                    new TimeDelay(workflowRunner, uploadAction, index,
-                            String.format("[%d/%d] Sleeping", count, photos.size()),
-                            uploadAction.getInterval() * 60 * 1000L).go();
+                    // sleep
+                    if (count < photos.size() && uploadAction.getInterval() > 0) {
+                        new TimeDelay(workflowRunner, uploadAction, index,
+                                String.format("[%d/%d] Sleeping", count, photos.size()),
+                                uploadAction.getInterval() * 60 * 1000L).go();
+                    }
+                } catch (Exception e) {
+                    logger.error("Error while processing photo {}", p, e);
+                    uploadAction.setHasErrors(true);
+                    new DesktopAlert()
+                            .withTitle("PhotoPipr Upload Error" )
+                            .withMessage("There was an error while uploading photo "
+                                    + p.getFileName() + ".\nSee the logs for details." )
+                            .showAlert();
                 }
-            } catch (Exception e) {
-                logger.error("Error while processing photo {}", p, e);
-                uploadAction.setHasErrors(true);
-                new DesktopAlert()
-                        .withTitle("PhotoPipr Upload Error" )
-                        .withMessage("There was an error while uploading photo "
-                                + p.getFileName() + ".\nSee the logs for details.")
-                        .showAlert();
             }
+            uploadAction.setStatus(Action.Status.IDLE);
+            uploadAction.setStatusMessage("Upload action completed at " + new Date());
+            workflowRunner.publish(uploadAction, index);
         }
-        uploadAction.setStatus(Action.Status.IDLE);
-        uploadAction.setStatusMessage("Upload action completed at " + new Date());
-        workflowRunner.publish(uploadAction, index);
     }
 
     private List<Path> getPhotos() {
