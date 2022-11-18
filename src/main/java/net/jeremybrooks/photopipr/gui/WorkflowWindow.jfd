@@ -1,4 +1,4 @@
-JFDML JFormDesigner: "7.0.7.0.1134" Java: "17.0.4" encoding: "UTF-8"
+JFDML JFormDesigner: "8.0.0.0.194" Java: "17.0.4.1" encoding: "UTF-8"
 
 new FormModel {
 	"i18n.bundlePackage": "net.jeremybrooks.photopipr"
@@ -107,6 +107,12 @@ new FormModel {
 						"text": new FormMessage( null, "WorkflowWindow.mnuRunWorkflow.text" )
 						"icon": new com.jformdesigner.model.SwingIcon( 0, "/net/jeremybrooks/photopipr/icons/36-circle-play-16.png" )
 						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "mnuRunWorkflow", false ) )
+					} )
+					add( new FormComponent( "javax.swing.JMenuItem" ) {
+						name: "mnuStopWorkflow"
+						"text": new FormMessage( null, "WorkflowWindow.mnuStopWorkflow.text" )
+						"icon": new com.jformdesigner.model.SwingIcon( 0, "/net/jeremybrooks/photopipr/icons/1243-stop-16.png" )
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "mnuStopWorkflow", false ) )
 					} )
 					add( new FormComponent( "javax.swing.JPopupMenu$Separator" ) {
 						name: "separator1"

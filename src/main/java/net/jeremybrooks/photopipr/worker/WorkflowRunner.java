@@ -85,9 +85,21 @@ public class WorkflowRunner extends SwingWorker<Void, WorkflowRunner.ActionUpdat
                 }
             }
         } while (repeat);
-        WorkflowWindow.getInstance().setBusy(false);
+        WorkflowWindow.getInstance().workflowRunnerFinished();
         return null;
     }
+
+    public void cancelWorkflow() {
+        cancel(true);
+        for (int i = 0; i < actionListModel.size(); i++) {
+            Action a = actionListModel.get(i);
+            a.setStatus(Action.Status.IDLE);
+            a.setStatusMessage("Execution canceled.");
+            publish(a, i);
+        }
+        WorkflowWindow.getInstance().workflowRunnerFinished();
+    }
+
 
     void publish(Action action, int index) {
         publish(new ActionUpdate(action, index));
@@ -98,7 +110,7 @@ public class WorkflowRunner extends SwingWorker<Void, WorkflowRunner.ActionUpdat
         chunks.forEach(c -> actionListModel.set(c.index, c.action));
     }
 
-    public class ActionUpdate {
+    public static class ActionUpdate {
         private final Action action;
         private final int index;
         ActionUpdate(Action action, int index) {

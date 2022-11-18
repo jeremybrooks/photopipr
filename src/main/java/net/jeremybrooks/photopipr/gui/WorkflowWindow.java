@@ -88,6 +88,8 @@ public class WorkflowWindow extends JFrame {
 
     private final Comparator<Workflow> workflowComparator = Comparator.comparing(workflow -> workflow.getName().toLowerCase());
 
+    private WorkflowRunner workflowRunner;
+
     public WorkflowWindow(List<Workflow> workflows) {
         try {
             initComponents();
@@ -321,6 +323,7 @@ public class WorkflowWindow extends JFrame {
         mnuAddAction.setEnabled(hasWorkflows);
         mnuAddUploadAction.setEnabled(hasWorkflows);
         mnuAddTimedAction.setEnabled(hasWorkflows);
+        mnuStopWorkflow.setEnabled(hasWorkflows && busy);
     }
 
     private void mnuAddUploadAction() {
@@ -351,7 +354,8 @@ public class WorkflowWindow extends JFrame {
 
     private void mnuRunWorkflow() {
         lstActions.clearSelection();
-        new WorkflowRunner(actionListModel).execute();
+        workflowRunner = new WorkflowRunner(actionListModel);
+        workflowRunner.execute();
     }
 
     private void thisComponentMoved() {
@@ -495,6 +499,20 @@ public class WorkflowWindow extends JFrame {
         mnuAddTimedAction();
     }
 
+    /**
+     * Called by the WorkflowRunner when it has completed.
+     */
+    public void workflowRunnerFinished() {
+        workflowRunner = null;
+        setBusy(false);
+    }
+
+    private void mnuStopWorkflow() {
+       if (workflowRunner != null) {
+           workflowRunner.cancelWorkflow();
+       }
+    }
+
 
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
@@ -508,6 +526,7 @@ public class WorkflowWindow extends JFrame {
         mnuRenameWorkflow = new JMenuItem();
         mnuDeleteWorkflow = new JMenuItem();
         mnuRunWorkflow = new JMenuItem();
+        mnuStopWorkflow = new JMenuItem();
         mnuAddAction = new JMenu();
         mnuAddUploadAction = new JMenuItem();
         mnuAddTimedAction = new JMenuItem();
@@ -606,6 +625,12 @@ public class WorkflowWindow extends JFrame {
                 mnuRunWorkflow.setIcon(new ImageIcon(getClass().getResource("/net/jeremybrooks/photopipr/icons/36-circle-play-16.png")));
                 mnuRunWorkflow.addActionListener(e -> mnuRunWorkflow());
                 mnuWorkflow.add(mnuRunWorkflow);
+
+                //---- mnuStopWorkflow ----
+                mnuStopWorkflow.setText(bundle.getString("WorkflowWindow.mnuStopWorkflow.text"));
+                mnuStopWorkflow.setIcon(new ImageIcon(getClass().getResource("/net/jeremybrooks/photopipr/icons/1243-stop-16.png")));
+                mnuStopWorkflow.addActionListener(e -> mnuStopWorkflow());
+                mnuWorkflow.add(mnuStopWorkflow);
                 mnuWorkflow.addSeparator();
 
                 //======== mnuAddAction ========
@@ -753,6 +778,7 @@ public class WorkflowWindow extends JFrame {
     private JMenuItem mnuRenameWorkflow;
     private JMenuItem mnuDeleteWorkflow;
     private JMenuItem mnuRunWorkflow;
+    private JMenuItem mnuStopWorkflow;
     private JMenu mnuAddAction;
     private JMenuItem mnuAddUploadAction;
     private JMenuItem mnuAddTimedAction;
