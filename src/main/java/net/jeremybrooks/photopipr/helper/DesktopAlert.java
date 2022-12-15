@@ -25,36 +25,79 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 
+/**
+ * Show a desktop alert on macOS systems.
+ *
+ * <p>This class uses osascript to display a notification on the desktop. If the user is
+ * on a non-mac OS, calling the methods in this class will have no effect.</p>
+ *
+ * <p>To use this class:</p>
+ * <pre>
+ *     {@code
+ *     new DesktopAlert()
+ *         .withMessage("This is a test message sent at " + new Date() + ".")
+ *         .withTitle("Test Message")
+ *         .withSubtitle("from PhotoPipr")
+ *         .showAlert();
+ *     }
+ * </pre>
+ */
 public class DesktopAlert {
     private static final Logger logger = LogManager.getLogger();
     private String message;
     private String title;
     private String subtitle;
 
+    /**
+     * Specify the message to display.
+     *
+     * @param message the message text to display.
+     */
     public DesktopAlert withMessage(String message) {
         this.message = message;
         return this;
     }
 
+    /**
+     * Specify the title to display.
+     *
+     * @param title the title text to display.
+     * @return this instance of DesktopAlert for chaining.
+     */
     public DesktopAlert withTitle(String title) {
         this.title = title;
         return this;
     }
 
+    /**
+     * Specify the subtitle to display.
+     *
+     * @param subtitle the subtitle text to display.
+     * @return this instance of DesktopAlert for chaining.
+     */
     public DesktopAlert withSubtitle(String subtitle) {
         this.subtitle = subtitle;
         return this;
     }
 
+    /**
+     * Show the desktop alert.
+     *
+     * <p>If running on macOS, and if the user has enabled desktop alerts, this
+     * method will exec the osascript utility to display a desktop alert with the
+     * desired message.</p>
+     */
     public void showAlert() {
-        if (ConfigurationManager.getConfig().isEnableDesktopAlerts()) {
-            String cmd = String.format("display notification \"%s\" with title \"%s\" subtitle \"%s\"",
-                    message, title, subtitle);
-            try {
-                Runtime.getRuntime().exec(new String[]{"osascript", "-e", cmd});
-            } catch (IOException ioe) {
-                logger.warn("Error showing alert for message {}, title {}, subtitle {}",
-                        message, title, subtitle, ioe);
+        if (System.getProperty("os.name").toLowerCase().contains("mac")) {
+            if (ConfigurationManager.getConfig().isEnableDesktopAlerts()) {
+                String cmd = String.format("display notification \"%s\" with title \"%s\" subtitle \"%s\"",
+                        message, title, subtitle);
+                try {
+                    Runtime.getRuntime().exec(new String[]{"osascript", "-e", cmd});
+                } catch (IOException ioe) {
+                    logger.warn("Error showing alert for message {}, title {}, subtitle {}",
+                            message, title, subtitle, ioe);
+                }
             }
         }
     }
