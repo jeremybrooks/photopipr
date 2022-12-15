@@ -6,8 +6,18 @@ import net.jeremybrooks.photopipr.gui.WorkflowWindow;
 
 import java.awt.Desktop;
 
+/**
+ * A class to set up desktop support when running on macOS.
+ */
 public class MacOSSetup {
 
+    /**
+     * Set up the macOS specific desktop behavior.
+     *
+     * <p>To set this up, call it as follows:</p>
+     *
+     * {@code Class.forName("net.jeremybrooks.photopipr.MacOSSetup").getDeclaredConstructor().newInstance();}
+     */
     public MacOSSetup() {
         Desktop.getDesktop().setAboutHandler(ae ->
                 new AboutDialog(WorkflowWindow.getInstance()).setVisible(true));
