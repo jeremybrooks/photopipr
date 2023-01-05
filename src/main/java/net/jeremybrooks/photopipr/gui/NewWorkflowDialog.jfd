@@ -3,7 +3,7 @@ JFDML JFormDesigner: "7.0.7.0.1134" Java: "17.0.4" encoding: "UTF-8"
 new FormModel {
 	"i18n.autoExternalize": true
 	"i18n.bundlePackage": "net.jeremybrooks.photopipr"
-	"i18n.bundleName": "workflowwindow"
+	"i18n.bundleName": "newworkflowdialog"
 	"i18n.keyPrefix": "NewWorkflowDialog"
 	contentType: "form/swing"
 	root: new FormRoot {

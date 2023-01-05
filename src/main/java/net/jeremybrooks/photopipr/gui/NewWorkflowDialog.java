@@ -83,7 +83,7 @@ public class NewWorkflowDialog extends JDialog {
 
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
-        ResourceBundle bundle = ResourceBundle.getBundle("net.jeremybrooks.photopipr.workflowwindow");
+        ResourceBundle bundle = ResourceBundle.getBundle("net.jeremybrooks.photopipr.newworkflowdialog");
         dialogPane = new JPanel();
         contentPanel = new JPanel();
         label1 = new JLabel();

@@ -53,6 +53,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
+import java.awt.Cursor;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -125,6 +126,7 @@ public class WorkflowWindow extends JFrame {
             }
             workflowWindow = this;
             busy = false;
+            updateMenuStates();
 
             // hide some menu items if running on macOS
             if (System.getProperty("os.name").toLowerCase().contains("mac")) {
@@ -317,12 +319,12 @@ public class WorkflowWindow extends JFrame {
 
     private void mnuWorkflowMenuSelected() {
         boolean hasWorkflows = (workflowComboBoxModel.getSize() > 0);
-        mnuDeleteWorkflow.setEnabled(hasWorkflows);
-        mnuRenameWorkflow.setEnabled(hasWorkflows);
-        mnuRunWorkflow.setEnabled(hasWorkflows);
-        mnuAddAction.setEnabled(hasWorkflows);
-        mnuAddUploadAction.setEnabled(hasWorkflows);
-        mnuAddTimedAction.setEnabled(hasWorkflows);
+        mnuDeleteWorkflow.setEnabled(hasWorkflows && !busy);
+        mnuRenameWorkflow.setEnabled(hasWorkflows && !busy);
+        mnuRunWorkflow.setEnabled(hasWorkflows && !busy);
+        mnuAddAction.setEnabled(hasWorkflows && !busy);
+        mnuAddUploadAction.setEnabled(hasWorkflows && !busy);
+        mnuAddTimedAction.setEnabled(hasWorkflows && !busy);
         mnuStopWorkflow.setEnabled(hasWorkflows && busy);
     }
 
@@ -374,11 +376,25 @@ public class WorkflowWindow extends JFrame {
 
     public void setBusy(boolean busy) {
         this.busy = busy;
+        updateMenuStates();
+        cmbWorkflows.setEnabled(!busy);
         if (busy) {
-            disabledGlassPane.activate("");
+            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         } else {
-            disabledGlassPane.deactivate();
+            setCursor(null);
         }
+    }
+
+    private void updateMenuStates() {
+        mnuNewWorkflow.setEnabled(!busy);
+        mnuRenameWorkflow.setEnabled(!busy);
+        mnuDeleteWorkflow.setEnabled(!busy);
+        mnuRunWorkflow.setEnabled(!busy);
+        mnuStopWorkflow.setEnabled(busy);
+        mnuAddAction.setEnabled(!busy);
+        mnuAddTimedAction.setEnabled(!busy);
+        mnuAddUploadAction.setEnabled(!busy);
+        mnuDeleteAction.setEnabled(!busy);
     }
 
     private void mnuDeleteAction() {
@@ -397,12 +413,19 @@ public class WorkflowWindow extends JFrame {
         int index = lstActions.getSelectedIndex();
         if (index > -1) {
             Action action = actionListModel.getElementAt(index);
-            if (action instanceof TimerAction) {
-                SwingUtilities.invokeLater(() -> new TimerActionDialog(this, (TimerAction) action).setVisible(true));
-            } else if (action instanceof FinishAction) {
-                SwingUtilities.invokeLater(() -> new FinishActionDialog(this, (FinishAction) action).setVisible(true));
-            } else if (action instanceof UploadAction) {
-                SwingUtilities.invokeLater(() -> new UploaderDialog(this, (UploadAction) action, groups).setVisible(true));
+            if (action.getStatus() == Action.Status.RUNNING) {
+                JOptionPane.showMessageDialog(this,
+                        resourceBundle.getString("WorkflowWindow.actionBusy.message"),
+                        resourceBundle.getString("WorkflowWindow.actionBusy.title"),
+                        JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                if (action instanceof TimerAction) {
+                    SwingUtilities.invokeLater(() -> new TimerActionDialog(this, (TimerAction) action).setVisible(true));
+                } else if (action instanceof FinishAction) {
+                    SwingUtilities.invokeLater(() -> new FinishActionDialog(this, (FinishAction) action).setVisible(true));
+                } else if (action instanceof UploadAction) {
+                    SwingUtilities.invokeLater(() -> new UploaderDialog(this, (UploadAction) action, groups).setVisible(true));
+                }
             }
         }
     }
@@ -452,10 +475,17 @@ public class WorkflowWindow extends JFrame {
             int index = e.getY() / (int) list.getCellBounds(0, 0).getHeight();
             // show popup if the index is in bounds of the model size
             if (index < list.getModel().getSize()) {
-                list.setSelectedIndex(index);
-                mnuCtxMoveDown.setEnabled(canActionMoveDown());
-                mnuCtxMoveUp.setEnabled(canActionMoveUp());
-                mnuCtxAction.show(e.getComponent(), e.getX(), e.getY());
+                if (busy) {
+                    JOptionPane.showMessageDialog(this,
+                            resourceBundle.getString("WorkflowWindow.workflowBusy.message"),
+                            resourceBundle.getString("WorkflowWindow.workflowBusy.title"),
+                            JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    list.setSelectedIndex(index);
+                    mnuCtxMoveDown.setEnabled(canActionMoveDown());
+                    mnuCtxMoveUp.setEnabled(canActionMoveUp());
+                    mnuCtxAction.show(e.getComponent(), e.getX(), e.getY());
+                }
             }
         }
     }
