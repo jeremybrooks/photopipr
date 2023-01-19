@@ -34,10 +34,17 @@ import static net.jeremybrooks.photopipr.PPConstants.*;
 
 public class WorkflowRunner extends SwingWorker<Void, WorkflowRunner.ActionUpdate> {
 
+    private int startIndex;
+
     private final DefaultListModel<Action> actionListModel;
 
     public WorkflowRunner(DefaultListModel<Action> actionListModel) {
+        this(actionListModel, 0);
+    }
+
+    public WorkflowRunner(DefaultListModel<Action> actionListModel, int startIndex) {
         this.actionListModel = actionListModel;
+        this.startIndex = startIndex;
     }
 
     @Override
@@ -46,13 +53,18 @@ public class WorkflowRunner extends SwingWorker<Void, WorkflowRunner.ActionUpdat
         // set all the actions to PENDING
         for (int i = 0; i < actionListModel.size(); i++) {
             Action a = actionListModel.get(i);
-            a.setStatus(Action.Status.PENDING);
-            a.setStatusMessage("Execution pending...");
+            if (i < startIndex) {
+                a.setStatus(Action.Status.IDLE);
+                a.setStatusMessage("Execution skipped.");
+            } else {
+                a.setStatus(Action.Status.PENDING);
+                a.setStatusMessage("Execution pending...");
+            }
             publish(a, i);
         }
         boolean repeat = false;
         do {
-            for (int i = 0; i < actionListModel.size(); i++) {
+            for (int i = startIndex; i < actionListModel.size(); i++) {
                 Action a = actionListModel.get(i);
                 if (a instanceof TimerAction ta) {
                     new TimeDelay(this, ta, i, "Sleeping", ta.getSleepMillis()).go();
@@ -68,6 +80,7 @@ public class WorkflowRunner extends SwingWorker<Void, WorkflowRunner.ActionUpdat
                         }
                         case FINISH_ACTION_REPEAT -> {
                             repeat = fa.getFinishMode().equals(FINISH_ACTION_REPEAT);
+                            fa.setStatusMessage("Workflow restarted at " + new Date());
                             for (int j = 0; j < actionListModel.size(); j++) {
                                 Action action = actionListModel.get(j);
                                 action.setStatus(Action.Status.PENDING);
@@ -84,6 +97,7 @@ public class WorkflowRunner extends SwingWorker<Void, WorkflowRunner.ActionUpdat
                     // todo unknown action
                 }
             }
+            startIndex = 0;
         } while (repeat);
         WorkflowWindow.getInstance().workflowRunnerFinished();
         return null;

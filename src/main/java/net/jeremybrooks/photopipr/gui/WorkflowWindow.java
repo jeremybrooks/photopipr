@@ -355,8 +355,12 @@ public class WorkflowWindow extends JFrame {
     }
 
     private void mnuRunWorkflow() {
+        startWorkflowRunner(0);
+    }
+
+    private void startWorkflowRunner(int startIndex) {
         lstActions.clearSelection();
-        workflowRunner = new WorkflowRunner(actionListModel);
+        workflowRunner = new WorkflowRunner(actionListModel, startIndex);
         workflowRunner.execute();
     }
 
@@ -543,6 +547,10 @@ public class WorkflowWindow extends JFrame {
        }
     }
 
+    private void mnuCtxRunFromHere() {
+        startWorkflowRunner(lstActions.getSelectedIndex());
+    }
+
 
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
@@ -577,6 +585,7 @@ public class WorkflowWindow extends JFrame {
         menu1 = new JMenu();
         mnuCtxAddUpload = new JMenuItem();
         mnuCtxAddTime = new JMenuItem();
+        mnuCtxRunFromHere = new JMenuItem();
 
         //======== this ========
         setIconImage(new ImageIcon(getClass().getResource("/net/jeremybrooks/photopipr/icons/icon-256.png")).getImage());
@@ -794,6 +803,13 @@ public class WorkflowWindow extends JFrame {
                 menu1.add(mnuCtxAddTime);
             }
             mnuCtxAction.add(menu1);
+            mnuCtxAction.addSeparator();
+
+            //---- mnuCtxRunFromHere ----
+            mnuCtxRunFromHere.setText(bundle.getString("WorkflowWindow.mnuCtxRunFromHere.text"));
+            mnuCtxRunFromHere.setIcon(new ImageIcon(getClass().getResource("/net/jeremybrooks/photopipr/icons/36-circle-play-16.png")));
+            mnuCtxRunFromHere.addActionListener(e -> mnuCtxRunFromHere());
+            mnuCtxAction.add(mnuCtxRunFromHere);
         }
         // JFormDesigner - End of component initialization  //GEN-END:initComponents
     }
@@ -829,5 +845,6 @@ public class WorkflowWindow extends JFrame {
     private JMenu menu1;
     private JMenuItem mnuCtxAddUpload;
     private JMenuItem mnuCtxAddTime;
+    private JMenuItem mnuCtxRunFromHere;
     // JFormDesigner - End of variables declaration  //GEN-END:variables
 }

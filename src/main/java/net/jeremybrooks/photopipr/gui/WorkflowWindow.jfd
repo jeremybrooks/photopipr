@@ -1,4 +1,4 @@
-JFDML JFormDesigner: "8.0.0.0.194" Java: "17.0.4.1" encoding: "UTF-8"
+JFDML JFormDesigner: "8.0.1.0.199" Java: "17.0.5" encoding: "UTF-8"
 
 new FormModel {
 	"i18n.bundlePackage": "net.jeremybrooks.photopipr"
@@ -203,6 +203,15 @@ new FormModel {
 					"icon": new com.jformdesigner.model.SwingIcon( 0, "/net/jeremybrooks/photopipr/icons/1097-timer-2-16.png" )
 					addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "mnuCtxAddTime", false ) )
 				} )
+			} )
+			add( new FormComponent( "javax.swing.JPopupMenu$Separator" ) {
+				name: "separator2"
+			} )
+			add( new FormComponent( "javax.swing.JMenuItem" ) {
+				name: "mnuCtxRunFromHere"
+				"text": new FormMessage( null, "WorkflowWindow.mnuCtxRunFromHere.text" )
+				"icon": new com.jformdesigner.model.SwingIcon( 0, "/net/jeremybrooks/photopipr/icons/36-circle-play-16.png" )
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "mnuCtxRunFromHere", false ) )
 			} )
 		}, new FormLayoutConstraints( null ) {
 			"location": new java.awt.Point( 5, 355 )
