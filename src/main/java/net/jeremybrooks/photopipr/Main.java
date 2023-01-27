@@ -52,7 +52,6 @@ public class Main {
     /* This is where the authorization token will be saved */
     public static final Path APP_HOME = Paths.get(PPConstants.PHOTOPIPR_HOME);
     private static final Path AUTH_TOKEN_FILE = Paths.get(PPConstants.PHOTOPIPR_HOME, PPConstants.PHOTOPIPR_AUTH_TOKEN);
-    public static String VERSION;
 
     public static void main(String... args) {
         logger.info("PhotoPipr starting");
@@ -65,12 +64,6 @@ public class Main {
             } catch (Exception e) {
                 logger.error("Could not find class.", e);
             }
-        }
-        Package p = Main.class.getPackage();
-        if (p != null && p.getImplementationVersion() != null) {
-            VERSION = p.getImplementationVersion();
-        } else {
-            VERSION = "0.0.0";
         }
 
         if (!Files.exists(APP_HOME)) {

@@ -31,7 +31,6 @@ import net.jeremybrooks.jinx.api.PhotosApi;
 import net.jeremybrooks.jinx.api.PhotosUploadApi;
 import net.jeremybrooks.jinx.logger.JinxLogger;
 import net.jeremybrooks.jinx.logger.LogInterface;
-import net.jeremybrooks.jinx.response.photos.Photo;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -97,13 +96,6 @@ public class JinxFactory {
     return JinxFactory.jinx.getAccessToken(requestToken, verificationCode);
   }
 
-  OAuthApi getoAuthApi() {
-    if (oAuthApi == null) {
-      oAuthApi = new OAuthApi(jinx);
-    }
-    return oAuthApi;
-  }
-
   public PhotosApi getPhotosApi() {
     if (photosApi == null) {
       photosApi = new PhotosApi(jinx);
@@ -136,20 +128,7 @@ public class JinxFactory {
     return jinx.getoAuthAccessToken() == null ? "not authorized" : jinx.getoAuthAccessToken().getUsername();
   }
 
-  /**
-   * Build the photo page URL for this photo.
-   * <p>
-   * Photo URLs are in the format
-   * https://www.flickr.com/photos/{user-id}/{photo-id}
-   *
-   * @param photo photo to build the URL for.
-   * @return string representation of the photo page URL.
-   */
-  public String buildUrlForPhoto(Photo photo) {
-    return "https://www.flickr.com/photos/" + jinx.getoAuthAccessToken().getNsid() + '/' + photo.getPhotoId();
-  }
-
-  public static class JinxLog4jLogger implements LogInterface {
+    public static class JinxLog4jLogger implements LogInterface {
     private static final Logger logger = LogManager.getLogger();
 
     @Override
