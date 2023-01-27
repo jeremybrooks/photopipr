@@ -24,7 +24,6 @@ import net.jeremybrooks.jinx.response.groups.Groups;
 import javax.swing.ListModel;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
-import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -34,8 +33,6 @@ import java.util.List;
  * This is a model that sorts items by the Group Name.
  */
 public class GroupListModel implements ListModel<Groups.Group> {
-    @Serial
-    private static final long serialVersionUID = -1663484177547622986L;
 
     private List<Groups.Group> items;
     private final List<Groups.Group> allItems;
@@ -71,11 +68,6 @@ public class GroupListModel implements ListModel<Groups.Group> {
             }
         });
         items.sort(groupComparator);
-        notifyListeners();
-    }
-
-    public void removeItemAt(int index) {
-        items.remove(index);
         notifyListeners();
     }
 

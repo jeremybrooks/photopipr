@@ -37,11 +37,12 @@ import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
 import java.io.Serial;
 import java.util.ResourceBundle;
 
-import static net.jeremybrooks.photopipr.PPConstants.*;
+import static net.jeremybrooks.photopipr.PPConstants.FINISH_ACTION_EXIT;
+import static net.jeremybrooks.photopipr.PPConstants.FINISH_ACTION_REPEAT;
+import static net.jeremybrooks.photopipr.PPConstants.FINISH_ACTION_STOP;
 
 /**
  * @author Jeremy Brooks
@@ -63,12 +64,12 @@ public class FinishActionDialog extends JDialog {
     radioStop.setSelected(action.getFinishMode().equals(FINISH_ACTION_STOP));
   }
 
-  private void cancelButtonActionPerformed(ActionEvent e) {
+  private void cancelButtonActionPerformed() {
     setVisible(false);
     dispose();
   }
 
-  private void okButtonActionPerformed(ActionEvent e) {
+  private void okButtonActionPerformed() {
       if (radioExit.isSelected()) {
           action.setFinishMode(FINISH_ACTION_EXIT);
       } else if (radioRepeat.isSelected()) {
@@ -155,14 +156,14 @@ public class FinishActionDialog extends JDialog {
 
             //---- okButton ----
             okButton.setText(bundle.getString("FinishActionDialog.okButton.text"));
-            okButton.addActionListener(e -> okButtonActionPerformed(e));
+            okButton.addActionListener(e -> okButtonActionPerformed());
             buttonBar.add(okButton, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0,
                 GridBagConstraints.CENTER, GridBagConstraints.BOTH,
                 new Insets(0, 0, 0, 5), 0, 0));
 
             //---- cancelButton ----
             cancelButton.setText(bundle.getString("FinishActionDialog.cancelButton.text"));
-            cancelButton.addActionListener(e -> cancelButtonActionPerformed(e));
+            cancelButton.addActionListener(e -> cancelButtonActionPerformed());
             buttonBar.add(cancelButton, new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0,
                 GridBagConstraints.CENTER, GridBagConstraints.BOTH,
                 new Insets(0, 0, 0, 0), 0, 0));
