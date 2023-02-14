@@ -475,7 +475,7 @@ public class WorkflowWindow extends JFrame {
     }
 
     private void showActionContextMenu(MouseEvent e) {
-        if (e.getComponent() instanceof JList list) {
+        if (e.getComponent() instanceof JList<?> list) {
             int index = e.getY() / (int) list.getCellBounds(0, 0).getHeight();
             // show popup if the index is in bounds of the model size
             if (index < list.getModel().getSize()) {

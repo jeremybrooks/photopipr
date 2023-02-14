@@ -28,13 +28,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * This is a model that sorts items by the Group Name.
  */
 public class GroupListModel implements ListModel<Groups.Group> {
 
-    private List<Groups.Group> items;
+    private final List<Groups.Group> items;
     private final List<Groups.Group> allItems;
     private final List<ListDataListener> listeners;
     private final Comparator<Groups.Group> groupComparator = Comparator.comparing(group -> group.getName().toLowerCase());
@@ -43,11 +44,7 @@ public class GroupListModel implements ListModel<Groups.Group> {
         this(null);
     }
     public GroupListModel(List<Groups.Group> groupList) {
-        if (groupList == null) {
-            allItems = new ArrayList<>();
-        } else {
-            allItems = groupList;
-        }
+        allItems = Objects.requireNonNullElseGet(groupList, ArrayList::new);
         items = new ArrayList<>(allItems);
         listeners = new ArrayList<>();
     }
@@ -77,7 +74,7 @@ public class GroupListModel implements ListModel<Groups.Group> {
     }
 
     public void removeItems(List<Groups.Group> groups) {
-        groups.forEach(group -> items.remove(group));
+        groups.forEach(items::remove);
         notifyListeners();
     }
 

@@ -113,7 +113,7 @@ public class Upload {
                         default -> logger.warn("Unexpected post-upload action {}", uploadAction.getPostUploadAction());
                     }
 
-                    processGroupRules(p, uploadMetadata, response.getPhotoId());
+                    processGroupRules(uploadMetadata, response.getPhotoId());
 
                     // sleep
                     if (count < photos.size() && uploadAction.getInterval() > 0) {
@@ -267,7 +267,7 @@ public class Upload {
     }
 
 
-    private void processGroupRules(Path p, PhotoMetadata metadata, String photoId) {
+    private void processGroupRules(PhotoMetadata metadata, String photoId) {
         Set<GroupRule.FlickrGroup> groupSet = new HashSet<>();
 
         // attempt to match the keywords in the photo against each rule.

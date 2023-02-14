@@ -38,10 +38,6 @@ public class WorkflowRunner extends SwingWorker<Void, WorkflowRunner.ActionUpdat
 
     private final DefaultListModel<Action> actionListModel;
 
-    public WorkflowRunner(DefaultListModel<Action> actionListModel) {
-        this(actionListModel, 0);
-    }
-
     public WorkflowRunner(DefaultListModel<Action> actionListModel, int startIndex) {
         this.actionListModel = actionListModel;
         this.startIndex = startIndex;
