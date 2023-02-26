@@ -65,7 +65,6 @@
         <metadata-extractor.version>2.18.0</metadata-extractor.version>
 
         <!-- plugin versions -->
-        <gitflow-maven-plugin.version>1.14.0</gitflow-maven-plugin.version>
         <maven-compiler-plugin.version>2.3.2</maven-compiler-plugin.version>
         <maven-dependency-plugin.version>3.1.2</maven-dependency-plugin.version>
         <maven-deploy-plugin.version>2.8.2</maven-deploy-plugin.version>
@@ -173,14 +172,6 @@
                 <version>${maven-javadoc-plugin.version}</version>
                 <configuration>
                     <source>8</source>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>com.amashchenko.maven.plugin</groupId>
-                <artifactId>gitflow-maven-plugin</artifactId>
-                <version>${gitflow-maven-plugin.version}</version>
-                <configuration>
-                    <skipTestProject>true</skipTestProject>
                 </configuration>
             </plugin>
             <plugin>
