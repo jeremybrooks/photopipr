@@ -306,6 +306,7 @@ public class WorkflowWindow extends JFrame {
                     Workflow w = (Workflow) workflowComboBoxModel.getSelectedItem();
                     actionListModel.addAll(w.getActions());
                 }
+                saveWorkflows();
             }
         }
     }
