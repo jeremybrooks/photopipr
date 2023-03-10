@@ -1,4 +1,4 @@
-JFDML JFormDesigner: "8.0.1.0.199" Java: "17.0.5" encoding: "UTF-8"
+JFDML JFormDesigner: "8.0.2.0.220" Java: "17.0.6" encoding: "UTF-8"
 
 new FormModel {
 	"i18n.bundlePackage": "net.jeremybrooks.photopipr"
@@ -154,6 +154,12 @@ new FormModel {
 						"text": new FormMessage( null, "WorkflowWindow.mnuAbout.text" )
 						"icon": new com.jformdesigner.model.SwingIcon( 0, "/net/jeremybrooks/photopipr/icons/59-info-symbol-16.png" )
 						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "mnuAbout", false ) )
+					} )
+					add( new FormComponent( "javax.swing.JMenuItem" ) {
+						name: "mnuCompress"
+						"text": new FormMessage( null, "WorkflowWindow.mnuCompress.text" )
+						"icon": new com.jformdesigner.model.SwingIcon( 0, "/net/jeremybrooks/photopipr/icons/1197-file-type-zip-16.png" )
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "mnuCompress", false ) )
 					} )
 				} )
 			}

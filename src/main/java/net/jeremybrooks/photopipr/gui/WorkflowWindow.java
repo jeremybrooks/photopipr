@@ -26,6 +26,7 @@ package net.jeremybrooks.photopipr.gui;
 import net.jeremybrooks.jinx.response.groups.Groups;
 import net.jeremybrooks.photopipr.ConfigurationManager;
 import net.jeremybrooks.photopipr.JinxFactory;
+import net.jeremybrooks.photopipr.Main;
 import net.jeremybrooks.photopipr.model.Action;
 import net.jeremybrooks.photopipr.model.Configuration;
 import net.jeremybrooks.photopipr.model.FinishAction;
@@ -40,6 +41,7 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -62,14 +64,25 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.io.Serial;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.concurrent.Executors;
+import java.util.stream.Stream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 /**
  * @author Jeremy Brooks
@@ -518,10 +531,12 @@ public class WorkflowWindow extends JFrame {
             actionListModel.add(index + 1, action);
         }
     }
+
     private boolean canActionMoveUp() {
         int index = lstActions.getSelectedIndex();
         return index > 0 && index < (lstActions.getModel().getSize() - 1);
     }
+
     private boolean canActionMoveDown() {
         return lstActions.getSelectedIndex() < (lstActions.getModel().getSize() - 2);
     }
@@ -543,13 +558,85 @@ public class WorkflowWindow extends JFrame {
     }
 
     private void mnuStopWorkflow() {
-       if (workflowRunner != null) {
-           workflowRunner.cancelWorkflow();
-       }
+        if (workflowRunner != null) {
+            workflowRunner.cancelWorkflow();
+        }
     }
 
     private void mnuCtxRunFromHere() {
         startWorkflowRunner(lstActions.getSelectedIndex());
+    }
+
+    private void mnuCompress() {
+        JFileChooser jfc = new JFileChooser();
+        jfc.setDialogTitle(resourceBundle.getString("WorkflowWindow.ziplogs.dialog.title.text"));
+        jfc.setDialogType(JFileChooser.OPEN_DIALOG);
+        jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
+        if (jfc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd'T'HHmmss");
+            String filename = "photopipr-logs-"
+                    + sdf.format(new Date()) + ".zip";
+            File zipFile = new File(jfc.getSelectedFile(), filename);
+            logger.info("Creating archive {}", zipFile.getAbsolutePath());
+
+            List<Path> configList = new ArrayList<>();
+            List<Path> logList = new ArrayList<>();
+            try (Stream<Path> s = Files.list(Main.APP_HOME)) {
+                configList.addAll(s.filter(p -> p.getFileName().toString().endsWith(".json"))
+                        .toList());
+            } catch (Exception e) {
+                logger.warn("Error while reading config files.", e);
+            }
+            try (Stream<Path> s = Files.list(Paths.get(Main.APP_HOME.toString(), "logs"))) {
+                logList.addAll(s.filter(p -> p.getFileName().toString().endsWith(".log"))
+                        .toList());
+            } catch (Exception e) {
+                logger.warn("Error while reading log files.", e);
+            }
+
+            byte[] buf = new byte[1024];
+            try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(zipFile))) {
+                zipFile.createNewFile();
+                logger.info("Adding {} config files to zip.", configList.size());
+                for (Path configFile : configList) {
+                    logger.info("Adding file {} to archive.", configFile);
+                    try (InputStream in = Files.newInputStream(configFile)) {
+                        out.putNextEntry(new ZipEntry(configFile.getFileName().toString()));
+                        int len;
+                        while ((len = in.read(buf)) > 0) {
+                            out.write(buf, 0, len);
+                        }
+                        out.closeEntry();
+                    }
+                }
+                out.putNextEntry(new ZipEntry("logs/"));
+                logger.info("Adding {} log files to zip.", logList.size());
+                for (Path logFile : logList) {
+                    logger.info("Adding file {} to archive.", logFile);
+                    try (InputStream in = Files.newInputStream(logFile)) {
+                        out.putNextEntry(new ZipEntry("logs/" + logFile.getFileName()));
+                        int len;
+                        while ((len = in.read(buf)) > 0) {
+                            out.write(buf, 0, len);
+                        }
+                        out.closeEntry();
+                    }
+                }
+                JOptionPane.showMessageDialog(this,
+                        resourceBundle.getString("WorkflowWindow.dialog.zipfile.created.message1") +
+                                " " + new File(jfc.getSelectedFile(), filename).getAbsolutePath() + "\n" +
+                                resourceBundle.getString("WorkflowWindow.dialog.zipfile.created.message2"),
+                        resourceBundle.getString("WorkflowWindow.dialog.zipfile.created.title"),
+                        JOptionPane.INFORMATION_MESSAGE);
+            } catch (Exception e) {
+                logger.warn("ERROR CREATING ZIP.", e);
+                JOptionPane.showMessageDialog(this,
+                        resourceBundle.getString("WorkflowWindow.dialog.zipfile.error.message"),
+                        resourceBundle.getString("WorkflowWindow.dialog.zipfile.error.title"),
+                        JOptionPane.INFORMATION_MESSAGE);
+            }
+        }
     }
 
 
@@ -573,6 +660,7 @@ public class WorkflowWindow extends JFrame {
         muHelp = new JMenu();
         menuItem1 = new JMenuItem();
         mnuAbout = new JMenuItem();
+        mnuCompress = new JMenuItem();
         label1 = new JLabel();
         cmbWorkflows = new JComboBox<>();
         scrollPane1 = new JScrollPane();
@@ -595,6 +683,7 @@ public class WorkflowWindow extends JFrame {
             public void componentMoved(ComponentEvent e) {
                 thisComponentMoved();
             }
+
             @Override
             public void componentResized(ComponentEvent e) {
                 thisComponentResized();
@@ -602,10 +691,10 @@ public class WorkflowWindow extends JFrame {
         });
         var contentPane = getContentPane();
         contentPane.setLayout(new GridBagLayout());
-        ((GridBagLayout)contentPane.getLayout()).columnWidths = new int[] {0, 0, 0};
-        ((GridBagLayout)contentPane.getLayout()).rowHeights = new int[] {0, 0, 0, 0};
-        ((GridBagLayout)contentPane.getLayout()).columnWeights = new double[] {0.0, 0.0, 1.0E-4};
-        ((GridBagLayout)contentPane.getLayout()).rowWeights = new double[] {0.0, 0.0, 0.0, 1.0E-4};
+        ((GridBagLayout) contentPane.getLayout()).columnWidths = new int[]{0, 0, 0};
+        ((GridBagLayout) contentPane.getLayout()).rowHeights = new int[]{0, 0, 0, 0};
+        ((GridBagLayout) contentPane.getLayout()).columnWeights = new double[]{0.0, 0.0, 1.0E-4};
+        ((GridBagLayout) contentPane.getLayout()).rowWeights = new double[]{0.0, 0.0, 0.0, 1.0E-4};
 
         //======== menuBar1 ========
         {
@@ -633,9 +722,13 @@ public class WorkflowWindow extends JFrame {
                 mnuWorkflow.setText(bundle.getString("WorkflowWindow.mnuWorkflow.text"));
                 mnuWorkflow.addMenuListener(new MenuListener() {
                     @Override
-                    public void menuCanceled(MenuEvent e) {}
+                    public void menuCanceled(MenuEvent e) {
+                    }
+
                     @Override
-                    public void menuDeselected(MenuEvent e) {}
+                    public void menuDeselected(MenuEvent e) {
+                    }
+
                     @Override
                     public void menuSelected(MenuEvent e) {
                         mnuWorkflowMenuSelected();
@@ -714,6 +807,12 @@ public class WorkflowWindow extends JFrame {
                 mnuAbout.setIcon(new ImageIcon(getClass().getResource("/net/jeremybrooks/photopipr/icons/59-info-symbol-16.png")));
                 mnuAbout.addActionListener(e -> mnuAbout());
                 muHelp.add(mnuAbout);
+
+                //---- mnuCompress ----
+                mnuCompress.setText(bundle.getString("WorkflowWindow.mnuCompress.text"));
+                mnuCompress.setIcon(new ImageIcon(getClass().getResource("/net/jeremybrooks/photopipr/icons/1197-file-type-zip-16.png")));
+                mnuCompress.addActionListener(e -> mnuCompress());
+                muHelp.add(mnuCompress);
             }
             menuBar1.add(muHelp);
         }
@@ -722,14 +821,14 @@ public class WorkflowWindow extends JFrame {
         //---- label1 ----
         label1.setText(bundle.getString("WorkflowWindow.label1.text"));
         contentPane.add(label1, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
-            GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-            new Insets(5, 5, 10, 10), 0, 0));
+                GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                new Insets(5, 5, 10, 10), 0, 0));
 
         //---- cmbWorkflows ----
         cmbWorkflows.addItemListener(e -> cmbWorkflowsItemStateChanged());
         contentPane.add(cmbWorkflows, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0,
-            GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-            new Insets(0, 0, 5, 0), 0, 0));
+                GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                new Insets(0, 0, 5, 0), 0, 0));
 
         //======== scrollPane1 ========
         {
@@ -741,6 +840,7 @@ public class WorkflowWindow extends JFrame {
                 public void mousePressed(MouseEvent e) {
                     lstActionsMousePressed(e);
                 }
+
                 @Override
                 public void mouseReleased(MouseEvent e) {
                     lstActionsMouseReleased(e);
@@ -749,14 +849,14 @@ public class WorkflowWindow extends JFrame {
             scrollPane1.setViewportView(lstActions);
         }
         contentPane.add(scrollPane1, new GridBagConstraints(0, 1, 2, 1, 0.0, 1.0,
-            GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-            new Insets(5, 5, 10, 5), 0, 0));
+                GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                new Insets(5, 5, 10, 5), 0, 0));
 
         //---- lblStatus ----
         lblStatus.setText(bundle.getString("WorkflowWindow.lblStatus.text"));
         contentPane.add(lblStatus, new GridBagConstraints(0, 2, 2, 1, 0.0, 0.0,
-            GridBagConstraints.WEST, GridBagConstraints.VERTICAL,
-            new Insets(3, 5, 3, 0), 0, 0));
+                GridBagConstraints.WEST, GridBagConstraints.VERTICAL,
+                new Insets(3, 5, 3, 0), 0, 0));
         setLocationRelativeTo(getOwner());
 
         //======== mnuCtxAction ========
@@ -833,6 +933,7 @@ public class WorkflowWindow extends JFrame {
     private JMenu muHelp;
     private JMenuItem menuItem1;
     private JMenuItem mnuAbout;
+    private JMenuItem mnuCompress;
     private JLabel label1;
     private JComboBox<Workflow> cmbWorkflows;
     private JScrollPane scrollPane1;
