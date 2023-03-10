@@ -56,6 +56,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 import java.awt.Cursor;
+import java.awt.Desktop;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -68,6 +69,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.Serial;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -639,6 +641,27 @@ public class WorkflowWindow extends JFrame {
         }
     }
 
+    private void menuItem1() {
+        int option =
+                JOptionPane.showConfirmDialog(this,
+                        resourceBundle.getString("WorkflowWindow.dialog.help.message"),
+                        resourceBundle.getString("WorkflowWindow.dialog.help.title"),
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE);
+
+        if (option == JOptionPane.YES_OPTION) {
+            try {
+                Desktop.getDesktop().browse(new URL("https://jeremybrooks.net/photopipr/faq.html").toURI());
+            } catch (Exception e) {
+                logger.error("Could not open help URL.", e);
+                JOptionPane.showMessageDialog(this,
+                        resourceBundle.getString("WorkflowWindow.dialog.browserError.message"),
+                        resourceBundle.getString("WorkflowWindow.dialog.browserError.title"),
+                        JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
 
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
@@ -800,6 +823,7 @@ public class WorkflowWindow extends JFrame {
                 //---- menuItem1 ----
                 menuItem1.setText(bundle.getString("WorkflowWindow.menuItem1.text"));
                 menuItem1.setIcon(new ImageIcon(getClass().getResource("/net/jeremybrooks/photopipr/icons/441-help-symbol1-16.png")));
+                menuItem1.addActionListener(e -> menuItem1());
                 muHelp.add(menuItem1);
 
                 //---- mnuAbout ----

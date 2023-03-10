@@ -148,6 +148,7 @@ new FormModel {
 						name: "menuItem1"
 						"text": new FormMessage( null, "WorkflowWindow.menuItem1.text" )
 						"icon": new com.jformdesigner.model.SwingIcon( 0, "/net/jeremybrooks/photopipr/icons/441-help-symbol1-16.png" )
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "menuItem1", false ) )
 					} )
 					add( new FormComponent( "javax.swing.JMenuItem" ) {
 						name: "mnuAbout"
