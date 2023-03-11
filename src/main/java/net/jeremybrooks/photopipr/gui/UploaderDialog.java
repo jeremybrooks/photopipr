@@ -24,14 +24,20 @@
 package net.jeremybrooks.photopipr.gui;
 
 import net.jeremybrooks.jinx.JinxConstants;
+import net.jeremybrooks.jinx.response.groups.GroupInfo;
 import net.jeremybrooks.jinx.response.groups.Groups;
+import net.jeremybrooks.photopipr.FlickrUtil;
+import net.jeremybrooks.photopipr.JinxFactory;
 import net.jeremybrooks.photopipr.PPConstants;
 import net.jeremybrooks.photopipr.model.GroupRule;
 import net.jeremybrooks.photopipr.model.UploadAction;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -39,8 +45,10 @@ import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
@@ -48,15 +56,19 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Desktop;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -78,6 +90,7 @@ import static net.jeremybrooks.photopipr.PPConstants.UPLOAD_DONE_ACTION_MOVE;
 public class UploaderDialog extends JDialog {
     @Serial
     private static final long serialVersionUID = 4023566266781050434L;
+    private static final Logger logger = LogManager.getLogger();
     private final ResourceBundle resourceBundle = ResourceBundle.getBundle("net.jeremybrooks.photopipr.uploader");
     private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("");
 
@@ -357,22 +370,73 @@ public class UploaderDialog extends JDialog {
     }
 
     private void btnAddGroupToList() {
-        selectedGroupsModel.addItems(lstGroups.getSelectedValuesList());
+        moveGroupToSelectedGroupsList();
+    }
+
+    private void moveGroupToSelectedGroupsList() {
+        selectedGroupsModel.addItem(lstGroups.getSelectedValue());
+        availableGroupsModel.removeItem(lstGroups.getSelectedValue());
+    }
+
+    private void moveGroupToAvailableGroupsList() {
+        availableGroupsModel.addItem(lstSelectedGroups.getSelectedValue());
+        selectedGroupsModel.removeItem(lstSelectedGroups.getSelectedValue());
     }
 
     private void btnRemoveGroupFromList() {
-        selectedGroupsModel.removeItems(lstSelectedGroups.getSelectedValuesList());
+        moveGroupToAvailableGroupsList();
     }
 
     private void lstGroupsMouseClicked(MouseEvent e) {
-        if (e.getClickCount() == 2) {
-            selectedGroupsModel.addItem(lstGroups.getSelectedValue());
+        if (e.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(e)) {
+            moveGroupToSelectedGroupsList();
+        }
+    }
+
+    /*
+     * Check for popup in both mouse pressed and mouse released for maximum compatibility.
+     */
+    private void lstGroupsMousePressed(MouseEvent e) {
+        if (e.isPopupTrigger()) {
+            showGroupContextMenu(e);
+        }
+    }
+
+    /*
+     * Check for popup in both mouse pressed and mouse released for maximum compatibility.
+     */
+    private void lstGroupsMouseReleased(MouseEvent e) {
+        if (e.isPopupTrigger()) {
+            showGroupContextMenu(e);
+        }
+    }
+
+    private void showGroupContextMenu(MouseEvent e) {
+        if (e.getComponent() instanceof JList<?> list) {
+            int index = e.getY() / (int) list.getCellBounds(0, 0).getHeight();
+            // show popup if the index is in bounds of the model size
+            if (index < list.getModel().getSize()) {
+                list.setSelectedIndex(list.locationToIndex(e.getPoint())); //select the item
+                popupMenu1.show(e.getComponent(), e.getX(), e.getY());
+            }
         }
     }
 
     private void lstSelectedGroupsMouseClicked(MouseEvent e) {
-        if (e.getClickCount() == 2) {
-            selectedGroupsModel.removeItem(lstSelectedGroups.getSelectedValue());
+        if (e.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(e)) {
+            moveGroupToAvailableGroupsList();
+        }
+    }
+
+    private void lstSelectedGroupsMousePressed(MouseEvent e) {
+        if (e.isPopupTrigger()) {
+            showGroupContextMenu(e);
+        }
+    }
+
+    private void lstSelectedGroupsMouseReleased(MouseEvent e) {
+        if (e.isPopupTrigger()) {
+            showGroupContextMenu(e);
         }
     }
 
@@ -385,6 +449,39 @@ public class UploaderDialog extends JDialog {
 
     private void cmbFolderCreateStrategy() {
         updateMoveFolderSelection();
+    }
+
+    private void mnuOpenGroup(ActionEvent e) {
+        Groups.Group group;
+        Component c = ((JPopupMenu) ((JMenuItem) e.getSource()).getParent()).getInvoker();
+        if (c instanceof JList<?> list) {
+            group = (Groups.Group) list.getSelectedValue();
+            try {
+                Desktop.getDesktop().browse(FlickrUtil.getGroupUri(group.getGroupId()));
+            } catch (Exception ex) {
+                logger.error("Could not open page for groupId {}", group.getGroupId(), ex);
+            }
+        }
+    }
+
+    private void mnuGroupInfo(ActionEvent e) {
+        Groups.Group group;
+        Component c = ((JPopupMenu) ((JMenuItem) e.getSource()).getParent()).getInvoker();
+        if (c instanceof JList<?> list) {
+            group = (Groups.Group) list.getSelectedValue();
+            try {
+                GroupInfo info = JinxFactory.getInstance().getGroupsApi()
+                        .getInfo(group.getGroupId(), null, null);
+                GroupInfoDialog dialog = new GroupInfoDialog(this, info);
+                SwingUtilities.invokeLater(() -> dialog.setVisible(true));
+            } catch (Exception ex) {
+                logger.error("Error getting group info for group {}", group.getName(), ex);
+                JOptionPane.showMessageDialog(this,
+                        resourceBundle.getString("UploaderDialog.groupInfoError.message"),
+                        resourceBundle.getString("UploaderDialog.groupInfoError.title"),
+                        JOptionPane.ERROR_MESSAGE);
+            }
+        }
     }
 
 
@@ -459,6 +556,9 @@ public class UploaderDialog extends JDialog {
         buttonBar = new JPanel();
         btnCancel = new JButton();
         btnSave = new JButton();
+        popupMenu1 = new JPopupMenu();
+        mnuGroupInfo = new JMenuItem();
+        mnuOpenGroup = new JMenuItem();
 
         //======== this ========
         setTitle(bundle.getString("UploaderDialog.this.title"));
@@ -633,10 +733,19 @@ public class UploaderDialog extends JDialog {
                             {
 
                                 //---- lstGroups ----
+                                lstGroups.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
                                 lstGroups.addMouseListener(new MouseAdapter() {
                                     @Override
                                     public void mouseClicked(MouseEvent e) {
                                         lstGroupsMouseClicked(e);
+                                    }
+                                    @Override
+                                    public void mousePressed(MouseEvent e) {
+                                        lstGroupsMousePressed(e);
+                                    }
+                                    @Override
+                                    public void mouseReleased(MouseEvent e) {
+                                        lstGroupsMouseReleased(e);
                                     }
                                 });
                                 scrollPane3.setViewportView(lstGroups);
@@ -675,10 +784,19 @@ public class UploaderDialog extends JDialog {
                             {
 
                                 //---- lstSelectedGroups ----
+                                lstSelectedGroups.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
                                 lstSelectedGroups.addMouseListener(new MouseAdapter() {
                                     @Override
                                     public void mouseClicked(MouseEvent e) {
                                         lstSelectedGroupsMouseClicked(e);
+                                    }
+                                    @Override
+                                    public void mousePressed(MouseEvent e) {
+                                        lstSelectedGroupsMousePressed(e);
+                                    }
+                                    @Override
+                                    public void mouseReleased(MouseEvent e) {
+                                        lstSelectedGroupsMouseReleased(e);
                                     }
                                 });
                                 scrollPane4.setViewportView(lstSelectedGroups);
@@ -857,6 +975,22 @@ public class UploaderDialog extends JDialog {
         setSize(605, 650);
         setLocationRelativeTo(getOwner());
 
+        //======== popupMenu1 ========
+        {
+
+            //---- mnuGroupInfo ----
+            mnuGroupInfo.setText(bundle.getString("UploaderDialog.mnuGroupInfo.text"));
+            mnuGroupInfo.setIcon(new ImageIcon(getClass().getResource("/net/jeremybrooks/photopipr/icons/59-info-symbol-16.png")));
+            mnuGroupInfo.addActionListener(e -> mnuGroupInfo(e));
+            popupMenu1.add(mnuGroupInfo);
+
+            //---- mnuOpenGroup ----
+            mnuOpenGroup.setText(bundle.getString("UploaderDialog.mnuOpenGroup.text"));
+            mnuOpenGroup.setIcon(new ImageIcon(getClass().getResource("/net/jeremybrooks/photopipr/icons/71-compass_16.png")));
+            mnuOpenGroup.addActionListener(e -> mnuOpenGroup(e));
+            popupMenu1.add(mnuOpenGroup);
+        }
+
         //---- buttonGroup2 ----
         var buttonGroup2 = new ButtonGroup();
         buttonGroup2.add(radioSafe);
@@ -935,5 +1069,8 @@ public class UploaderDialog extends JDialog {
     private JPanel buttonBar;
     private JButton btnCancel;
     private JButton btnSave;
+    private JPopupMenu popupMenu1;
+    private JMenuItem mnuGroupInfo;
+    private JMenuItem mnuOpenGroup;
     // JFormDesigner - End of variables declaration  //GEN-END:variables
 }

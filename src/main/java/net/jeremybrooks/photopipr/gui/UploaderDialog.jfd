@@ -1,4 +1,4 @@
-JFDML JFormDesigner: "7.0.7.0.1134" Java: "17.0.4" encoding: "UTF-8"
+JFDML JFormDesigner: "8.0.2.0.220" Java: "17.0.6" encoding: "UTF-8"
 
 new FormModel {
 	"i18n.autoExternalize": true
@@ -206,10 +206,13 @@ new FormModel {
 									name: "scrollPane3"
 									add( new FormComponent( "javax.swing.JList" ) {
 										name: "lstGroups"
+										"selectionMode": 0
 										auxiliary() {
 											"JavaCodeGenerator.typeParameters": "Groups.Group"
 										}
 										addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "lstGroupsMouseClicked", true ) )
+										addEvent( new FormEvent( "java.awt.event.MouseListener", "mousePressed", "lstGroupsMousePressed", true ) )
+										addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseReleased", "lstGroupsMouseReleased", true ) )
 									} )
 								}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 									"gridy": 2
@@ -245,10 +248,13 @@ new FormModel {
 									name: "scrollPane4"
 									add( new FormComponent( "javax.swing.JList" ) {
 										name: "lstSelectedGroups"
+										"selectionMode": 0
 										auxiliary() {
 											"JavaCodeGenerator.typeParameters": "Groups.Group"
 										}
 										addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "lstSelectedGroupsMouseClicked", true ) )
+										addEvent( new FormEvent( "java.awt.event.MouseListener", "mousePressed", "lstSelectedGroupsMousePressed", true ) )
+										addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseReleased", "lstSelectedGroupsMouseReleased", true ) )
 									} )
 								}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 									"gridx": 2
@@ -450,6 +456,23 @@ new FormModel {
 		}, new FormLayoutConstraints( null ) {
 			"location": new java.awt.Point( 110, 0 )
 			"size": new java.awt.Dimension( 605, 650 )
+		} )
+		add( new FormContainer( "javax.swing.JPopupMenu", new FormLayoutManager( class javax.swing.JPopupMenu ) ) {
+			name: "popupMenu1"
+			add( new FormComponent( "javax.swing.JMenuItem" ) {
+				name: "mnuGroupInfo"
+				"text": new FormMessage( null, "UploaderDialog.mnuGroupInfo.text" )
+				"icon": new com.jformdesigner.model.SwingIcon( 0, "/net/jeremybrooks/photopipr/icons/59-info-symbol-16.png" )
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "mnuGroupInfo", true ) )
+			} )
+			add( new FormComponent( "javax.swing.JMenuItem" ) {
+				name: "mnuOpenGroup"
+				"text": new FormMessage( null, "UploaderDialog.mnuOpenGroup.text" )
+				"icon": new com.jformdesigner.model.SwingIcon( 0, "/net/jeremybrooks/photopipr/icons/71-compass_16.png" )
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "mnuOpenGroup", true ) )
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 125, 670 )
 		} )
 		add( new FormNonVisual( "javax.swing.ButtonGroup" ) {
 			name: "buttonGroup1"
