@@ -21,7 +21,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.jeremybrooks</groupId>
     <artifactId>photopipr</artifactId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0.2</version>
     <name>PhotoPipr</name>
     <description>Flexible automatic photo uploads for Flickr.</description>
     <url>https://jeremybrooks.net/photopipr</url>
