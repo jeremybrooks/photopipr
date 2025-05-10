@@ -1,5 +1,5 @@
 /*
- *  PhotoPipr is Copyright 2017-2023 by Jeremy Brooks
+ *  PhotoPipr is Copyright 2017-2025 by Jeremy Brooks
  *
  *  This file is part of PhotoPipr.
  *

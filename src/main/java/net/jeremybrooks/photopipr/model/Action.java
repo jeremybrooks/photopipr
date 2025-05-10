@@ -1,5 +1,5 @@
 /*
- *  PhotoPipr is Copyright 2017-2023 by Jeremy Brooks
+ *  PhotoPipr is Copyright 2017-2025 by Jeremy Brooks
  *
  *  This file is part of PhotoPipr.
  *
@@ -22,10 +22,11 @@ package net.jeremybrooks.photopipr.model;
 public interface Action {
   /**
    * The status enum defines the current state of an Action.
-   *
+   * <p>
    * IDLE - The action is not running and is not waiting to run
    * PENDING - The action is in a workflow that is running, and it is waiting to run
    * RUNNING - The action is currently running
+   * </p>
    */
   enum Status {
     IDLE,

@@ -1,5 +1,5 @@
 /*
- *  PhotoPipr is Copyright 2017-2023 by Jeremy Brooks
+ *  PhotoPipr is Copyright 2017-2025 by Jeremy Brooks
  *
  *  This file is part of PhotoPipr.
  *
@@ -439,12 +439,15 @@ public class WorkflowWindow extends JFrame {
                         resourceBundle.getString("WorkflowWindow.actionBusy.title"),
                         JOptionPane.INFORMATION_MESSAGE);
             } else {
-                if (action instanceof TimerAction) {
-                    SwingUtilities.invokeLater(() -> new TimerActionDialog(this, (TimerAction) action).setVisible(true));
-                } else if (action instanceof FinishAction) {
-                    SwingUtilities.invokeLater(() -> new FinishActionDialog(this, (FinishAction) action).setVisible(true));
-                } else if (action instanceof UploadAction) {
-                    SwingUtilities.invokeLater(() -> new UploaderDialog(this, (UploadAction) action, groups).setVisible(true));
+                switch (action) {
+                    case TimerAction ignored ->
+                            SwingUtilities.invokeLater(() -> new TimerActionDialog(this, (TimerAction) action).setVisible(true));
+                    case FinishAction ignored1 ->
+                            SwingUtilities.invokeLater(() -> new FinishActionDialog(this, (FinishAction) action).setVisible(true));
+                    case UploadAction ignored ->
+                            SwingUtilities.invokeLater(() -> new UploaderDialog(this, (UploadAction) action, groups).setVisible(true));
+                    default -> {
+                    }
                 }
             }
         }

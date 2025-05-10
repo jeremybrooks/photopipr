@@ -1,5 +1,5 @@
 /*
- *  PhotoPipr is Copyright 2017-2023 by Jeremy Brooks
+ *  PhotoPipr is Copyright 2017-2025 by Jeremy Brooks
  *
  *  This file is part of PhotoPipr.
  *
@@ -32,8 +32,8 @@ public class FlickrUtil {
      * @return URL pointing to the group page on Flickr.
      * @throws MalformedURLException if the URL is incorrect.
      */
-    public static URL getGroupUrl(String groupId) throws MalformedURLException {
-        return new URL(String.format("https://flickr.com/groups/%s", groupId));
+    public static URL getGroupUrl(String groupId) throws MalformedURLException, URISyntaxException {
+        return new URI(String.format("https://flickr.com/groups/%s", groupId)).toURL();
     }
 
     /**

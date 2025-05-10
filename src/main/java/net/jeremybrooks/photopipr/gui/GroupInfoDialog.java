@@ -1,5 +1,5 @@
 /*
- *  PhotoPipr is Copyright 2017-2023 by Jeremy Brooks
+ *  PhotoPipr is Copyright 2017-2025 by Jeremy Brooks
  *
  *  This file is part of PhotoPipr.
  *
@@ -43,12 +43,15 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Window;
+import java.io.Serial;
 import java.util.ResourceBundle;
 
 /**
  * @author jeremyb
  */
 public class GroupInfoDialog extends JDialog {
+    @Serial
+    private static final long serialVersionUID = -3376378548722182700L;
     private static final Logger logger = LogManager.getLogger();
     private final GroupInfo groupInfo;
 

@@ -1,5 +1,5 @@
 <!--
-  ~  PhotoPipr is Copyright 2017-2023 by Jeremy Brooks
+  ~  PhotoPipr is Copyright 2017-2025 by Jeremy Brooks
   ~
   ~  This file is part of PhotoPipr.
   ~
@@ -21,7 +21,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.jeremybrooks</groupId>
     <artifactId>photopipr</artifactId>
-    <version>1.0.3-SNAPSHOT</version>
+    <version>1.0.4</version>
     <name>PhotoPipr</name>
     <description>Flexible automatic photo uploads for Flickr.</description>
     <url>https://jeremybrooks.net/photopipr</url>
@@ -50,19 +50,19 @@
         </developer>
     </developers>
     <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <!-- library versions -->
-        <commons-io.version>2.7</commons-io.version>
-        <commons-lang.version>3.11</commons-lang.version>
-        <commons-collections4.version>4.4</commons-collections4.version>
+        <commons-io.version>2.19.0</commons-io.version>
+        <commons-lang.version>3.17.0</commons-lang.version>
+        <commons-collections4.version>4.5.0</commons-collections4.version>
         <jinx.version>3.1.0</jinx.version>
         <junit.version>4.13.1</junit.version>
-        <log4j.version>2.20.0</log4j.version>
-        <metadata-extractor.version>2.18.0</metadata-extractor.version>
+        <log4j.version>2.24.3</log4j.version>
+        <metadata-extractor.version>2.19.0</metadata-extractor.version>
 
         <!-- plugin versions -->
         <maven-compiler-plugin.version>2.3.2</maven-compiler-plugin.version>
@@ -110,7 +110,12 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
+    <pluginRepositories>
+        <pluginRepository>
+            <id>ej-technologies</id>
+            <url>https://maven.ej-technologies.com/repository</url>
+        </pluginRepository>
+    </pluginRepositories>
     <build>
         <resources>
             <resource>
@@ -175,9 +180,9 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.sonatype.install4j</groupId>
-                <artifactId>install4j-maven-plugin</artifactId>
-                <version>1.1.2</version>
+                <groupId>com.install4j</groupId>
+                <artifactId>install4j-maven</artifactId>
+                <version>11.0.3</version>
                 <executions>
                     <execution>
                         <id>compile-installers</id>
