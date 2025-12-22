@@ -124,6 +124,7 @@ public class Upload {
                 } catch (Exception e) {
                     logger.error("Error while processing photo {}", p, e);
                     uploadAction.setHasErrors(true);
+                    errorMove(p);
                     new DesktopAlert()
                             .withTitle("PhotoPipr Upload Error" )
                             .withMessage("There was an error while uploading photo "
@@ -134,6 +135,18 @@ public class Upload {
             uploadAction.setStatus(Action.Status.IDLE);
             uploadAction.setStatusMessage("Upload action completed at " + new Date());
             workflowRunner.publish(uploadAction, index);
+        }
+    }
+
+    private void errorMove(Path p) {
+        if (uploadAction.getUploadErrorAction().equals(UPLOAD_ERROR_MOVE)) {
+            Path dest = Paths.get(uploadAction.getUploadErrorMovePath()).resolve(p.getFileName());
+            logger.info("Moving {} to {}", p, dest);
+            try {
+                Files.move(p, dest);
+            } catch (Exception e) {
+                logger.error("Error while trying to move photo from {} to {}", p, dest, e);
+            }
         }
     }
 

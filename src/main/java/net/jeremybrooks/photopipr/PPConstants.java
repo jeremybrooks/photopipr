@@ -93,6 +93,8 @@ public class PPConstants {
 
   public static final String UPLOAD_DONE_ACTION_DELETE = "Delete";
   public static final String UPLOAD_DONE_ACTION_MOVE = "Move";
+  public static final String UPLOAD_ERROR_MOVE = "Move";
+  public static final String UPLOAD_ERROR_KEEP = "Keep";
 
   public static final List<String> SUPPORTED_FILE_TYPES = List.of(
           "jpg", "jpeg", "png", "gif",

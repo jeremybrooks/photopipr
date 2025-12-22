@@ -26,157 +26,175 @@ import java.util.List;
 
 public class UploadAction implements Action {
 
-  /* Configuration parameters */
-  private String sourcePath = System.getProperty("user.home") + "/Pictures";
-  private int quantity = 1;
-  private int interval = 1;
-  private String selectionOrder = PPConstants.SelectionOrder.RANDOM.name();
-  private boolean makePrivate = false;
-  private String safetyLevel = "safe";
-  private transient boolean hasErrors = false;
+    /* Configuration parameters */
+    private String sourcePath = System.getProperty("user.home") + "/Pictures";
+    private int quantity = 1;
+    private int interval = 1;
+    private String selectionOrder = PPConstants.SelectionOrder.RANDOM.name();
+    private boolean makePrivate = false;
+    private String safetyLevel = "safe";
+    private transient boolean hasErrors = false;
 
-  /* Group parameters */
-  private List<GroupRule> groupRules = new ArrayList<>();
+    /* Group parameters */
+    private List<GroupRule> groupRules = new ArrayList<>();
 
-  /* Post upload parameters */
-  private String postUploadAction = PPConstants.UPLOAD_DONE_ACTION_DELETE;
-  private String movePath = "";
+    /* Post upload parameters */
+    private String postUploadAction = PPConstants.UPLOAD_DONE_ACTION_DELETE;
+    private String movePath = "";
+    private String uploadErrorAction = PPConstants.UPLOAD_ERROR_KEEP;
+    private String uploadErrorMovePath = "";
 
-  private String directoryCreateStrategy = PPConstants.DirectoryCreateStrategy.NO_NEW_DIRECTORIES.name();
+    private String directoryCreateStrategy = PPConstants.DirectoryCreateStrategy.NO_NEW_DIRECTORIES.name();
 
-  private String dateFormat = "yyyy-MM-dd";
+    private String dateFormat = "yyyy-MM-dd";
 
-  private transient Status status = Status.IDLE;
-  private transient String statusMessage = " ";
+    private transient Status status = Status.IDLE;
+    private transient String statusMessage = " ";
 
-  public String getDescription() {
-    if (interval > 0) {
-      return String.format("Upload %d photos from %s. Wait %d minute%s between uploads.",
-              quantity, sourcePath, interval, interval == 1 ? "" : "s");
-    } else {
-      return String.format("Upload %d photos from %s.", quantity, sourcePath);
+    public String getDescription() {
+        if (interval > 0) {
+            return String.format("Upload %d photos from %s. Wait %d minute%s between uploads.",
+                    quantity, sourcePath, interval, interval == 1 ? "" : "s");
+        } else {
+            return String.format("Upload %d photos from %s.", quantity, sourcePath);
+        }
     }
-  }
 
-  @Override
-  public Status getStatus() {
-    return status;
-  }
+    @Override
+    public Status getStatus() {
+        return status;
+    }
 
-  @Override
-  public void setStatus(Status status) {
-    this.status = status;
-  }
+    @Override
+    public void setStatus(Status status) {
+        this.status = status;
+    }
 
-  @Override
-  public String toString() {
-    return getDescription();
-  }
+    @Override
+    public String toString() {
+        return getDescription();
+    }
 
-  public String getSourcePath() {
-    return sourcePath;
-  }
+    public String getSourcePath() {
+        return sourcePath;
+    }
 
-  public void setSourcePath(String sourcePath) {
-    this.sourcePath = sourcePath;
-  }
+    public void setSourcePath(String sourcePath) {
+        this.sourcePath = sourcePath;
+    }
 
-  public int getQuantity() {
-    return quantity;
-  }
+    public int getQuantity() {
+        return quantity;
+    }
 
-  public void setQuantity(int quantity) {
-    this.quantity = quantity;
-  }
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
 
-  public int getInterval() {
-    return interval;
-  }
+    public int getInterval() {
+        return interval;
+    }
 
-  public void setInterval(int interval) {
-    this.interval = interval;
-  }
+    public void setInterval(int interval) {
+        this.interval = interval;
+    }
 
-  public String getMovePath() {
-    return movePath;
-  }
+    public String getMovePath() {
+        return movePath;
+    }
 
-  public void setMovePath(String movePath) {
-    this.movePath = movePath;
-  }
+    public void setMovePath(String movePath) {
+        this.movePath = movePath;
+    }
 
 
-  public String getDateFormat() {
-    return dateFormat;
-  }
+    public String getDateFormat() {
+        return dateFormat;
+    }
 
-  public void setDateFormat(String dateFormat) {
-    this.dateFormat = dateFormat;
-  }
+    public void setDateFormat(String dateFormat) {
+        this.dateFormat = dateFormat;
+    }
 
-  public List<GroupRule> getGroupRules() {
-    return groupRules;
-  }
+    public List<GroupRule> getGroupRules() {
+        return groupRules;
+    }
 
-  public void setGroupRules(List<GroupRule> groupRules) {
-    this.groupRules = groupRules;
-  }
+    public void setGroupRules(List<GroupRule> groupRules) {
+        this.groupRules = groupRules;
+    }
 
-  public String getPostUploadAction() {
-    return postUploadAction;
-  }
+    public String getPostUploadAction() {
+        return postUploadAction;
+    }
 
-  public void setPostUploadAction(String postUploadAction) {
-    this.postUploadAction = postUploadAction;
-  }
+    public void setPostUploadAction(String postUploadAction) {
+        this.postUploadAction = postUploadAction;
+    }
 
-  @Override
-  public String getStatusMessage() {
-    return statusMessage;
-  }
+    public String getUploadErrorAction() {
+        return uploadErrorAction;
+    }
 
-  @Override
-  public void setStatusMessage(String statusMessage) {
-    this.statusMessage = statusMessage;
-  }
+    public void setUploadErrorAction(String uploadErrorAction) {
+        this.uploadErrorAction = uploadErrorAction;
+    }
 
-  public boolean isMakePrivate() {
-    return makePrivate;
-  }
+    public String getUploadErrorMovePath() {
+        return uploadErrorMovePath;
+    }
 
-  public void setMakePrivate(boolean makePrivate) {
-    this.makePrivate = makePrivate;
-  }
+    public void setUploadErrorMovePath(String uploadErrorMovePath) {
+        this.uploadErrorMovePath = uploadErrorMovePath;
+    }
 
-  public boolean isHasErrors() {
-    return hasErrors;
-  }
+    @Override
+    public String getStatusMessage() {
+        return statusMessage;
+    }
 
-  public void setHasErrors(boolean hasErrors) {
-    this.hasErrors = hasErrors;
-  }
+    @Override
+    public void setStatusMessage(String statusMessage) {
+        this.statusMessage = statusMessage;
+    }
 
-  public String getSafetyLevel() {
-    return safetyLevel;
-  }
+    public boolean isMakePrivate() {
+        return makePrivate;
+    }
 
-  public void setSafetyLevel(String safetyLevel) {
-    this.safetyLevel = safetyLevel;
-  }
+    public void setMakePrivate(boolean makePrivate) {
+        this.makePrivate = makePrivate;
+    }
 
-  public String getSelectionOrder() {
-    return selectionOrder;
-  }
+    public boolean isHasErrors() {
+        return hasErrors;
+    }
 
-  public void setSelectionOrder(String selectionOrder) {
-    this.selectionOrder = selectionOrder;
-  }
+    public void setHasErrors(boolean hasErrors) {
+        this.hasErrors = hasErrors;
+    }
 
-  public String getDirectoryCreateStrategy() {
-    return directoryCreateStrategy;
-  }
+    public String getSafetyLevel() {
+        return safetyLevel;
+    }
 
-  public void setDirectoryCreateStrategy(String directoryCreateStrategy) {
-    this.directoryCreateStrategy = directoryCreateStrategy;
-  }
+    public void setSafetyLevel(String safetyLevel) {
+        this.safetyLevel = safetyLevel;
+    }
+
+    public String getSelectionOrder() {
+        return selectionOrder;
+    }
+
+    public void setSelectionOrder(String selectionOrder) {
+        this.selectionOrder = selectionOrder;
+    }
+
+    public String getDirectoryCreateStrategy() {
+        return directoryCreateStrategy;
+    }
+
+    public void setDirectoryCreateStrategy(String directoryCreateStrategy) {
+        this.directoryCreateStrategy = directoryCreateStrategy;
+    }
 }

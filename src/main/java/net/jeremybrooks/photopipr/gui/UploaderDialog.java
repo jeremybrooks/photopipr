@@ -33,6 +33,10 @@ import net.jeremybrooks.photopipr.model.GroupRule;
 import net.jeremybrooks.photopipr.model.UploadAction;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
+import org.jdesktop.beansbinding.BeanProperty;
+import org.jdesktop.beansbinding.BindingGroup;
+import org.jdesktop.beansbinding.Bindings;
 
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
@@ -156,6 +160,9 @@ public class UploaderDialog extends JDialog {
         }
         txtDateFormat.setText(uploadAction.getDateFormat());
 
+        radioErrorMove.setSelected(uploadAction.getUploadErrorAction().equals(PPConstants.UPLOAD_ERROR_MOVE));
+        txtErrorMoveTo.setText(uploadAction.getUploadErrorMovePath());
+
         updateSampleDateFormat();
         updateMoveFolderSelection();
     }
@@ -254,6 +261,14 @@ public class UploaderDialog extends JDialog {
             rules.clear();
             groupRuleListModel.elements().asIterator().forEachRemaining(rules::add);
 
+            if (radioErrorMove.isSelected()) {
+                uploadAction.setUploadErrorAction(PPConstants.UPLOAD_ERROR_MOVE);
+                uploadAction.setUploadErrorMovePath(txtErrorMoveTo.getText().trim());
+            } else {
+                uploadAction.setUploadErrorAction(PPConstants.UPLOAD_ERROR_KEEP);
+                uploadAction.setUploadErrorMovePath("");
+            }
+
             workflowWindow.saveWorkflows();
             setVisible(false);
             dispose();
@@ -282,6 +297,18 @@ public class UploaderDialog extends JDialog {
                     JOptionPane.ERROR_MESSAGE);
             tabbedPane1.setSelectedIndex(2);
             btnBrowseMove.requestFocus();
+            return false;
+        }
+
+        // if "move on error" is set, must have a valid directory
+        if (radioErrorMove.isSelected() &&
+                !new File(txtErrorMoveTo.getText()).exists()) {
+            JOptionPane.showMessageDialog(this,
+                    resourceBundle.getString("UploaderDialog.validationErrorMoveDir.message"),
+                    resourceBundle.getString("UploaderDialog.validation.title"),
+                    JOptionPane.ERROR_MESSAGE);
+            tabbedPane1.setSelectedIndex(2);
+            btnErrorBrowse.requestFocus();
             return false;
         }
 
@@ -484,9 +511,35 @@ public class UploaderDialog extends JDialog {
         }
     }
 
+    private void btnErrorBrowse(ActionEvent e) {
+        JFileChooser jFileChooser = new JFileChooser();
+        jFileChooser.setMultiSelectionEnabled(false);
+        jFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        if (txtErrorMoveTo.getText().isBlank()) {
+            jFileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+        } else {
+            jFileChooser.setCurrentDirectory(new File(txtErrorMoveTo.getText()));
+        }
+        jFileChooser.setDialogTitle(resourceBundle.getString("UploaderDialog.selectMoveDialog.title"));
+        int choice = jFileChooser.showDialog(this,
+                resourceBundle.getString("UploaderDialog.selectDirectoryDialog.buttonText"));
+        if (choice == JFileChooser.APPROVE_OPTION) {
+            File f = jFileChooser.getSelectedFile();
+            if (f.exists() && f.isDirectory()) {
+                txtErrorMoveTo.setText(f.getAbsolutePath());
+            } else {
+                JOptionPane.showMessageDialog(this,
+                        resourceBundle.getString("UploaderDialog.invalidLocation.message") + "\n" + f.getAbsolutePath(),
+                        resourceBundle.getString("UploaderDialog.invalidLocation.title"),
+                        JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
 
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
+        // Generated using JFormDesigner non-commercial license
         ResourceBundle bundle = ResourceBundle.getBundle("net.jeremybrooks.photopipr.uploader");
         dialogPane = new JPanel();
         contentPanel = new JPanel();
@@ -542,6 +595,7 @@ public class UploaderDialog extends JDialog {
         panel5 = new JPanel();
         btnDeleteRule = new JButton();
         pnlArchive = new JPanel();
+        panel10 = new JPanel();
         radioMove = new JRadioButton();
         txtMoveTo = new JTextField();
         btnBrowseMove = new JButton();
@@ -553,6 +607,11 @@ public class UploaderDialog extends JDialog {
         lblDateSample = new JLabel();
         btnDefaultDate = new JButton();
         radioDelete = new JRadioButton();
+        panel11 = new JPanel();
+        radioErrorMove = new JRadioButton();
+        txtErrorMoveTo = new JTextField();
+        btnErrorBrowse = new JButton();
+        radioErrorKeep = new JRadioButton();
         buttonBar = new JPanel();
         btnCancel = new JButton();
         btnSave = new JButton();
@@ -856,91 +915,140 @@ public class UploaderDialog extends JDialog {
 
                     //======== pnlArchive ========
                     {
-                        pnlArchive.setLayout(new GridBagLayout());
-                        ((GridBagLayout)pnlArchive.getLayout()).columnWidths = new int[] {0, 0, 0, 0};
-                        ((GridBagLayout)pnlArchive.getLayout()).rowHeights = new int[] {0, 0, 0, 0, 0, 0, 0};
-                        ((GridBagLayout)pnlArchive.getLayout()).columnWeights = new double[] {0.0, 0.0, 0.0, 1.0E-4};
-                        ((GridBagLayout)pnlArchive.getLayout()).rowWeights = new double[] {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0E-4};
+                        pnlArchive.setLayout(new BorderLayout());
 
-                        //---- radioMove ----
-                        radioMove.setText(bundle.getString("UploaderDialog.radioMove.text"));
-                        radioMove.setSelected(true);
-                        radioMove.addActionListener(e -> radioMoveActionPerformed());
-                        pnlArchive.add(radioMove, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
-                            GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-                            new Insets(0, 0, 5, 5), 0, 0));
-                        pnlArchive.add(txtMoveTo, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0,
-                            GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-                            new Insets(0, 0, 5, 5), 0, 0));
-
-                        //---- btnBrowseMove ----
-                        btnBrowseMove.setText(bundle.getString("UploaderDialog.btnBrowseMove.text"));
-                        btnBrowseMove.addActionListener(e -> btnBrowseMoveActionPerformed());
-                        pnlArchive.add(btnBrowseMove, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0,
-                            GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-                            new Insets(0, 0, 5, 0), 0, 0));
-
-                        //---- cmbFolderCreateStrategy ----
-                        cmbFolderCreateStrategy.addActionListener(e -> cmbFolderCreateStrategy());
-                        pnlArchive.add(cmbFolderCreateStrategy, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0,
-                            GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-                            new Insets(0, 0, 5, 5), 0, 0));
-
-                        //======== panel2 ========
+                        //======== panel10 ========
                         {
-                            panel2.setLayout(new GridBagLayout());
-                            ((GridBagLayout)panel2.getLayout()).columnWidths = new int[] {0, 0, 0, 0};
-                            ((GridBagLayout)panel2.getLayout()).rowHeights = new int[] {0, 0, 0, 0};
-                            ((GridBagLayout)panel2.getLayout()).columnWeights = new double[] {0.0, 0.0, 0.0, 1.0E-4};
-                            ((GridBagLayout)panel2.getLayout()).rowWeights = new double[] {0.0, 0.0, 0.0, 1.0E-4};
+                            panel10.setBorder(new TitledBorder(bundle.getString("UploaderDialog.panel10.border")));
+                            panel10.setLayout(new GridBagLayout());
+                            ((GridBagLayout)panel10.getLayout()).columnWidths = new int[] {0, 0, 0, 0};
+                            ((GridBagLayout)panel10.getLayout()).rowHeights = new int[] {0, 0, 0, 0, 0, 0};
+                            ((GridBagLayout)panel10.getLayout()).columnWeights = new double[] {0.0, 0.0, 0.0, 1.0E-4};
+                            ((GridBagLayout)panel10.getLayout()).rowWeights = new double[] {0.0, 0.0, 0.0, 0.0, 0.0, 1.0E-4};
 
-                            //---- lblDateFormat ----
-                            lblDateFormat.setText(bundle.getString("UploaderDialog.lblDateFormat.text"));
-                            panel2.add(lblDateFormat, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
+                            //---- radioMove ----
+                            radioMove.setText(bundle.getString("UploaderDialog.radioMove.text"));
+                            radioMove.setSelected(true);
+                            radioMove.addActionListener(e -> radioMoveActionPerformed());
+                            panel10.add(radioMove, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
                                 GridBagConstraints.CENTER, GridBagConstraints.BOTH,
                                 new Insets(0, 0, 5, 5), 0, 0));
 
-                            //---- txtDateFormat ----
-                            txtDateFormat.setText(bundle.getString("UploaderDialog.txtDateFormat.text"));
-                            txtDateFormat.addKeyListener(new KeyAdapter() {
-                                @Override
-                                public void keyTyped(KeyEvent e) {
-                                    txtDateFormatKeyTyped();
-                                }
-                            });
-                            panel2.add(txtDateFormat, new GridBagConstraints(1, 0, 2, 1, 1.0, 0.0,
+                            //---- txtMoveTo ----
+                            txtMoveTo.setEditable(false);
+                            panel10.add(txtMoveTo, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0,
+                                GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                                new Insets(0, 0, 5, 5), 0, 0));
+
+                            //---- btnBrowseMove ----
+                            btnBrowseMove.setText(bundle.getString("UploaderDialog.btnBrowseMove.text"));
+                            btnBrowseMove.addActionListener(e -> btnBrowseMoveActionPerformed());
+                            panel10.add(btnBrowseMove, new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0,
                                 GridBagConstraints.CENTER, GridBagConstraints.BOTH,
                                 new Insets(0, 0, 5, 0), 0, 0));
 
-                            //---- lblFolderNameSample ----
-                            lblFolderNameSample.setText(bundle.getString("UploaderDialog.lblFolderNameSample.text"));
-                            panel2.add(lblFolderNameSample, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
+                            //---- cmbFolderCreateStrategy ----
+                            cmbFolderCreateStrategy.addActionListener(e -> cmbFolderCreateStrategy());
+                            panel10.add(cmbFolderCreateStrategy, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0,
                                 GridBagConstraints.CENTER, GridBagConstraints.BOTH,
                                 new Insets(0, 0, 5, 5), 0, 0));
 
-                            //---- lblDateSample ----
-                            lblDateSample.setText(bundle.getString("UploaderDialog.lblDateSample.text"));
-                            panel2.add(lblDateSample, new GridBagConstraints(1, 1, 2, 1, 0.0, 0.0,
-                                GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-                                new Insets(0, 5, 5, 0), 0, 0));
+                            //======== panel2 ========
+                            {
+                                panel2.setLayout(new GridBagLayout());
+                                ((GridBagLayout)panel2.getLayout()).columnWidths = new int[] {0, 0, 0, 0};
+                                ((GridBagLayout)panel2.getLayout()).rowHeights = new int[] {0, 0, 0, 0};
+                                ((GridBagLayout)panel2.getLayout()).columnWeights = new double[] {0.0, 0.0, 0.0, 1.0E-4};
+                                ((GridBagLayout)panel2.getLayout()).rowWeights = new double[] {0.0, 0.0, 0.0, 1.0E-4};
 
-                            //---- btnDefaultDate ----
-                            btnDefaultDate.setText(bundle.getString("UploaderDialog.btnDefaultDate.text"));
-                            btnDefaultDate.addActionListener(e -> btnDefaultDateActionPerformed());
-                            panel2.add(btnDefaultDate, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0,
+                                //---- lblDateFormat ----
+                                lblDateFormat.setText(bundle.getString("UploaderDialog.lblDateFormat.text"));
+                                panel2.add(lblDateFormat, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
+                                    GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                                    new Insets(0, 0, 5, 5), 0, 0));
+
+                                //---- txtDateFormat ----
+                                txtDateFormat.setText(bundle.getString("UploaderDialog.txtDateFormat.text"));
+                                txtDateFormat.addKeyListener(new KeyAdapter() {
+                                    @Override
+                                    public void keyTyped(KeyEvent e) {
+                                        txtDateFormatKeyTyped();
+                                    }
+                                });
+                                panel2.add(txtDateFormat, new GridBagConstraints(1, 0, 2, 1, 1.0, 0.0,
+                                    GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                                    new Insets(0, 0, 5, 0), 0, 0));
+
+                                //---- lblFolderNameSample ----
+                                lblFolderNameSample.setText(bundle.getString("UploaderDialog.lblFolderNameSample.text"));
+                                panel2.add(lblFolderNameSample, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
+                                    GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                                    new Insets(0, 0, 5, 5), 0, 0));
+
+                                //---- lblDateSample ----
+                                lblDateSample.setText(bundle.getString("UploaderDialog.lblDateSample.text"));
+                                panel2.add(lblDateSample, new GridBagConstraints(1, 1, 2, 1, 0.0, 0.0,
+                                    GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                                    new Insets(0, 5, 5, 0), 0, 0));
+
+                                //---- btnDefaultDate ----
+                                btnDefaultDate.setText(bundle.getString("UploaderDialog.btnDefaultDate.text"));
+                                btnDefaultDate.addActionListener(e -> btnDefaultDateActionPerformed());
+                                panel2.add(btnDefaultDate, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0,
+                                    GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                                    new Insets(0, 0, 0, 5), 0, 0));
+                            }
+                            panel10.add(panel2, new GridBagConstraints(1, 2, 2, 1, 0.0, 0.0,
+                                GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                                new Insets(0, 0, 5, 0), 0, 0));
+
+                            //---- radioDelete ----
+                            radioDelete.setText(bundle.getString("UploaderDialog.radioDelete.text"));
+                            radioDelete.addActionListener(e -> radioDeleteActionPerformed());
+                            panel10.add(radioDelete, new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0,
                                 GridBagConstraints.CENTER, GridBagConstraints.BOTH,
                                 new Insets(0, 0, 0, 5), 0, 0));
                         }
-                        pnlArchive.add(panel2, new GridBagConstraints(1, 3, 2, 1, 0.0, 0.0,
-                            GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-                            new Insets(0, 0, 5, 0), 0, 0));
+                        pnlArchive.add(panel10, BorderLayout.PAGE_START);
 
-                        //---- radioDelete ----
-                        radioDelete.setText(bundle.getString("UploaderDialog.radioDelete.text"));
-                        radioDelete.addActionListener(e -> radioDeleteActionPerformed());
-                        pnlArchive.add(radioDelete, new GridBagConstraints(0, 5, 1, 1, 0.0, 0.0,
-                            GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-                            new Insets(0, 0, 0, 5), 0, 0));
+                        //======== panel11 ========
+                        {
+                            panel11.setBorder(new TitledBorder(bundle.getString("UploaderDialog.panel11.border")));
+                            panel11.setLayout(new GridBagLayout());
+                            ((GridBagLayout)panel11.getLayout()).columnWidths = new int[] {0, 0, 0, 0};
+                            ((GridBagLayout)panel11.getLayout()).rowHeights = new int[] {0, 0, 0};
+                            ((GridBagLayout)panel11.getLayout()).columnWeights = new double[] {0.0, 0.0, 0.0, 1.0E-4};
+                            ((GridBagLayout)panel11.getLayout()).rowWeights = new double[] {0.0, 0.0, 1.0E-4};
+
+                            //---- radioErrorMove ----
+                            radioErrorMove.setText(bundle.getString("UploaderDialog.radioErrorMove.text"));
+                            radioErrorMove.setToolTipText("If there is an error during upload, the photo will be moved to a specified folder so you can manually verifiy if the upload failed.");
+                            panel11.add(radioErrorMove, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
+                                GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                                new Insets(0, 0, 5, 5), 0, 0));
+
+                            //---- txtErrorMoveTo ----
+                            txtErrorMoveTo.setEditable(false);
+                            panel11.add(txtErrorMoveTo, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0,
+                                GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                                new Insets(0, 0, 5, 5), 0, 0));
+
+                            //---- btnErrorBrowse ----
+                            btnErrorBrowse.setText(bundle.getString("UploaderDialog.btnErrorBrowse.text"));
+                            btnErrorBrowse.addActionListener(e -> btnErrorBrowse(e));
+                            panel11.add(btnErrorBrowse, new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0,
+                                GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                                new Insets(0, 0, 5, 0), 0, 0));
+
+                            //---- radioErrorKeep ----
+                            radioErrorKeep.setText(bundle.getString("UploaderDialog.radioErrorKeep.text"));
+                            radioErrorKeep.setSelected(true);
+                            radioErrorKeep.setToolTipText("If there is an error during upload, the photo will remain in the uploads folder for future attempts.");
+                            panel11.add(radioErrorKeep, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
+                                GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                                new Insets(0, 0, 0, 5), 0, 0));
+                        }
+                        pnlArchive.add(panel11, BorderLayout.CENTER);
                     }
                     tabbedPane1.addTab(bundle.getString("UploaderDialog.pnlArchive.tab.title"), pnlArchive);
                 }
@@ -991,25 +1099,38 @@ public class UploaderDialog extends JDialog {
             popupMenu1.add(mnuOpenGroup);
         }
 
-        //---- buttonGroup2 ----
-        var buttonGroup2 = new ButtonGroup();
-        buttonGroup2.add(radioSafe);
-        buttonGroup2.add(radioModerate);
-        buttonGroup2.add(radioRestricted);
+        //---- safetyLevelGroup ----
+        var safetyLevelGroup = new ButtonGroup();
+        safetyLevelGroup.add(radioSafe);
+        safetyLevelGroup.add(radioModerate);
+        safetyLevelGroup.add(radioRestricted);
 
-        //---- buttonGroup3 ----
-        var buttonGroup3 = new ButtonGroup();
-        buttonGroup3.add(radioAllTags);
-        buttonGroup3.add(radioAnyTags);
+        //---- tagButtonGroup ----
+        var tagButtonGroup = new ButtonGroup();
+        tagButtonGroup.add(radioAllTags);
+        tagButtonGroup.add(radioAnyTags);
 
-        //---- buttonGroup1 ----
-        var buttonGroup1 = new ButtonGroup();
-        buttonGroup1.add(radioMove);
-        buttonGroup1.add(radioDelete);
+        //---- successfulUploadGroup ----
+        var successfulUploadGroup = new ButtonGroup();
+        successfulUploadGroup.add(radioMove);
+        successfulUploadGroup.add(radioDelete);
+
+        //---- errorButtonGroup ----
+        var errorButtonGroup = new ButtonGroup();
+        errorButtonGroup.add(radioErrorMove);
+        errorButtonGroup.add(radioErrorKeep);
+
+        //---- bindings ----
+        bindingGroup = new BindingGroup();
+        bindingGroup.addBinding(Bindings.createAutoBinding(UpdateStrategy.READ_WRITE,
+            radioErrorMove, BeanProperty.create("selected"),
+            btnErrorBrowse, BeanProperty.create("enabled")));
+        bindingGroup.bind();
         // JFormDesigner - End of component initialization  //GEN-END:initComponents
     }
 
     // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
+    // Generated using JFormDesigner non-commercial license
     private JPanel dialogPane;
     private JPanel contentPanel;
     private JTabbedPane tabbedPane1;
@@ -1055,6 +1176,7 @@ public class UploaderDialog extends JDialog {
     private JPanel panel5;
     private JButton btnDeleteRule;
     private JPanel pnlArchive;
+    private JPanel panel10;
     private JRadioButton radioMove;
     private JTextField txtMoveTo;
     private JButton btnBrowseMove;
@@ -1066,11 +1188,17 @@ public class UploaderDialog extends JDialog {
     private JLabel lblDateSample;
     private JButton btnDefaultDate;
     private JRadioButton radioDelete;
+    private JPanel panel11;
+    private JRadioButton radioErrorMove;
+    private JTextField txtErrorMoveTo;
+    private JButton btnErrorBrowse;
+    private JRadioButton radioErrorKeep;
     private JPanel buttonBar;
     private JButton btnCancel;
     private JButton btnSave;
     private JPopupMenu popupMenu1;
     private JMenuItem mnuGroupInfo;
     private JMenuItem mnuOpenGroup;
+    private BindingGroup bindingGroup;
     // JFormDesigner - End of variables declaration  //GEN-END:variables
 }
